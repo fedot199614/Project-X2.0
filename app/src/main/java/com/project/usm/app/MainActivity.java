@@ -23,11 +23,6 @@ import com.project.usm.app.Fragments.RV_Main;
 @Loggable
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-
-
-
-
-
     public void initHomePage(){
         RV_Main mainNewsList = new RV_Main();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -73,12 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        //Log.i("gggggg",String.valueOf(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName()));
-       // Log.i("gggggg1",String.valueOf(getSupportFragmentManager().getBackStackEntryCount()));
-        //Log.i("gggggg2",getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()).getClass().getSimpleName());
-       //if(getSupportFragmentManager().getBackStackEntryCount() == 1) {
-           // finish();
-        //}
+
         if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("SharedNews")) {
             getSupportFragmentManager().popBackStack("sharedNews", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("RV_Main")){
@@ -88,19 +78,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("Auth")){
             finish();
         }
-
-       // switch(getSupportFragmentManager().getFragments().size()){
-         //   case :
-       // }
-       //else {
-           // super.onBackPressed();
-       //}
-
-        //if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("SharedNews")){
-           // getSupportFragmentManager().findFragmentByTag("root").
-        //}
-
-
 
     }
 

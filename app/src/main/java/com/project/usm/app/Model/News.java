@@ -14,6 +14,7 @@ public class News {
     }
 
     public String getFull_news() {
+
         return full_news;
     }
 
@@ -32,10 +33,12 @@ public class News {
     }
 
     public String getModel() {
+
         return news;
     }
 
     public void setModel(String model) {
+
         this.news = model;
     }
 

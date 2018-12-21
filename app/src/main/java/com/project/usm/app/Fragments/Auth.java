@@ -3,6 +3,7 @@ package com.project.usm.app.Fragments;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.transition.TransitionInflater;
@@ -76,22 +77,17 @@ public class Auth extends Fragment implements Auth_View {
         password = getActivity().findViewById(R.id.password);
         progressBar = getActivity().findViewById(R.id.progressBarAuth);
         progressBar.setVisibility(View.INVISIBLE);
+        Auth_Presenter authPresenter = new Auth_Presenter(this);
 
         auth.setOnClickListener(click -> {
-            Auth_Presenter authPresenter = new Auth_Presenter(this);
             authPresenter.onLogin(login.getText().toString(), password.getText().toString());
 
         });
         registration.setOnClickListener(click -> {
-            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.slide_left));
-            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.slide_right));
+            authPresenter.setAnimFade(this,getActivity());
             Registration registrationFR = new Registration();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            registrationFR.setEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.slide_right));
-            registrationFR.setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.slide_left));
-            transaction.addToBackStack("reg");
-            transaction.addSharedElement(getView().findViewById(R.id.cv_auth), getView().findViewById(R.id.cv_auth).getTransitionName());
-            transaction.replace(R.id.mainFrame, registrationFR).commit();
+            authPresenter.setAnimFade(registrationFR,getActivity());
+            authPresenter.beginTransaction(this,registrationFR);
         });
         forgot.setOnClickListener(click -> {
 

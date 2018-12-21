@@ -9,4 +9,5 @@
     <color name="darkslategray2">#1d282d</color>
     <color name ="white">#ffffff</color>
     <color name="textClick">#c7c7c7</color>
+    <color name="textColor">#ecf0f1</color>
 </resources>
