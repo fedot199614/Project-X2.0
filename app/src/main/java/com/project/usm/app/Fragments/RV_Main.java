@@ -2,24 +2,30 @@ package com.project.usm.app.Fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import  com.project.usm.app.Model.News;
 import com.project.usm.app.Presenter.HomeNews;
 import  com.project.usm.app.R;
+import com.project.usm.app.Tools.NavItems;
 import  com.project.usm.app.Tools.RVAdapter;
 import  com.project.usm.app.Tools.RecyclerItemClickListener;
 import com.project.usm.app.View.Home_View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class RV_Main extends Fragment implements Home_View {
@@ -51,6 +57,8 @@ public class RV_Main extends Fragment implements Home_View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -67,11 +75,8 @@ public class RV_Main extends Fragment implements Home_View {
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-
-        homePresenter.Init();
+        homePresenter.Init(getActivity());
         homePresenter.setAnimFade(this,getActivity());
-
-
     }
 
     public void onButtonPressed(Uri uri) {
@@ -108,10 +113,9 @@ public class RV_Main extends Fragment implements Home_View {
         rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), rv ,new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
                 SharedNews sn = new SharedNews();
                 homePresenter.setAnimFade(sn,getActivity());
-                homePresenter.beginTransaction(getFragmentManager(),sn,"sharedNews",position,view,model);
+                homePresenter.beginTransaction(getFragmentManager(),sn,getString(R.string.sharedNews),position,view,model);
             }
             @Override
             public void onLongItemClick(View view, int position) {

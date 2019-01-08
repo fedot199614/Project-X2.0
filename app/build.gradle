@@ -73,4 +73,5 @@ dependencies {
     //implementation 'org.aspectj:aspectjweaver:1.9.2'
     //implementation 'org.springframework:spring-aspects:5.1.2.RELEASE'
     implementation 'com.google.dagger:dagger:2.19'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
 }

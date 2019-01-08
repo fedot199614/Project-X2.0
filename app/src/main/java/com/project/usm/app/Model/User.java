@@ -3,6 +3,8 @@ package com.project.usm.app.Model;
 import android.text.TextUtils;
 import android.util.Patterns;
 
+import java.util.regex.Pattern;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,6 +29,7 @@ public class User implements IUser {
 
     @Override
     public boolean validationPhone() {
+
         return false;
     }
 
@@ -36,9 +39,9 @@ public class User implements IUser {
         int code = -1;
         if(TextUtils.isEmpty(getEmail())){
             code = 0;
-        }else if(!Patterns.EMAIL_ADDRESS.matcher(getEmail()).matches()){
+        }else if(!Pattern.compile("^[0-9]+$").matcher(getEmail()).matches()){
             code = 1;
-        }else if(getPassword().length()<6){
+        }else if(getEmail().length()!=13){
             code = 2;
         }
 

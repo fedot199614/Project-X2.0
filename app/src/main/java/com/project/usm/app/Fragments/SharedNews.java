@@ -67,8 +67,8 @@ public class SharedNews extends Fragment{
         TextView title = (TextView) getView().findViewById(R.id.title_model_sh);
         TextView newsFull = (TextView) getView().findViewById(R.id.news_model_sh);
         Bundle bundle = getArguments();
-        title.setText(bundle.getString("title"));
-        newsFull.setText(bundle.getString("news"));
+        title.setText(bundle.getString(getString(R.string.title)));
+        newsFull.setText(bundle.getString(getString(R.string.news)));
 
         System.out.print(getFragmentManager().getBackStackEntryCount());
 

@@ -59,7 +59,7 @@ public class Auth_Presenter implements IAuth_Presenter {
     @Override
     public void beginTransaction(Fragment firstFragment,Fragment nextFragment) {
         FragmentTransaction transaction = firstFragment.getFragmentManager().beginTransaction();
-        transaction.addToBackStack("reg");
+        transaction.addToBackStack(firstFragment.getString(R.string.reg));
         transaction.addSharedElement(firstFragment.getView().findViewById(R.id.cv_auth), firstFragment.getView().findViewById(R.id.cv_auth).getTransitionName());
         transaction.replace(R.id.mainFrame, nextFragment).commit();
     }

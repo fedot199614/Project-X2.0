@@ -10,7 +10,7 @@ import com.project.usm.app.Model.News;
 import java.util.List;
 
 public interface IHomeNews {
-    void Init();
-    public void setAnimFade(Fragment fragment, Activity activity);
-    public void beginTransaction(FragmentManager frManager, Fragment nextFragment, String backStackTag, int position, View view, List<News> model);
+    void Init(Activity activity);
+    void setAnimFade(Fragment fragment, Activity activity);
+    void beginTransaction(FragmentManager frManager, Fragment nextFragment, String backStackTag, int position, View view, List<News> model);
 }

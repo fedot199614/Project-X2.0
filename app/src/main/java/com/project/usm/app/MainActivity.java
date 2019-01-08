@@ -1,9 +1,18 @@
 package com.project.usm.app;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -11,22 +20,29 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.project.usm.app.Fragments.Map;
 import com.project.usm.app.R;
 import com.project.usm.app.AOP.Loggable;
 import com.project.usm.app.Fragments.Auth;
 import com.project.usm.app.Fragments.RV_Main;
 
+
+import java.util.Objects;
+
 @Loggable
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int TAG_CODE_PERMISSION_LOCATION = 0;
     public void initHomePage(){
         RV_Main mainNewsList = new RV_Main();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.addToBackStack("root");
+        ft.addToBackStack(getString(R.string.root));
         ft.replace(R.id.mainFrame,mainNewsList).commit();
 
     }
@@ -39,14 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -57,6 +66,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //permission check
+        if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION },
+                    TAG_CODE_PERMISSION_LOCATION);
+        }
         //Init Start Fragment
         initHomePage();
 
@@ -69,14 +85,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
 
-        if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("SharedNews")) {
-            getSupportFragmentManager().popBackStack("sharedNews", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("RV_Main")){
-            finish();
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("Registration")){
-            getSupportFragmentManager().popBackStack("reg", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("Auth")){
-            finish();
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.leave)).setTitle(getString(R.string.exit));
+        builder.setPositiveButton(getString(R.string.OK),(dialog,which) -> {
+                finish();
+            }
+        );
+        builder.setNegativeButton(getString(R.string.Cancel),(dialog,which) -> {
+                dialog.cancel();
+                }
+        );
+        AlertDialog dialog = builder.create();
+
+
+if(getSupportFragmentManager().getBackStackEntryCount()!= 1  && !getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.RV_Main))){
+    getSupportFragmentManager().popBackStack();
+}else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.RV_Main))){
+    dialog.show();
+}
+
+
+
+
+        if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.SharedNews))) {
+            getSupportFragmentManager().popBackStack(getString(R.string.sharedNews), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.RV_Main))){
+            dialog.show();
+        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Registration))){
+            getSupportFragmentManager().popBackStack(getString(R.string.reg), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Auth))){
+            getSupportFragmentManager().popBackStack(getString(R.string.auth), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Map))){
+            getSupportFragmentManager().popBackStack(getString(R.string.map), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
 
     }
@@ -85,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
         return true;
     }
 
@@ -116,12 +159,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.map) {
+            Map map = new Map();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.addToBackStack(getString(R.string.map));
+            ft.replace(R.id.mainFrame,map).commit();
 
         } else if (id == R.id.nav_logIn) {
             Auth auth = new Auth();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.addToBackStack("auth");
+            ft.addToBackStack(getString(R.string.auth));
             ft.replace(R.id.mainFrame,auth).commit();
         }
 

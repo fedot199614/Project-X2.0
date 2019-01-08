@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.project.usm.app.Model.News;
 import com.project.usm.app.R;
+import com.project.usm.app.Tools.NavItems;
 import com.project.usm.app.View.Home_View;
 
 import java.util.ArrayList;
@@ -19,12 +20,14 @@ import java.util.List;
 public class HomeNews implements IHomeNews {
     Home_View home_view;
     public HomeNews(Home_View home) {
+
         this.home_view = home;
     }
 
 
     @Override
-    public void Init() {
+    public void Init(Activity activity) {
+        NavItems.getNavMenu(activity).getItem(0).setChecked(true);
         List<News> newsList = new ArrayList<>();
         newsList.add(new News("În atenția studenților anului I, Specialitățile Tehnologia informației",
                 "Sesiunea de instruire (reper) se va desfășura în perioada 15.10.18 – 10.11.18. IV. http://phys.usm.md/ Modificările posibile în Orar (sala), le urmăriți la…",
@@ -90,10 +93,10 @@ public class HomeNews implements IHomeNews {
     public void beginTransaction(FragmentManager frManager, Fragment nextFragment, String backStackTag, int position, View view, List<News> model) {
         FragmentTransaction transaction = frManager.beginTransaction();
         Bundle bundle = new Bundle();
-        bundle.putString("title", model.get(position).getTitle());
-        bundle.putString("news", model.get(position).getFull_news());
+        bundle.putString(view.getResources().getString(R.string.title), model.get(position).getTitle());
+        bundle.putString(view.getResources().getString(R.string.news), model.get(position).getFull_news());
         nextFragment.setArguments(bundle);
-        transaction.addToBackStack("sharedNews");
+        transaction.addToBackStack(view.getResources().getString(R.string.sharedNews));
         transaction.addSharedElement(view.findViewById(R.id.cv), view.findViewById(R.id.cv).getTransitionName());
         transaction.addSharedElement(view.findViewById(R.id.title_model), view.findViewById(R.id.title_model).getTransitionName());
         transaction.addSharedElement(view.findViewById(R.id.news_model), view.findViewById(R.id.news_model).getTransitionName());
