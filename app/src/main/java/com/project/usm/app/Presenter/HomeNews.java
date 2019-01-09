@@ -79,7 +79,7 @@ public class HomeNews implements IHomeNews {
         RecyclerView rv =  home_view.InitRV();
         rv.setAdapter(home_view.createRVAdapter(newsList));
         home_view.itemClickListener(rv,newsList);
-
+        home_view.onRefresh();
 
 
     }
@@ -113,5 +113,10 @@ public class HomeNews implements IHomeNews {
 
 
 
+    }
+
+    @Override
+    public void refreshAnim() {
+        home_view.runLayoutAnimation();
     }
 }

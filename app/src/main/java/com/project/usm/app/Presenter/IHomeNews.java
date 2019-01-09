@@ -13,4 +13,5 @@ public interface IHomeNews {
     void Init(Activity activity);
     void setAnimFade(Fragment fragment, Activity activity);
     void beginTransaction(FragmentManager frManager, Fragment nextFragment, String backStackTag, int position, View view, List<News> model);
+    void refreshAnim();
 }

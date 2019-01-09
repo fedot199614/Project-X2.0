@@ -11,6 +11,8 @@ public interface Home_View {
     RecyclerView InitRV();
     RVAdapter createRVAdapter(List<News> newsList);
     void itemClickListener(RecyclerView rv,List<News> model);
+    void onRefresh();
+    void runLayoutAnimation();
 
 
 }

@@ -1,10 +1,12 @@
 package com.project.usm.app.Fragments;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
@@ -13,6 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
 import  com.project.usm.app.Model.News;
@@ -32,7 +37,8 @@ public class RV_Main extends Fragment implements Home_View {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private  HomeNews homePresenter = new HomeNews(this);
+    private  HomeNews homePresenter;
+    private RecyclerView rv;
 
     private String mParam1;
     private String mParam2;
@@ -75,6 +81,7 @@ public class RV_Main extends Fragment implements Home_View {
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
+        homePresenter = new HomeNews(this);
         homePresenter.Init(getActivity());
         homePresenter.setAnimFade(this,getActivity());
     }
@@ -95,7 +102,7 @@ public class RV_Main extends Fragment implements Home_View {
 
     @Override
     public RecyclerView InitRV() {
-        RecyclerView rv = (RecyclerView)getView().findViewById(R.id.rv);
+        rv = (RecyclerView)getView().findViewById(R.id.rv);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
@@ -122,6 +129,24 @@ public class RV_Main extends Fragment implements Home_View {
 
             }
         }));
+    }
+
+    @Override
+    public void onRefresh() {
+        SwipeRefreshLayout refresh =  (SwipeRefreshLayout)getActivity().findViewById(R.id.container);
+        refresh.setOnRefreshListener(()->{
+            Toast.makeText(getContext(), "Жду сервис!!!!!", Toast.LENGTH_SHORT).show();
+            homePresenter.refreshAnim();
+            refresh.setRefreshing(false);
+        });
+    }
+
+    @Override
+    public void runLayoutAnimation() {
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(rv.getContext(), R.anim.layout_animation_fall_down);
+        rv.setLayoutAnimation(controller);
+        rv.getAdapter().notifyDataSetChanged();
+        rv.scheduleLayoutAnimation();
     }
 
     public interface OnFragmentInteractionListener {
