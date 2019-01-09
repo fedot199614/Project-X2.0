@@ -6,8 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.project.usm.app.Model.News;
 import com.project.usm.app.R;
@@ -84,8 +86,14 @@ public class HomeNews implements IHomeNews {
 
     @Override
     public void setAnimFade(Fragment fragment, Activity activity) {
-        fragment.setExitTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.fade));
-        fragment.setEnterTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.fade));
+
+        Transition changeTransform = TransitionInflater.from(activity).
+                inflateTransition(R.transition.change_img_transform);
+        fragment.setSharedElementReturnTransition(changeTransform);
+        fragment.setSharedElementEnterTransition(changeTransform);
+
+        fragment.setExitTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.explode));
+        fragment.setEnterTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.explode));
     }
 
 
@@ -97,9 +105,13 @@ public class HomeNews implements IHomeNews {
         bundle.putString(view.getResources().getString(R.string.news), model.get(position).getFull_news());
         nextFragment.setArguments(bundle);
         transaction.addToBackStack(view.getResources().getString(R.string.sharedNews));
-        transaction.addSharedElement(view.findViewById(R.id.cv), view.findViewById(R.id.cv).getTransitionName());
-        transaction.addSharedElement(view.findViewById(R.id.title_model), view.findViewById(R.id.title_model).getTransitionName());
-        transaction.addSharedElement(view.findViewById(R.id.news_model), view.findViewById(R.id.news_model).getTransitionName());
+        //transaction.addSharedElement(view.findViewById(R.id.cv), view.findViewById(R.id.cv).getTransitionName());
+        //transaction.addSharedElement(view.findViewById(R.id.title_model), view.findViewById(R.id.title_model).getTransitionName());
+        //transaction.addSharedElement(view.findViewById(R.id.news_model), view.findViewById(R.id.news_model).getTransitionName());
+        transaction.addSharedElement(view.findViewById(R.id.image),"img");
         transaction.replace(R.id.mainFrame,nextFragment).commit();
+
+
+
     }
 }
