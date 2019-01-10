@@ -5,11 +5,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,10 +26,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.project.usm.app.Presenter.MapPresenter;
 import com.project.usm.app.R;
 import com.project.usm.app.View.MapView;
@@ -41,6 +48,7 @@ public class Map extends Fragment implements OnMapReadyCallback, LocationListene
     private static final String ARG_PARAM2 = "param2";
     private static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 0;
     private GoogleMap mMap;
+    private Location myLocation;
     private Thread dialogThread;
     private ProgressDialog myProgress;
     private SupportMapFragment mapFragment;
@@ -153,7 +161,8 @@ public class Map extends Fragment implements OnMapReadyCallback, LocationListene
 
                 String[] permissions = new String[]{
                         Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION};
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        };
                 ActivityCompat.requestPermissions(getActivity(), permissions,
                         REQUEST_ID_ACCESS_COURSE_FINE_LOCATION);
             getActivity().onBackPressed();
@@ -162,12 +171,54 @@ public class Map extends Fragment implements OnMapReadyCallback, LocationListene
             mMap.getUiSettings().setZoomControlsEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.setMyLocationEnabled(true);
+            getMyLocation();
+            showMyLocation();
         }
     }
 
     @Override
     public void destroyLoadingDialog() {
         myProgress.dismiss();
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void getMyLocation() {
+
+            // Get location from GPS if it's available
+            LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+            myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            // Location wasn't found, check the next most accurate place for the current location
+            if (myLocation == null) {
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                // Finds a provider that matches the criteria
+                String provider = lm.getBestProvider(criteria, true);
+                // Use the provider to get the last known location
+                myLocation = lm.getLastKnownLocation(provider);
+            }
+
+
+
+    }
+
+    @Override
+    public void showMyLocation() {
+        if (myLocation != null)
+        {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), 13));
+            MarkerOptions marker = new MarkerOptions().position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude())).title("My Location");
+            mMap.addMarker(marker);
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
+                    .zoom(17)                   // Sets the zoom
+                    .bearing(90)                // Sets the orientation of the camera to east
+                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                    .build();                   // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
     }
 
 

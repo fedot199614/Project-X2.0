@@ -1,11 +1,24 @@
 package com.project.usm.app.Fragments;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioTrack;
+import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +33,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
+import com.project.usm.app.MainActivity;
 import  com.project.usm.app.Model.News;
 import com.project.usm.app.Presenter.HomeNews;
 import  com.project.usm.app.R;
@@ -131,6 +145,7 @@ public class RV_Main extends Fragment implements Home_View {
         }));
     }
 
+
     @Override
     public void onRefresh() {
         SwipeRefreshLayout refresh =  (SwipeRefreshLayout)getActivity().findViewById(R.id.container);
@@ -138,6 +153,45 @@ public class RV_Main extends Fragment implements Home_View {
             Toast.makeText(getContext(), "Жду сервис!!!!!", Toast.LENGTH_SHORT).show();
             homePresenter.refreshAnim();
             refresh.setRefreshing(false);
+            //---------------------------------------------------TEST
+
+
+            Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            NotificationManager notificationManager =
+                    (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel("test", "My channel",
+                        NotificationManager.IMPORTANCE_HIGH);
+                channel.setDescription("My channel description");
+                channel.enableLights(true);
+                channel.enableVibration(true);
+                channel.setLightColor(Notification.DEFAULT_LIGHTS);
+                channel.setSound(ringURI,new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build());
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            Intent intent = new Intent(getContext(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent,
+                    PendingIntent.FLAG_ONE_SHOT);
+
+
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(getContext(), "test")
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle("Title")
+                            .setContentText("Тест push-up").setDefaults(Notification.DEFAULT_ALL).
+                             setContentIntent(pendingIntent).setAutoCancel(true);
+
+
+
+
+            notificationManager.notify(0, builder.build());
         });
     }
 

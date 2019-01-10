@@ -31,5 +31,6 @@ public class MapPresenter implements IMapPresenter {
     @Override
     public void permissionCheck() {
         mapView.permissionCheck();
+
     }
 }
