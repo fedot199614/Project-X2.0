@@ -37,10 +37,9 @@
     <string name="IDNP">IDNP</string>
     <string name="home">Главная</string>
     <string name="Mapp">Карта</string>
-    <string name="icon_heart">&#xf004;</string>
-    <string name="test">f015</string>
-    <string name="test2">&#xf015;</string>
-    <string name="fa_music">&#xf001;</string>
+    <string name="schedule">Расписание</string>
+
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

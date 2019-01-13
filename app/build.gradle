@@ -74,5 +74,5 @@ dependencies {
     //implementation 'org.springframework:spring-aspects:5.1.2.RELEASE'
     implementation 'com.google.dagger:dagger:2.19'
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
-
+    implementation 'com.joanzapata.iconify:android-iconify-fontawesome:2.2.2'
 }

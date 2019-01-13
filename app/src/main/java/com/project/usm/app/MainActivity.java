@@ -26,6 +26,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.joanzapata.iconify.IconDrawable;
+import com.joanzapata.iconify.Iconify;
+import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.project.usm.app.Fragments.Map;
 import com.project.usm.app.R;
 import com.project.usm.app.AOP.Loggable;
@@ -56,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
 
+        Iconify.with(new FontAwesomeModule());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -65,6 +70,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().findItem(R.id.nav_home).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_home).colorRes(R.color.secondText));
+        navigationView.getMenu().findItem(R.id.map).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_map_marker).colorRes(R.color.secondText));
+        navigationView.getMenu().findItem(R.id.nav_logIn).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_sign_in).colorRes(R.color.secondText));
+        navigationView.getMenu().findItem(R.id.nav_schedule).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_clipboard).colorRes(R.color.secondText));
 
         //permission check
         if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -128,7 +137,6 @@ if(getSupportFragmentManager().getBackStackEntryCount()!= 1  && !getSupportFragm
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-
         return true;
     }
 
@@ -158,7 +166,7 @@ if(getSupportFragmentManager().getBackStackEntryCount()!= 1  && !getSupportFragm
 
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_schedule) {
 
         } else if (id == R.id.map) {
             Map map = new Map();
