@@ -11,4 +11,5 @@ public interface MapView {
     void destroyLoadingDialog();
     void getMyLocation();
     void showMyLocation();
+    void initTabBar();
 }

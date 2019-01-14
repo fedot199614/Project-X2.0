@@ -35,10 +35,7 @@ public class Auth_Presenter implements IAuth_Presenter {
 
     }
 
-    @Override
-    public void forgotPass(String email) {
 
-    }
 
     @Override
     public void checkedWebServicesConnection() {
@@ -62,6 +59,11 @@ public class Auth_Presenter implements IAuth_Presenter {
         transaction.addToBackStack(firstFragment.getString(R.string.reg));
         transaction.addSharedElement(firstFragment.getView().findViewById(R.id.cv_auth), firstFragment.getView().findViewById(R.id.cv_auth).getTransitionName());
         transaction.replace(R.id.mainFrame, nextFragment).commit();
+    }
+
+    @Override
+    public void initTabLayout() {
+        auth_view.initTabBar();
     }
 
 

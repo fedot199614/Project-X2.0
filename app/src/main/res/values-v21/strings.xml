@@ -38,6 +38,15 @@
     <string name="home">Главная</string>
     <string name="Mapp">Карта</string>
     <string name="schedule">Расписание</string>
+    <string name="Schedule">Schedule</string>
+    <string name="schedule_back">schedule_back</string>
+    <string name="monday">Пн</string>
+    <string name="tuesday">Вт</string>
+    <string name="wednesday">Ср</string>
+    <string name="thursday">Чт</string>
+    <string name="friday">Пт</string>
+    <string name="saturday">Сб</string>
+    <string name="sunday">Вс</string>
 
 
 

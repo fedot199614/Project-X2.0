@@ -70,9 +70,6 @@ public class SharedNews extends Fragment{
         title.setText(bundle.getString(getString(R.string.title)));
         newsFull.setText(bundle.getString(getString(R.string.news)));
 
-        System.out.print(getFragmentManager().getBackStackEntryCount());
-
-
     }
 
 

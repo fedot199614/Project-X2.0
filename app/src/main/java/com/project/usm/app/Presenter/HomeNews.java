@@ -29,6 +29,7 @@ public class HomeNews implements IHomeNews {
 
     @Override
     public void Init(Activity activity) {
+        home_view.initTabBar();
         NavItems.getNavMenu(activity).getItem(0).setChecked(true);
         List<News> newsList = new ArrayList<>();
         newsList.add(new News("În atenția studenților anului I, Specialitățile Tehnologia informației",

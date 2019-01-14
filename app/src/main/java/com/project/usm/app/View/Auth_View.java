@@ -6,6 +6,6 @@ public interface Auth_View {
     void hideLoading();
     void onLoginMessage();
     void showErrorValidation(int errorCode);
-
+    void initTabBar();
 
 }

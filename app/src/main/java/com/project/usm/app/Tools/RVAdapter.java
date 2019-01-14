@@ -15,9 +15,12 @@ import java.util.List;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
 
+
+
     List<News> news;
    public RVAdapter(List<News> news){
-        this.news = news;
+
+       this.news = news;
     }
 
 
@@ -27,7 +30,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.news_model_main, viewGroup, false);
         PersonViewHolder pvh = new PersonViewHolder(v);
         return pvh;
-
     }
 
     @Override
@@ -58,7 +60,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         PersonViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
-            news = (TextView) itemView.findViewById(R.id.news_model);
+            news = (TextView) itemView.findViewById(R.id.professorName);
             title = (TextView) itemView.findViewById(R.id.title_model);
 
             //personName = (TextView)itemView.findViewById(R.id.person_name);

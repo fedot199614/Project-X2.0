@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
@@ -106,7 +107,11 @@ public class RV_Main extends Fragment implements Home_View {
         }
     }
 
-
+    @Override
+    public void initTabBar(){
+        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
+        tabBar.setVisibility(View.GONE);
+    }
 
     @Override
     public void onDetach() {

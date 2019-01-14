@@ -2,6 +2,7 @@ package com.project.usm.app.Fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 
 import android.support.v4.app.Fragment;
@@ -78,7 +79,7 @@ public class Auth extends Fragment implements Auth_View {
         progressBar = getActivity().findViewById(R.id.progressBarAuth);
         progressBar.setVisibility(View.INVISIBLE);
         Auth_Presenter authPresenter = new Auth_Presenter(this);
-
+        authPresenter.initTabLayout();
         auth.setOnClickListener(click -> {
             authPresenter.onLogin(login.getText().toString(), "");
         });
@@ -86,14 +87,17 @@ public class Auth extends Fragment implements Auth_View {
 
     }
 
-
-
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    @Override
+    public void initTabBar(){
+        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
+        tabBar.setVisibility(View.GONE);
+    }
     @Override
     public void showLoading() {
 

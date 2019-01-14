@@ -18,6 +18,7 @@ public class MapPresenter implements IMapPresenter {
 
     @Override
     public void init(Activity activity) {
+        mapView.initTabBar();
         NavItems.getNavMenu(activity).getItem(3).setChecked(true);
         mapView.showLoadingDialog();
 

@@ -13,6 +13,7 @@ public interface Home_View {
     void itemClickListener(RecyclerView rv,List<News> model);
     void onRefresh();
     void runLayoutAnimation();
+    void initTabBar();
 
 
 }

@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
@@ -174,6 +175,12 @@ public class Map extends Fragment implements OnMapReadyCallback, LocationListene
             getMyLocation();
             showMyLocation();
         }
+    }
+
+    @Override
+    public void initTabBar(){
+        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
+        tabBar.setVisibility(View.GONE);
     }
 
     @Override
