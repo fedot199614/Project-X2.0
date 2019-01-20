@@ -12,5 +12,17 @@
     <color name="textColor">#ecf0f1</color>
     <color name="title">#212121</color>
     <color name="secondText">#7e7e7e</color>
+    <color name="divider">#4c5a6f</color>
+    <color name="address">#2F7092</color>
+    <color name="followers">#0D5D98</color>
+    <color name="headings">#3797CF</color>
+    <color name="solidCircle">#AAFFFFFF</color>
+    <color name="circleBorder">#50FFFFFF</color>
+    <color name="followersBg">#4c5d7c</color>
+    <color name="followingBg">#556989</color>
+    <color name="grey">#E5E5E5</color>
+    <color name="btnColor">#364a4c</color>
+
+
 
 </resources>

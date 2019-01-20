@@ -36,6 +36,7 @@ import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.project.usm.app.Fragments.Map;
+import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.Fragments.Schedule;
 import com.project.usm.app.Presenter.MainActivityPr;
 import com.project.usm.app.R;
@@ -165,8 +166,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_home) {
             initHomePage();
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.profile) {
+            Profile profile = new Profile();
+            FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
+            fr.addToBackStack(getString(R.string.profile));
+            fr.replace(R.id.mainFrame,profile).commit();
         } else if (id == R.id.nav_schedule) {
             Schedule schedule = new Schedule();
             FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
