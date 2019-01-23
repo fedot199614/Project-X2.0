@@ -22,6 +22,8 @@
     <color name="followingBg">#556989</color>
     <color name="grey">#E5E5E5</color>
     <color name="btnColor">#364a4c</color>
+    <color name="online">#008000</color>
+    <color name="offline">#7e7e7e</color>
 
 
 

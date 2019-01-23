@@ -2,6 +2,7 @@ package com.project.usm.app.Fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,6 +65,8 @@ public class SharedNews extends Fragment{
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
 
+        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
+        tabBar.setVisibility(View.GONE);
         TextView title = (TextView) getView().findViewById(R.id.title_model_sh);
         TextView newsFull = (TextView) getView().findViewById(R.id.news_model_sh);
         Bundle bundle = getArguments();

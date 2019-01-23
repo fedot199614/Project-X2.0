@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
+import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +49,8 @@ import com.project.usm.app.View.MainActivityView;
 
 
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 @Loggable
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,MainActivityView {
@@ -82,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.getMenu().findItem(R.id.map).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_map_marker).colorRes(R.color.secondText));
         navigationView.getMenu().findItem(R.id.nav_logIn).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_sign_in).colorRes(R.color.secondText));
         navigationView.getMenu().findItem(R.id.nav_schedule).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_clipboard).colorRes(R.color.secondText));
+        navigationView.getMenu().findItem(R.id.profile).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_user).colorRes(R.color.secondText));
+
 
     }
 
@@ -118,6 +124,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         MainActivityPr presenter = new MainActivityPr(this);
         presenter.init();
 
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getHeaderView(0).findViewById(R.id.imgUserNav).setOnClickListener(e->{
+            drawer.closeDrawer(GravityCompat.START);
+            initProfile();
+
+        });
+
+
     }
 
 
@@ -139,10 +153,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().popBackStack(getString(R.string.map), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Schedule))){
             getSupportFragmentManager().popBackStack(getString(R.string.schedule_back), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.profClass))) {
+             getSupportFragmentManager().popBackStack(getString(R.string.profile), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+         }
 
-        }
-
-    }
+         }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,6 +174,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void initProfile(){
+        Profile profile = new Profile();
+        profile.setExitTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.explode));
+        profile.setEnterTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.explode));
+        FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
+        fr.addToBackStack(getString(R.string.profile));
+        fr.replace(R.id.mainFrame,profile).commit();
+    }
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -167,10 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_home) {
             initHomePage();
         } else if (id == R.id.profile) {
-            Profile profile = new Profile();
-            FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
-            fr.addToBackStack(getString(R.string.profile));
-            fr.replace(R.id.mainFrame,profile).commit();
+            initProfile();
         } else if (id == R.id.nav_schedule) {
             Schedule schedule = new Schedule();
             FragmentTransaction fr = getSupportFragmentManager().beginTransaction();

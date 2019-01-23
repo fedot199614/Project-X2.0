@@ -76,5 +76,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.joanzapata.iconify:android-iconify-fontawesome:2.2.2'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation 'com.google.android.gms:play-services-maps:15.0.1' // para mapas
+    implementation 'com.google.android.gms:play-services-location:15.0.1' // para gps
+
 
 }

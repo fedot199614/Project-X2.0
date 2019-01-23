@@ -48,6 +48,10 @@
     <string name="saturday">Сб</string>
     <string name="sunday">Вс</string>
     <string name="profile">profile</string>
+    <string name="prof">Профиль</string>
+    <string name="profClass">Profile</string>
+    <string name="fa_icon_pen">&#xf304;</string>
+    <string name="fa_icon_online">&#xf111;</string>
 
     <string name="twitterUsername">\@joeytribbiani</string>
 

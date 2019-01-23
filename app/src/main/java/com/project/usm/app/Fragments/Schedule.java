@@ -28,15 +28,31 @@ import java.util.Objects;
 
 
 public class Schedule extends Fragment implements TabLayout.OnTabSelectedListener{
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
+
+    private String mParam1;
+    private String mParam2;
     private OnFragmentInteractionListener mListener;
+
+
     private RVAdapterSchedule adapter;
     private  Map<Integer,List<ScheduleModel>> mapSchedule;
     private RecyclerView rv;
+
     public Schedule() {
         // Required empty public constructor
     }
 
+    public static Schedule newInstance(String param1, String param2) {
+        Schedule fragment = new Schedule();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -15,25 +15,34 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.project.usm.app.Presenter.MapPresenter;
 import com.project.usm.app.R;
@@ -43,13 +52,19 @@ import java.util.Objects;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-public class Map extends Fragment implements OnMapReadyCallback, LocationListener, MapView {
+public class Map extends Fragment implements  MapView,OnMapReadyCallback,
+        LocationListener,GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final int REQUEST_ID_ACCESS_COURSE_FINE_LOCATION = 0;
+    private GoogleApiClient mGoogleApiClient;
     private GoogleMap mMap;
     private Location myLocation;
+    private Marker mCurrLocationMarker;
+    private Location  mLastLocation;
+    private LocationRequest mLocationRequest;
     private Thread dialogThread;
     private ProgressDialog myProgress;
     private SupportMapFragment mapFragment;
@@ -123,14 +138,10 @@ public class Map extends Fragment implements OnMapReadyCallback, LocationListene
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mapPresenter.init(getActivity());
-        mapPresenter.destroyLoadingD();
+
         mapPresenter.permissionCheck();
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -166,15 +177,25 @@ public class Map extends Fragment implements OnMapReadyCallback, LocationListene
                         };
                 ActivityCompat.requestPermissions(getActivity(), permissions,
                         REQUEST_ID_ACCESS_COURSE_FINE_LOCATION);
+            mapPresenter.destroyLoadingD();
             getActivity().onBackPressed();
-            return;
+
         }else{
             mMap.getUiSettings().setZoomControlsEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.setMyLocationEnabled(true);
-            getMyLocation();
-            showMyLocation();
+            buildGoogleApiClient();
+            //getMyLocation();
+            //showMyLocation();
         }
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -213,22 +234,74 @@ public class Map extends Fragment implements OnMapReadyCallback, LocationListene
 
     @Override
     public void showMyLocation() {
-        if (myLocation != null)
-        {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), 13));
-            MarkerOptions marker = new MarkerOptions().position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude())).title("My Location");
-            mMap.addMarker(marker);
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
+//        if (myLocation != null)
+//        {
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), 13));
+//            MarkerOptions marker = new MarkerOptions().position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude())).title("My Location");
+//            mMap.addMarker(marker);
+//            CameraPosition cameraPosition = new CameraPosition.Builder()
+//                    .target(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
+//                    .zoom(17)                   // Sets the zoom
+//                    .bearing(90)                // Sets the orientation of the camera to east
+//                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+//                    .build();                   // Creates a CameraPosition from the builder
+//            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = new LocationRequest();
+        //mLocationRequest.setInterval(1000);
+        //mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this::onLocationChanged);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mapPresenter.destroyLoadingD();
+        mLastLocation = location;
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
+        }
+        //Place current location marker
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+        //move map camera
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
                     .zoom(17)                   // Sets the zoom
                     .bearing(90)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        //stop location updates
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this::onLocationChanged);
         }
+
     }
-
-
     public interface OnFragmentInteractionListener {
 
         void onFragmentInteraction(Uri uri);
