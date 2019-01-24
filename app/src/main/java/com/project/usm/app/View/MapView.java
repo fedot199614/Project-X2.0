@@ -9,7 +9,6 @@ public interface MapView {
     void showLoadingDialog();
     void permissionCheck();
     void destroyLoadingDialog();
-    void getMyLocation();
-    void showMyLocation();
+
     void initTabBar();
 }

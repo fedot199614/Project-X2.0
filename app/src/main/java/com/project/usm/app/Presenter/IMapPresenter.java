@@ -7,5 +7,5 @@ import com.google.android.gms.maps.GoogleMap;
 public interface IMapPresenter {
     void init(Activity activity);
     void destroyLoadingD();
-    void permissionCheck();
+    void permCheck();
 }

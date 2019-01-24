@@ -60,7 +60,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         PersonViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
-            news = (TextView) itemView.findViewById(R.id.professorName);
+            news = (TextView) itemView.findViewById(R.id.news_model);
             title = (TextView) itemView.findViewById(R.id.title_model);
 
             //personName = (TextView)itemView.findViewById(R.id.person_name);

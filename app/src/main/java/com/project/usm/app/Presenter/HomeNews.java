@@ -105,11 +105,11 @@ public class HomeNews implements IHomeNews {
         bundle.putString(view.getResources().getString(R.string.title), model.get(position).getTitle());
         bundle.putString(view.getResources().getString(R.string.news), model.get(position).getFull_news());
         nextFragment.setArguments(bundle);
-        transaction.addToBackStack(view.getResources().getString(R.string.sharedNews));
+        transaction.addToBackStack(backStackTag);
         //transaction.addSharedElement(view.findViewById(R.id.cv), view.findViewById(R.id.cv).getTransitionName());
         //transaction.addSharedElement(view.findViewById(R.id.title_model), view.findViewById(R.id.title_model).getTransitionName());
         //transaction.addSharedElement(view.findViewById(R.id.news_model), view.findViewById(R.id.news_model).getTransitionName());
-        transaction.addSharedElement(view.findViewById(R.id.image),"img");
+        transaction.addSharedElement(view.findViewById(R.id.image),view.findViewById(R.id.image).getTransitionName());
         transaction.replace(R.id.mainFrame,nextFragment).commit();
 
 

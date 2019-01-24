@@ -30,7 +30,7 @@ public class MapPresenter implements IMapPresenter {
     }
 
     @Override
-    public void permissionCheck() {
+    public void permCheck() {
         mapView.permissionCheck();
 
     }

@@ -10,7 +10,7 @@
     <string name="title_activity_shared_test">SharedTest</string>
     <!-- my strings -->
     <string name="mapReady">Карта готова!</string>
-    <string name="mapL">Загрузка карты...</string>
+    <string name="mapL">Загрузка местоположения...</string>
     <string name="mapW">Пожалуйста подождите...</string>
     <string name="title">title</string>
     <string name="news">news</string>
@@ -39,7 +39,7 @@
     <string name="Mapp">Карта</string>
     <string name="schedule">Расписание</string>
     <string name="Schedule">Schedule</string>
-    <string name="schedule_back">schedule_back</string>
+    <string name="scheduleBack">scheduleBack</string>
     <string name="monday">Пн</string>
     <string name="tuesday">Вт</string>
     <string name="wednesday">Ср</string>

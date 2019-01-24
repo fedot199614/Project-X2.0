@@ -81,7 +81,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/professorName"
+                android:id="@+id/news_model"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/title_model"

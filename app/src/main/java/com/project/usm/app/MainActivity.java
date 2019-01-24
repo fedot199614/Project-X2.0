@@ -24,6 +24,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.transition.TransitionInflater;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void initHomePage(){
         RV_Main mainNewsList = new RV_Main();
         FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
-        fr.addToBackStack(getString(R.string.root));
+        fr.addToBackStack(null);
         fr.replace(R.id.mainFrame,mainNewsList).commit();
     }
 
@@ -127,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getHeaderView(0).findViewById(R.id.imgUserNav).setOnClickListener(e->{
             drawer.closeDrawer(GravityCompat.START);
-            initProfile();
+            //initProfile();
 
         });
 
@@ -137,22 +139,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(Gravity.START)) {
+            drawer.closeDrawer(Gravity.START);
+        }
          if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.SharedNews))) {
             getSupportFragmentManager().popBackStack(getString(R.string.sharedNews), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.RV_Main))){
             exitDialogShow();
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Registration))){
             getSupportFragmentManager().popBackStack(getString(R.string.reg), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Auth))){
             getSupportFragmentManager().popBackStack(getString(R.string.auth), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Map))){
             getSupportFragmentManager().popBackStack(getString(R.string.map), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Schedule))){
-            getSupportFragmentManager().popBackStack(getString(R.string.schedule_back), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager().popBackStack(getString(R.string.scheduleBack), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.profClass))) {
              getSupportFragmentManager().popBackStack(getString(R.string.profile), FragmentManager.POP_BACK_STACK_INCLUSIVE);
          }
@@ -177,10 +179,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void initProfile(){
         Profile profile = new Profile();
-        profile.setExitTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.explode));
-        profile.setEnterTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.explode));
         FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
         fr.addToBackStack(getString(R.string.profile));
+        profile.setExitTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.explode));
+        profile.setEnterTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.explode));
         fr.replace(R.id.mainFrame,profile).commit();
     }
 
@@ -191,15 +193,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            initHomePage();
+           initHomePage();
         } else if (id == R.id.profile) {
             initProfile();
         } else if (id == R.id.nav_schedule) {
             Schedule schedule = new Schedule();
             FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
-            fr.addToBackStack(getString(R.string.schedule_back));
+            fr.addToBackStack(getString(R.string.scheduleBack));
             fr.replace(R.id.mainFrame,schedule).commit();
-
         } else if (id == R.id.map) {
             Map map = new Map();
             FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
