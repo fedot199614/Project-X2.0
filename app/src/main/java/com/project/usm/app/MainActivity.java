@@ -39,6 +39,8 @@ import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
+import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
+import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.project.usm.app.Fragments.Map;
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.Fragments.Schedule;
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private static final int TAG_CODE_PERMISSION_LOCATION = 0;
     private TabLayout tabBar;
+    private FlowingDrawer drawer;
+
 
     @Override
     public void initHomePage(){
@@ -81,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void initNavigViewIcons() {
-        Iconify.with(new FontAwesomeModule());
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().findItem(R.id.nav_home).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_home).colorRes(R.color.secondText));
@@ -115,21 +119,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Iconify.with(new FontAwesomeModule());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(new IconDrawable(this, FontAwesomeIcons.fa_bars).sizeDp(21).colorRes(R.color.white));
+
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        //custom drawer
+        drawer = (FlowingDrawer) findViewById(R.id.drawer_layout);
+        drawer.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
+        toolbar.setNavigationOnClickListener(e->{drawer.toggleMenu(true);});
+
+
+
+
+
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,  drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.addDrawerListener(toggle);
+//        toggle.syncState();
+
+
         MainActivityPr presenter = new MainActivityPr(this);
         presenter.init();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getHeaderView(0).findViewById(R.id.imgUserNav).setOnClickListener(e->{
-            drawer.closeDrawer(GravityCompat.START);
-            //initProfile();
+            drawer.closeMenu(true);
+            //drawer.closeDrawer(GravityCompat.START);
+            initProfile();
 
         });
 
@@ -139,10 +158,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(Gravity.START)) {
-            drawer.closeDrawer(Gravity.START);
-        }
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(Gravity.START)) {
+//            drawer.closeDrawer(Gravity.START);
+//        }
+        drawer.closeMenu(true);
          if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.SharedNews))) {
             getSupportFragmentManager().popBackStack(getString(R.string.sharedNews), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.RV_Main))){
@@ -159,7 +179,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
              getSupportFragmentManager().popBackStack(getString(R.string.profile), FragmentManager.POP_BACK_STACK_INCLUSIVE);
          }
 
-         }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -215,8 +236,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        drawer.closeDrawer(GravityCompat.START);
+//        drawer.closeMenu(true);
+        drawer.closeMenu(true);
+
         return true;
     }
 

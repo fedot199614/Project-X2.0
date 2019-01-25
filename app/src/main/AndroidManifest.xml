@@ -47,6 +47,10 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAyabpbsrj1CRDXoOVjsIQg_xLpctwU4L4" />
+
+        <activity
+            android:name=".Main2ActivityDELETE"
+            android:label="@string/title_activity_main2_delete"></activity>
     </application>
 
 </manifest>
