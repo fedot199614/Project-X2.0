@@ -52,7 +52,10 @@
     <string name="profClass">Profile</string>
     <string name="fa_icon_pen">&#xf304;</string>
     <string name="fa_icon_online">&#xf111;</string>
-
+    <string name="newPhoto">Сделать новое фото</string>
+    <string name="onGallery">Выбрать фото из галереи</string>
+    <string name="edit">Редактирование</string>
+    <string name="chosePhoto">Выбирите фото</string>
     <string name="twitterUsername">\@joeytribbiani</string>
 
 

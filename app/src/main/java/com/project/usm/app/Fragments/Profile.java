@@ -1,23 +1,58 @@
 package com.project.usm.app.Fragments;
 
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+
+import com.mxn.soul.flowingdrawer_core.BuildConfig;
 import com.project.usm.app.R;
+import com.project.usm.app.Tools.FontAwesome;
 import com.project.usm.app.Tools.NavItems;
 
-public class Profile extends Fragment {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Set;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.app.Activity.RESULT_OK;
+
+public class Profile extends Fragment {
+    private File file;
+    private Uri uri;
+    private final int PERMISSION_REQUEST_CODE = 3;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private CircleImageView profImg,navProfImg;
+    private final int CAMERA_REQUEST_CODE = 0;
+    private final int GALLERY_REQUEST_CODE = 1;
 
     private String mParam1;
     private String mParam2;
@@ -63,10 +98,95 @@ public class Profile extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+         profImg = (CircleImageView) getActivity().findViewById(R.id.profile_image);
+         navProfImg = (CircleImageView) getActivity().findViewById(R.id.nav_prof_img);
+
+
+
         NavItems.getNavMenu(getActivity()).getItem(1).setChecked(true);
         TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
         tabBar.setVisibility(View.GONE);
+
+        FontAwesome editProfileImg = (FontAwesome) getActivity().findViewById(R.id.addProfImg);
+        editProfileImg.setOnClickListener(click->{
+
+            int permissionCheckCam = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
+            int permissionCheckWrite = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int permissionCheckRead = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+            if(permissionCheckCam != PackageManager.PERMISSION_GRANTED || permissionCheckWrite != PackageManager.PERMISSION_GRANTED || permissionCheckRead != PackageManager.PERMISSION_GRANTED){
+
+                    ActivityCompat.requestPermissions(getActivity(),new String[]{
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE},
+                            PERMISSION_REQUEST_CODE);
+
+            }else {
+
+
+                String[] list = {getString(R.string.newPhoto), getString(R.string.onGallery)};
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(getString(R.string.edit))
+                        .setItems(list, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch(which) {
+                                    case 0:
+                                        cameraOpen();
+                                        break;
+                                    case 1:
+                                        galleryOpen();
+                                        break;
+                                }
+                            }
+                        });
+
+                builder.create().show();
+
+            }
+        });
+
+
     }
+
+    public void cameraOpen() {
+       Intent camIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+
+       startActivityForResult(camIntent,CAMERA_REQUEST_CODE);
+
+    }
+
+    public void galleryOpen() {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(pickPhoto , GALLERY_REQUEST_CODE);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK){
+            Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+            profImg.setImageBitmap(imageBitmap);
+            navProfImg.setImageBitmap(imageBitmap);
+        }else if(requestCode == GALLERY_REQUEST_CODE){
+
+            if(resultCode == RESULT_OK){
+                Uri selectedImage = data.getData();
+                profImg.setImageURI(selectedImage);
+                navProfImg.setImageURI(selectedImage);
+            }
+
+//            if (data != null && data.getExtras() != null) {
+//                Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+//                profImg.setImageBitmap(imageBitmap);
+//            }
+
+        }
+    }
+
+
+
+
 
     @Override
     public void onDetach() {

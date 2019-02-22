@@ -17,6 +17,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -41,6 +45,17 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -48,9 +63,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAyabpbsrj1CRDXoOVjsIQg_xLpctwU4L4" />
 
-        <activity
-            android:name=".Main2ActivityDELETE"
-            android:label="@string/title_activity_main2_delete"></activity>
     </application>
 
 </manifest>
