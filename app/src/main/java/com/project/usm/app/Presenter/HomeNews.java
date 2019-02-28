@@ -8,16 +8,23 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.project.usm.app.Model.News;
 import com.project.usm.app.R;
+import com.project.usm.app.SplashScreen;
 import com.project.usm.app.Tools.NavItems;
 import com.project.usm.app.View.Home_View;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BasicHeader;
 
 public class HomeNews implements IHomeNews {
     Home_View home_view;
@@ -32,6 +39,16 @@ public class HomeNews implements IHomeNews {
         home_view.initTabBar();
         NavItems.getNavMenu(activity).getItem(0).setChecked(true);
         List<News> newsList = new ArrayList<>();
+        String response = "";
+            try {
+                SplashScreen.getHttpClient().news().getRequestBuild(new Header[]{new BasicHeader("Authorization",SplashScreen.getClientApp().getTokenType()+" "+SplashScreen.getClientApp().getTokenClient())}).getTaskGet().execute();
+                response = SplashScreen.getHttpClient().getTaskGet().get();
+            } catch (IOException | ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                SplashScreen.getHttpClient().getTaskGet().cancel(true);
+            }
+//TUT UTUT UTU TUTUTUTUTUTUTUTUTUT
         newsList.add(new News("În atenția studenților anului I, Specialitățile Tehnologia informației",
                 "Sesiunea de instruire (reper) se va desfășura în perioada 15.10.18 – 10.11.18. IV. http://phys.usm.md/ Modificările posibile în Orar (sala), le urmăriți la…",
                 "În data de 18 octombrie o delegație a Academiei Forțelor Terestre „Nicolae BĂLCESCU” din Sibiu s-a aflat într-o vizită de lucru la Universitatea de Stat din Moldova. Delegația Academiei a fost condusă de Prorectorul pentru programe și relații internaționale, profesor universitar, doctor Vasile CĂRUȚAȘU.În componența delegației au făcut parte:\n" +

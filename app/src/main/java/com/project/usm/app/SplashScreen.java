@@ -6,16 +6,43 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.project.usm.app.Model.ClientApp;
+import com.project.usm.app.Tools.GsonParser;
+import com.project.usm.app.Tools.HttpClient;
+
+import java.util.concurrent.ExecutionException;
+
+import lombok.Getter;
 
 
 public class SplashScreen extends AppCompatActivity {
-
+    private static GsonParser gsonParser;
+    private static HttpClient httpClient;
+    private static ClientApp clientApp;
+    private String jsonResponse;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if(isOnline()) {
+            httpClient = new HttpClient("http://35.184.2.70","8000");
+            clientApp = new ClientApp();
+            gsonParser = GsonParser.getNewInstance();
+            SplashScreen.getHttpClient().oauth().postRequestBuild(SplashScreen.getClientApp().getHeaders(),SplashScreen.getClientApp().getParams()).getTaskPost().execute();
+            try {
+                jsonResponse = SplashScreen.getHttpClient().getTaskPost().get();
+                gsonParser.parseClientApp(jsonResponse);
+
+            } catch (ExecutionException | InterruptedException e) {
+               Log.e("ERROR APP OAUTH",e.getMessage());
+            } finally {
+                SplashScreen.getHttpClient().getTaskPost().cancel(true);
+            }
+
+
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -32,4 +59,13 @@ public class SplashScreen extends AppCompatActivity {
 
         return netInfo != null && netInfo.isConnected();
     }
+
+    public static HttpClient getHttpClient(){
+        return httpClient;
+    }
+
+    public static ClientApp getClientApp(){
+        return clientApp;
+    }
+
 }

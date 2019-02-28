@@ -19,16 +19,19 @@ public class News {
     }
 
     public void setFull_news(String full_news) {
+
         this.full_news = full_news;
     }
 
 
 
     public String getTitle() {
+
         return title;
     }
 
     public void setTitle(String title) {
+
         this.title = title;
     }
 
@@ -41,6 +44,7 @@ public class News {
 
         this.news = model;
     }
+
 
 
 
