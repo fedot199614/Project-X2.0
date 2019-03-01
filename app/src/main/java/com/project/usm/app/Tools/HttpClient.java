@@ -44,8 +44,6 @@ public class HttpClient {
 
 
 public HttpClient(String url,String port){
-    this.taskPost = new MyTaskPost();
-    this.taskGet = new MyTaskGet();
     this.url = url;
     this.port = port;
     this.client = HttpClients.createDefault();
@@ -53,6 +51,17 @@ public HttpClient(String url,String port){
     this.oauthService = "oauth/token";
     this.newsService = "v1/news";
 }
+
+public HttpClient buildTaskPost(){
+    this.taskPost = new MyTaskPost();
+    return this;
+}
+
+public HttpClient buildTaskGet(){
+    this.taskGet = new MyTaskGet();
+    return this;
+}
+
 
 public HttpClient oauth(){
     this.absoluteUrl = this.url+":"+this.port+"/"+this.oauthService;
@@ -84,7 +93,7 @@ public HttpClient postRequestBuild(Header[] headers, List<BasicNameValuePair> va
 }
 
 
-public HttpClient getRequestBuild(Header[] headers) throws IOException {
+public HttpClient getRequestBuild(Header[] headers){
         httpGet.setHeaders(headers);
     return this;
 }

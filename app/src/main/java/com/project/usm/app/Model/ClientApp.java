@@ -26,7 +26,7 @@ public ClientApp(){
     this.appID = "MOBILE_APP";
     this.appPassword ="password";
     this.grant_type = "client_credentials";
-    this.tokenType = "Bearer ";
+    this.tokenType = "Bearer";
     this.params = new ArrayList<>();
     this.headers = new Header[1];
     paramsBuild();

@@ -10,11 +10,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.project.usm.app.Model.ClientApp;
+import com.project.usm.app.Model.News;
 import com.project.usm.app.Tools.GsonParser;
 import com.project.usm.app.Tools.HttpClient;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BasicHeader;
 import lombok.Getter;
 
 
@@ -22,7 +26,8 @@ public class SplashScreen extends AppCompatActivity {
     private static GsonParser gsonParser;
     private static HttpClient httpClient;
     private static ClientApp clientApp;
-    private String jsonResponse;
+    private static List<News> newsList;
+    private String jsonResponseClient,jsonResponseNews;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,15 +36,19 @@ public class SplashScreen extends AppCompatActivity {
             httpClient = new HttpClient("http://35.184.2.70","8000");
             clientApp = new ClientApp();
             gsonParser = GsonParser.getNewInstance();
-            SplashScreen.getHttpClient().oauth().postRequestBuild(SplashScreen.getClientApp().getHeaders(),SplashScreen.getClientApp().getParams()).getTaskPost().execute();
-            try {
-                jsonResponse = SplashScreen.getHttpClient().getTaskPost().get();
-                gsonParser.parseClientApp(jsonResponse);
+            SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(SplashScreen.getClientApp().getHeaders(),SplashScreen.getClientApp().getParams()).getTaskPost().execute();
 
+            try {
+                jsonResponseClient = SplashScreen.getHttpClient().getTaskPost().get();
+                gsonParser.parseClientApp(jsonResponseClient);
+                SplashScreen.getHttpClient().buildTaskGet().news().getRequestBuild(new Header[]{new BasicHeader("Authorization",SplashScreen.getClientApp().getTokenType()+" "+SplashScreen.getClientApp().getTokenClient())}).getTaskGet().execute();
+                jsonResponseNews = SplashScreen.getHttpClient().getTaskGet().get();
+                newsList = gsonParser.parseNews(jsonResponseNews);
             } catch (ExecutionException | InterruptedException e) {
                Log.e("ERROR APP OAUTH",e.getMessage());
             } finally {
                 SplashScreen.getHttpClient().getTaskPost().cancel(true);
+                SplashScreen.getHttpClient().getTaskGet().cancel(true);
             }
 
 
@@ -63,7 +72,9 @@ public class SplashScreen extends AppCompatActivity {
     public static HttpClient getHttpClient(){
         return httpClient;
     }
-
+    public static List<News> getNewsList(){
+        return newsList;
+    }
     public static ClientApp getClientApp(){
         return clientApp;
     }
