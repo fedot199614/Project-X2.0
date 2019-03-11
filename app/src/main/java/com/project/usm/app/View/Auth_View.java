@@ -1,11 +1,15 @@
 package com.project.usm.app.View;
 
-public interface Auth_View {
+import android.content.Context;
 
+public interface Auth_View {
     void showLoading();
     void hideLoading();
-    void onLoginMessage();
-    void showErrorValidation(int errorCode);
+    void onLoginMessageError();
+    void onLoginSuccessfully();
+    void showErrorValidationLogin(int errorCode);
+    void showErrorValidationPassword(int errorCode);
     void initTabBar();
-
+    void initAuthState();
+    void initHomePage();
 }

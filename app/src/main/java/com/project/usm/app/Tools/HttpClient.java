@@ -2,8 +2,14 @@ package com.project.usm.app.Tools;
 
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.project.usm.app.MainActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,6 +47,7 @@ public class HttpClient {
     private String newsService;
     private MyTaskPost taskPost;
     private MyTaskGet taskGet;
+
 
 
 public HttpClient(String url,String port){
@@ -107,12 +114,16 @@ public void closeClient() throws IOException {
     client.close();
 }
 
+
+
 public class MyTaskPost extends AsyncTask<String, Void, String>{
+
+
+
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //tvInfo.setText("Begin");
             Log.d("LOG_TAG", "BeginPost");
         }
 
@@ -121,21 +132,22 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
             String res = "";
             CloseableHttpResponse httpResponse = null;
             try {
+
                 httpResponse = client.execute(httpPost);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
             BufferedReader bf = null;
             try {
-                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+
+                    bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                    res = bf.readLine();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try {
-                res = bf.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
             flushData();
             return res;
         }
@@ -144,7 +156,6 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
-
         }
     }
 
@@ -155,7 +166,7 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //tvInfo.setText("Begin");
+
             Log.d("LOG_TAG", "BeginGet");
         }
 
@@ -164,21 +175,21 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
             String res = "";
             CloseableHttpResponse httpResponse = null;
             try {
+
                 httpResponse = client.execute(httpGet);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             BufferedReader bf = null;
             try {
-                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+
+                    bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                    res = bf.readLine();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try {
-                res = bf.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
             flushData();
             return res;
         }
@@ -188,6 +199,11 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
 
+
+
         }
     }
+
+
+
 }

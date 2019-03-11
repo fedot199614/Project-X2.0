@@ -49,6 +49,7 @@ import com.project.usm.app.R;
 import com.project.usm.app.AOP.Loggable;
 import com.project.usm.app.Fragments.Auth;
 import com.project.usm.app.Fragments.RV_Main;
+import com.project.usm.app.Tools.NavigationViewManager;
 import com.project.usm.app.View.MainActivityView;
 
 
@@ -62,10 +63,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int TAG_CODE_PERMISSION_LOCATION = 0;
     private TabLayout tabBar;
     private FlowingDrawer drawer;
+    private static NavigationViewManager navViewManager;
 
+    public static NavigationViewManager  getNavManager(){
+        return navViewManager;
+    }
 
     @Override
-    public void initHomePage(){
+    public  void initHomePage(){
         RV_Main mainNewsList = new RV_Main();
         FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
         fr.addToBackStack(null);
@@ -90,13 +95,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void initNavigViewIcons() {
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.getMenu().findItem(R.id.nav_home).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_home).colorRes(R.color.secondText));
-        navigationView.getMenu().findItem(R.id.map).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_map_marker).colorRes(R.color.secondText));
-        navigationView.getMenu().findItem(R.id.nav_logIn).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_sign_in).colorRes(R.color.secondText));
-        navigationView.getMenu().findItem(R.id.nav_schedule).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_clipboard).colorRes(R.color.secondText));
-        navigationView.getMenu().findItem(R.id.profile).setIcon(new IconDrawable(this, FontAwesomeIcons.fa_user).colorRes(R.color.secondText));
+        navViewManager = NavigationViewManager.getNewInstance();
+        navViewManager.setContext(this);
+        navViewManager.setNavigationView(findViewById(R.id.nav_view));
+        navViewManager.basicInit();
+        navViewManager.initIcons();
+        navViewManager.getNavigationView().setNavigationItemSelectedListener(this);
+        boolean isLogin = SplashScreen.getSessionManager().isLoggedIn();
+        if(isLogin){
+            navViewManager.sign_outViewVisibility();
+        }else{
+            navViewManager.sign_inViewVisibility();
+        }
 
 
     }
@@ -238,6 +248,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fr.addToBackStack(getString(R.string.auth));
             fr.replace(R.id.mainFrame,auth).commit();
 
+        }else if (id == R.id.nav_Out) {
+            SplashScreen.getSessionManager().logoutUser();
+            navViewManager.sign_inViewVisibility();
+            initHomePage();
         }
 
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

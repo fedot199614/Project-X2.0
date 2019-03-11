@@ -1,16 +1,22 @@
 package com.project.usm.app.Presenter;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.transition.TransitionInflater;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.project.usm.app.Model.User;
 import com.project.usm.app.R;
+import com.project.usm.app.SplashScreen;
 import com.project.usm.app.View.Auth_View;
 
-public class Auth_Presenter implements IAuth_Presenter {
+import java.util.concurrent.ExecutionException;
 
+public class Auth_Presenter implements IAuth_Presenter {
+    User user;
     Auth_View auth_view;
     public Auth_Presenter(Auth_View auth) {
 
@@ -21,29 +27,39 @@ public class Auth_Presenter implements IAuth_Presenter {
 
     @Override
     public void onLogin(String email, String pass) {
-        User user = new User(email,pass);
-        auth_view.showLoading();
-        int codeValidation = user.isValidData();
-        if(codeValidation != -1){
-            auth_view.showErrorValidation(codeValidation);
+        user = new User(email,pass);
+
+        int codeValidationIdnp = user.isValidIdnp();
+        int codeValidationPassword = user.isValidPassword();
+        if(codeValidationIdnp != -1){
+            auth_view.showErrorValidationLogin(codeValidationIdnp);
         }
-        auth_view.hideLoading();
-    }
+        if(codeValidationPassword != -1){
+            auth_view.showErrorValidationPassword(codeValidationPassword);
+        }
+        if(codeValidationIdnp == -1 && codeValidationPassword == -1) {
+            auth_view.showLoading();
+            SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), user.getParams()).getTaskPost().execute();
+            try {
+                String response =  SplashScreen.getHttpClient().getTaskPost().get();
+                auth_view.hideLoading();
+                SplashScreen.getGsonParser().parseUser(response,user);
 
-    @Override
-    public void registration(String name, String lastName, String email, String pass, String mobile) {
+                if(user.getIsLogin()){
+                   SplashScreen.getSessionManager().createLoginSession(user.getIdnp(),user.getPassword());
+                   auth_view.onLoginSuccessfully();
+                   auth_view.initAuthState();
+                   auth_view.initHomePage();
+                }else{
+                   auth_view.onLoginMessageError();
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                SplashScreen.getHttpClient().getTaskPost().cancel(true);
+            }
 
-    }
-
-
-
-    @Override
-    public void checkedWebServicesConnection() {
-
-    }
-
-    @Override
-    public void connectToWS() {
+        }
 
     }
 

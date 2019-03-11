@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.project.usm.app.Model.ClientApp;
 import com.project.usm.app.Model.News;
+import com.project.usm.app.Model.User;
 import com.project.usm.app.SplashScreen;
 
 import java.util.ArrayList;
@@ -29,9 +30,7 @@ public class GsonParser {
     public List<News> parseNews(String jsonObj){
         List<News> newsList = new ArrayList<>();
         JsonElement jElement = new JsonParser().parse(jsonObj);
-        JsonObject jObject = jElement.getAsJsonObject();
-        if(!jObject.has("error")){
-            JsonArray news = jObject.get("response").getAsJsonObject().get("newsList").getAsJsonArray();
+        JsonArray news = jElement.getAsJsonArray();
             for(JsonElement item : news){
                 JsonObject objItem = item.getAsJsonObject();
                 List<String> urlImgBuff = new ArrayList<>();
@@ -53,9 +52,7 @@ public class GsonParser {
 
             }
 
-        }else{
-            Log.e("ERROR","ERROR PARSING APP CLIENT");
-        }
+
 
 
 
@@ -70,6 +67,19 @@ public class GsonParser {
             SplashScreen.getClientApp().setTokenClient(jObject.get("access_token").getAsString());
         }else{
             Log.e("ERROR","ERROR PARSING APP CLIENT");
+        }
+
+    }
+
+    public void parseUser(String json,User userModel){
+        JsonElement jElement = new JsonParser().parse(json);
+        JsonObject jObject = jElement.getAsJsonObject();
+        if(!jObject.has("error")){
+            userModel.setToken(jObject.get("access_token").getAsString());
+            userModel.setToken_type(jObject.get("token_type").getAsString());
+            userModel.setIsLogin(true);
+        }else{
+            userModel.setIsLogin(false);
         }
 
     }

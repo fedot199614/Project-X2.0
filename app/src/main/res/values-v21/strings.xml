@@ -16,8 +16,8 @@
     <string name="news">news</string>
     <string name="sharedNews">sharedNews</string>
     <string name="emptyInput">Поле не может быть пустым</string>
-    <string name="wrongFormat">Неверный формат IDNP</string>
-    <string name="shortIDNP">Неверная длина IDNP</string>
+    <string name="wrongFormat">Неверный формат</string>
+    <string name="wrongLength">Неверная длина</string>
     <string name="root">root</string>
     <string name="reg">reg</string>
     <string name="leave">Хотите выйти?</string>
@@ -48,6 +48,7 @@
     <string name="saturday">Сб</string>
     <string name="sunday">Вс</string>
     <string name="profile">profile</string>
+    <string name="password">Пароль</string>
     <string name="prof">Профиль</string>
     <string name="profClass">Profile</string>
     <string name="fa_icon_pen">&#xf304;</string>
@@ -57,6 +58,7 @@
     <string name="edit">Редактирование</string>
     <string name="chosePhoto">Выбирите фото</string>
     <string name="twitterUsername">\@joeytribbiani</string>
+    <string name="out">Выйти</string>
 
 
 

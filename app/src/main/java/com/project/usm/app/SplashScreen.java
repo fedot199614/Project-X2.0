@@ -13,6 +13,7 @@ import com.project.usm.app.Model.ClientApp;
 import com.project.usm.app.Model.News;
 import com.project.usm.app.Tools.GsonParser;
 import com.project.usm.app.Tools.HttpClient;
+import com.project.usm.app.Tools.SessionManager;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -24,6 +25,7 @@ import lombok.Getter;
 
 public class SplashScreen extends AppCompatActivity {
     private static GsonParser gsonParser;
+    private static SessionManager session;
     private static HttpClient httpClient;
     private static ClientApp clientApp;
     private static List<News> newsList;
@@ -33,6 +35,7 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if(isOnline()) {
+            session = new SessionManager(this);
             httpClient = new HttpClient("http://35.184.2.70","8000");
             clientApp = new ClientApp();
             gsonParser = GsonParser.getNewInstance();
@@ -41,7 +44,12 @@ public class SplashScreen extends AppCompatActivity {
             try {
                 jsonResponseClient = SplashScreen.getHttpClient().getTaskPost().get();
                 gsonParser.parseClientApp(jsonResponseClient);
-                SplashScreen.getHttpClient().buildTaskGet().news().getRequestBuild(new Header[]{new BasicHeader("Authorization",SplashScreen.getClientApp().getTokenType()+" "+SplashScreen.getClientApp().getTokenClient())}).getTaskGet().execute();
+
+                SplashScreen.getHttpClient().buildTaskGet().news()
+                        .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                                SplashScreen.getClientApp().getTokenType()+" "+SplashScreen.getClientApp().getTokenClient())})
+                        .getTaskGet().execute();
+
                 jsonResponseNews = SplashScreen.getHttpClient().getTaskGet().get();
                 newsList = gsonParser.parseNews(jsonResponseNews);
             } catch (ExecutionException | InterruptedException e) {
@@ -75,8 +83,14 @@ public class SplashScreen extends AppCompatActivity {
     public static List<News> getNewsList(){
         return newsList;
     }
+    public static GsonParser getGsonParser(){
+        return gsonParser;
+    }
     public static ClientApp getClientApp(){
         return clientApp;
+    }
+    public static SessionManager getSessionManager(){
+        return session;
     }
 
 }

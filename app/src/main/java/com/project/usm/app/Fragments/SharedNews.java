@@ -103,9 +103,6 @@ public class SharedNews extends Fragment{
         //-------------------------------------------------------------
         List<String> urls = bundle.getStringArrayList(getString(R.string.imgUrl));
         ImageView sharedImg = (ImageView) getActivity().findViewById(R.id.sharedImg);
-        for(String h : urls){
-            Log.e("ASDFSDFSD",h);
-        }
         if(!urls.isEmpty()) {
             Picasso.get().load(urls.get(0)).into(sharedImg);
         }

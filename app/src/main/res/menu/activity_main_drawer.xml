@@ -33,6 +33,9 @@
                 android:icon="@drawable/ic_menu_send"
                 android:title="@string/enter"
                 android:checked="false"/>
+        <item
+            android:id="@+id/nav_Out"
+            android:title="@string/out" />
 
     </group>
 
