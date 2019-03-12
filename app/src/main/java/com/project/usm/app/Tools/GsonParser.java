@@ -18,7 +18,7 @@ import java.util.List;
 
 public class GsonParser {
     private static final GsonParser gsonParser = new GsonParser();
-
+    private static final String INVALID_TOKEN = "invalid_token";
     private GsonParser(){
 
     }
@@ -30,12 +30,13 @@ public class GsonParser {
     public List<News> parseNews(String jsonObj){
         List<News> newsList = new ArrayList<>();
         JsonElement jElement = new JsonParser().parse(jsonObj);
-        JsonArray news = jElement.getAsJsonArray();
-            for(JsonElement item : news){
+        if(jElement.isJsonArray()) {
+            JsonArray news = jElement.getAsJsonArray();
+            for (JsonElement item : news) {
                 JsonObject objItem = item.getAsJsonObject();
                 List<String> urlImgBuff = new ArrayList<>();
                 JsonArray imgUrl = objItem.get("content").getAsJsonObject().get("imageLinks").getAsJsonArray();
-                for(JsonElement url : imgUrl){
+                for (JsonElement url : imgUrl) {
                     urlImgBuff.add(url.getAsString());
                 }
                 newsList.add(new News(
@@ -44,19 +45,20 @@ public class GsonParser {
                         objItem.get("description").getAsString(),
                         objItem.get("content").getAsJsonObject().get("message").getAsString(),
                         urlImgBuff,
-                        objItem.get("author").getAsJsonObject().get("firstName").getAsString()+" "+
+                        objItem.get("author").getAsJsonObject().get("firstName").getAsString() + " " +
                                 objItem.get("author").getAsJsonObject().get("lastName").getAsString()
 
-                        ));
+                ));
                 urlImgBuff.clear();
 
             }
-
-
-
-
-
-
+        }else if(jElement.isJsonObject()){
+            JsonObject news = jElement.getAsJsonObject();
+            if(news.has("error") && news.get("error").getAsString().equals(INVALID_TOKEN)){
+                SplashScreen.oauthClient();
+                SplashScreen.getSessionManager().logoutUser();
+            }
+        }
         return newsList;
     }
 
@@ -77,9 +79,11 @@ public class GsonParser {
         if(!jObject.has("error")){
             userModel.setToken(jObject.get("access_token").getAsString());
             userModel.setToken_type(jObject.get("token_type").getAsString());
-            userModel.setIsLogin(true);
+            SplashScreen.getSessionManager().createLoginSession(userModel.getIdnp(),userModel.getPassword(),userModel.getToken());
         }else{
-            userModel.setIsLogin(false);
+            if(jObject.has("error") && jObject.get("error").getAsString().equals(INVALID_TOKEN)){
+                SplashScreen.getSessionManager().logoutUser();
+            }
         }
 
     }

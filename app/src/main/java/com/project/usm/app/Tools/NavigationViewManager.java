@@ -1,9 +1,13 @@
 package com.project.usm.app.Tools;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
@@ -17,6 +21,12 @@ import lombok.Setter;
 public class NavigationViewManager {
     private static final NavigationViewManager navigationViewManager = new NavigationViewManager();
 
+
+    private TextView usmText;
+    private TextView someInfo;
+    private TextView name;
+    private ConstraintLayout imgUserNav;
+    private ImageView usmLogo;
     private Context context;
     private NavigationView navigationView;
     private MenuItem home;
@@ -41,7 +51,11 @@ public class NavigationViewManager {
         this.logOut = navigationView.getMenu().findItem(R.id.nav_Out);
         this.nav_schedule = navigationView.getMenu().findItem(R.id.nav_schedule);
         this.profile = navigationView.getMenu().findItem(R.id.profile);
-
+        this.usmText = navigationView.getHeaderView(0).findViewById(R.id.usmText);
+        this.someInfo =  navigationView.getHeaderView(0).findViewById(R.id.someInfo);
+        this.imgUserNav =  navigationView.getHeaderView(0).findViewById(R.id.imgUserNav);
+        this.usmLogo =  navigationView.getHeaderView(0).findViewById(R.id.usmLogo);
+        this.name =  navigationView.getHeaderView(0).findViewById(R.id.name);
 
     }
 
@@ -60,6 +74,11 @@ public class NavigationViewManager {
         nav_schedule.setVisible(false);
         profile.setVisible(false);
         logOut.setVisible(false);
+        usmText.setVisibility(View.VISIBLE);
+        someInfo.setVisibility(View.INVISIBLE);
+        imgUserNav.setVisibility(View.INVISIBLE);
+        usmLogo.setVisibility(View.VISIBLE);
+        name.setVisibility(View.INVISIBLE);
         logIn.setVisible(true);
 
     }
@@ -70,6 +89,11 @@ public class NavigationViewManager {
         nav_schedule.setVisible(true);
         profile.setVisible(true);
         logOut.setVisible(true);
+        usmText.setVisibility(View.INVISIBLE);
+        someInfo.setVisibility(View.VISIBLE);
+        imgUserNav.setVisibility(View.VISIBLE);
+        name.setVisibility(View.VISIBLE);
+        usmLogo.setVisibility(View.INVISIBLE);
         logIn.setVisible(false);
     }
 

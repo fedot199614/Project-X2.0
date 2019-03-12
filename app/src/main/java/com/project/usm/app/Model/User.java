@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User implements IUser {
-    private Boolean isLogin;
+
     private String grant_type;
     private String token_type;
     private String idnp;
@@ -34,6 +34,7 @@ public class User implements IUser {
         this.idnp = email;
         this.password = pass;
         this.grant_type = "password";
+        this.token_type = "";
         this.params = new ArrayList<>();
         this.headers = new Header[1];
         paramsBuild();

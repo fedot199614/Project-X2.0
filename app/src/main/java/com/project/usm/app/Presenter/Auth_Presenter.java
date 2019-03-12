@@ -23,7 +23,15 @@ public class Auth_Presenter implements IAuth_Presenter {
         this.auth_view = auth;
     }
 
+    public Auth_Presenter() {
 
+    }
+
+    @Override
+    public void createAuthUser(String idnp, String password, String token){
+        user = new User(idnp,password);
+        user.setToken(token);
+    }
 
     @Override
     public void onLogin(String email, String pass) {
@@ -45,8 +53,7 @@ public class Auth_Presenter implements IAuth_Presenter {
                 auth_view.hideLoading();
                 SplashScreen.getGsonParser().parseUser(response,user);
 
-                if(user.getIsLogin()){
-                   SplashScreen.getSessionManager().createLoginSession(user.getIdnp(),user.getPassword());
+                if(SplashScreen.getSessionManager().isLoggedIn()){
                    auth_view.onLoginSuccessfully();
                    auth_view.initAuthState();
                    auth_view.initHomePage();

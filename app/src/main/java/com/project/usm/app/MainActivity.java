@@ -44,6 +44,7 @@ import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
 import com.project.usm.app.Fragments.Map;
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.Fragments.Schedule;
+import com.project.usm.app.Presenter.Auth_Presenter;
 import com.project.usm.app.Presenter.MainActivityPr;
 import com.project.usm.app.R;
 import com.project.usm.app.AOP.Loggable;
@@ -53,6 +54,7 @@ import com.project.usm.app.Tools.NavigationViewManager;
 import com.project.usm.app.View.MainActivityView;
 
 
+import java.util.HashMap;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TabLayout tabBar;
     private FlowingDrawer drawer;
     private static NavigationViewManager navViewManager;
-
+    private Auth_Presenter auth_presenter;
     public static NavigationViewManager  getNavManager(){
         return navViewManager;
     }
@@ -104,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         boolean isLogin = SplashScreen.getSessionManager().isLoggedIn();
         if(isLogin){
             navViewManager.sign_outViewVisibility();
+            auth_presenter = new Auth_Presenter();
+            HashMap<String,String> userDetails = SplashScreen.getSessionManager().getUserDetails();
+            auth_presenter.createAuthUser(userDetails.get("idnp"),userDetails.get("password"),userDetails.get("token"));
         }else{
             navViewManager.sign_inViewVisibility();
         }

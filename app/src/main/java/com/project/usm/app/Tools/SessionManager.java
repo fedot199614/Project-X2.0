@@ -26,6 +26,7 @@ public class SessionManager {
     public static final String KEY_IDNP = "idnp";
     // Email address (make variable public to access from outside)
     public static final String KEY_PASSWORD = "password";
+    public static final String KEY_TOKEN = "token";
 
     // Constructor
     @SuppressLint("CommitPrefEdits")
@@ -38,13 +39,15 @@ public class SessionManager {
     /**
      * Create login session
      */
-    public void createLoginSession(String name, String email) {
+    public void createLoginSession(String name, String email,String token) {
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
         // Storing name in pref
         editor.putString(KEY_IDNP, name);
         // Storing email in pref
         editor.putString(KEY_PASSWORD, email);
+        editor.putString(KEY_TOKEN, token);
+
         // commit changes
         editor.commit();
     }
@@ -80,7 +83,7 @@ public class SessionManager {
 
         // user email id
         user.put(KEY_PASSWORD, pref.getString(KEY_PASSWORD, null));
-
+        user.put(KEY_TOKEN, pref.getString(KEY_TOKEN, null));
         // return user
         return user;
     }

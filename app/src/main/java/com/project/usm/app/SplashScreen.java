@@ -29,7 +29,19 @@ public class SplashScreen extends AppCompatActivity {
     private static HttpClient httpClient;
     private static ClientApp clientApp;
     private static List<News> newsList;
-    private String jsonResponseClient,jsonResponseNews;
+    private static String jsonResponseClient,jsonResponseNews;
+
+    public static void oauthClient(){
+        SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(SplashScreen.getClientApp().getHeaders(),SplashScreen.getClientApp().getParams()).getTaskPost().execute();
+        try {
+            jsonResponseClient = SplashScreen.getHttpClient().getTaskPost().get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            SplashScreen.getHttpClient().getTaskPost().cancel(true);
+        }
+        gsonParser.parseClientApp(jsonResponseClient);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +51,8 @@ public class SplashScreen extends AppCompatActivity {
             httpClient = new HttpClient("http://35.184.2.70","8000");
             clientApp = new ClientApp();
             gsonParser = GsonParser.getNewInstance();
-            SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(SplashScreen.getClientApp().getHeaders(),SplashScreen.getClientApp().getParams()).getTaskPost().execute();
-
+            oauthClient();
             try {
-                jsonResponseClient = SplashScreen.getHttpClient().getTaskPost().get();
-                gsonParser.parseClientApp(jsonResponseClient);
 
                 SplashScreen.getHttpClient().buildTaskGet().news()
                         .getRequestBuild(new Header[]{new BasicHeader("Authorization",
@@ -55,7 +64,6 @@ public class SplashScreen extends AppCompatActivity {
             } catch (ExecutionException | InterruptedException e) {
                Log.e("ERROR APP OAUTH",e.getMessage());
             } finally {
-                SplashScreen.getHttpClient().getTaskPost().cancel(true);
                 SplashScreen.getHttpClient().getTaskGet().cancel(true);
             }
 
