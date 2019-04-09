@@ -28,9 +28,11 @@ import android.widget.Toast;
 
 
 import com.mxn.soul.flowingdrawer_core.BuildConfig;
+import com.project.usm.app.Presenter.ProfilePresenter;
 import com.project.usm.app.R;
 import com.project.usm.app.Tools.FontAwesome;
 import com.project.usm.app.Tools.NavItems;
+import com.project.usm.app.View.ProfileView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,7 +46,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 
-public class Profile extends Fragment {
+public class Profile extends Fragment implements ProfileView {
+    private ProfilePresenter profilePresenter;
+    private FontAwesome editProfileImg;
     private File file;
     private Uri uri;
     private final int PERMISSION_REQUEST_CODE = 3;
@@ -97,29 +101,50 @@ public class Profile extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        profilePresenter = new ProfilePresenter(this);
+        profilePresenter.initStartState();
+    }
 
-         profImg = (CircleImageView) getActivity().findViewById(R.id.profile_image);
-         navProfImg = (CircleImageView) getActivity().findViewById(R.id.nav_prof_img);
+    @Override
+    public void cameraOpen() {
+       Intent camIntent = new Intent("android.media.action.IMAGE_CAPTURE");
+       startActivityForResult(camIntent,CAMERA_REQUEST_CODE);
+    }
+
+    @Override
+    public void galleryOpen() {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(pickPhoto , GALLERY_REQUEST_CODE);
+    }
 
 
-
-        NavItems.getNavMenu(getActivity()).getItem(1).setChecked(true);
+    @Override
+    public void initTabBar(){
         TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
         tabBar.setVisibility(View.GONE);
+    }
+    @Override
+    public void initBaseOption() {
+        NavItems.getNavMenu(getActivity()).getItem(1).setChecked(true);
+        profImg = (CircleImageView) getActivity().findViewById(R.id.profile_image);
+        navProfImg = (CircleImageView) getActivity().findViewById(R.id.nav_prof_img);
+        editProfileImg = (FontAwesome) getActivity().findViewById(R.id.addProfImg);
+    }
 
-        FontAwesome editProfileImg = (FontAwesome) getActivity().findViewById(R.id.addProfImg);
+    @Override
+    public void initSettingsListener(){
         editProfileImg.setOnClickListener(click->{
-
             int permissionCheckCam = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
             int permissionCheckWrite = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int permissionCheckRead = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
             if(permissionCheckCam != PackageManager.PERMISSION_GRANTED || permissionCheckWrite != PackageManager.PERMISSION_GRANTED || permissionCheckRead != PackageManager.PERMISSION_GRANTED){
 
-                    ActivityCompat.requestPermissions(getActivity(),new String[]{
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE},
-                            PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(getActivity(),new String[]{
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PERMISSION_REQUEST_CODE);
 
             }else {
 
@@ -144,24 +169,7 @@ public class Profile extends Fragment {
 
             }
         });
-
-
     }
-
-    public void cameraOpen() {
-       Intent camIntent = new Intent("android.media.action.IMAGE_CAPTURE");
-
-       startActivityForResult(camIntent,CAMERA_REQUEST_CODE);
-
-    }
-
-    public void galleryOpen() {
-        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickPhoto , GALLERY_REQUEST_CODE);
-    }
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK){
