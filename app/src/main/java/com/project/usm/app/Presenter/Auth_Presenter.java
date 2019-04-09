@@ -13,7 +13,11 @@ import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
 import com.project.usm.app.View.Auth_View;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 public class Auth_Presenter implements IAuth_Presenter {
     User user;
@@ -47,9 +51,13 @@ public class Auth_Presenter implements IAuth_Presenter {
         }
         if(codeValidationIdnp == -1 && codeValidationPassword == -1) {
             auth_view.showLoading();
-            SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), user.getParams()).getTaskPost().execute();
+            List<BasicNameValuePair> clientParamPlusUserParam = new ArrayList<>();
+            clientParamPlusUserParam.addAll(SplashScreen.getClientApp().getParams());
+            clientParamPlusUserParam.addAll(user.getParams());
+            SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPost().execute();
             try {
                 String response =  SplashScreen.getHttpClient().getTaskPost().get();
+
                 auth_view.hideLoading();
                 SplashScreen.getGsonParser().parseUser(response,user);
 

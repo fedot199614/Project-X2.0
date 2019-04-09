@@ -1,6 +1,7 @@
 package com.project.usm.app.Model;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -35,13 +36,14 @@ public ClientApp(){
 
 public List<BasicNameValuePair> paramsBuild(){
     params.add(new BasicNameValuePair("grant_type",this.grant_type));
-    params.add(new BasicNameValuePair("username",this.appID));
-    params.add(new BasicNameValuePair("password",this.appPassword));
+    params.add(new BasicNameValuePair("client_id",this.appID));
+    params.add(new BasicNameValuePair("client_secret",this.appPassword));
     return params;
 }
 
 public Header[] headersBuild(){
-   headers[0] = new BasicHeader("Authorization","Basic TU9CSUxFX0FQUDpwYXNzd29yZA==");
+   headers[0] = new BasicHeader("Content-Type","application/x-www-form-urlencoded");
+   //String basicToken = Base64.getEncoder().encodeToString(String.format("%s:%s",appID,appPassword).getBytes());
    return headers;
 }
 

@@ -1,6 +1,7 @@
 package com.project.usm.app.Model;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class User implements IUser {
             code = 0;
         }else if(!Pattern.compile("^[0-9]+$").matcher(getIdnp()).matches()){
             code = 1;
-        }else if(getIdnp().length()>13){
+        }else if(getIdnp().length()!=13){
             code = 2;
         }
 
@@ -66,12 +67,13 @@ public class User implements IUser {
 
     @Override
     public int isValidPassword() {
+
         int code = -1;
         if(TextUtils.isEmpty(getPassword())){
             code = 0;
-        }else if(!Pattern.compile("^[a-zA-Z0-9]+$").matcher(getPassword()).matches()){
+        }else if(!Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$").matcher(getPassword()).matches()){
             code = 1;
-        }else if(getPassword().length()>15){
+        }else if(getPassword().length()>30){
             code = 2;
         }else if(getPassword().length()<8){
             code = 3;
@@ -89,7 +91,7 @@ public class User implements IUser {
     }
 
     public Header[] headersBuild(){
-        headers[0] = new BasicHeader("Authorization","Basic TU9CSUxFX0FQUDpwYXNzd29yZA==");
+        headers[0] = new BasicHeader("Content-Type","application/x-www-form-urlencoded");
         return headers;
     }
 

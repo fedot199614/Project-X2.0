@@ -35,11 +35,13 @@ public class SplashScreen extends AppCompatActivity {
         SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(SplashScreen.getClientApp().getHeaders(),SplashScreen.getClientApp().getParams()).getTaskPost().execute();
         try {
             jsonResponseClient = SplashScreen.getHttpClient().getTaskPost().get();
+
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             SplashScreen.getHttpClient().getTaskPost().cancel(true);
         }
+
         gsonParser.parseClientApp(jsonResponseClient);
     }
     @Override

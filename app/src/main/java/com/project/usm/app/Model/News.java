@@ -14,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class News {
+    private int id;
     private String title;
     private String news;
     private String full_news;
@@ -30,6 +31,7 @@ public class News {
         this.publishDate = format.format(new Date(publishDate));
         this.imgURL.addAll(imgURL);
         this.authorName = authorName;
+        //this.id = id;
     }
 
     public String getFull_news() {
@@ -70,17 +72,17 @@ public class News {
         this.news = model;
     }
 
-
     @Override
     public String toString() {
-
         return "News{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
                 ", news='" + news + '\'' +
                 ", full_news='" + full_news + '\'' +
-                ", publishDate=" + publishDate +
+                ", publishDate='" + publishDate + '\'' +
                 ", imgURL=" + imgURL +
                 ", authorName='" + authorName + '\'' +
+                ", format=" + format +
                 '}';
     }
 }

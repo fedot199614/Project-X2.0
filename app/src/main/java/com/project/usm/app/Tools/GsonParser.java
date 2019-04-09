@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.project.usm.app.DTO.NewsResponseResource;
 import com.project.usm.app.Model.ClientApp;
 import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.User;
@@ -19,6 +20,7 @@ import java.util.List;
 public class GsonParser {
     private static final GsonParser gsonParser = new GsonParser();
     private static final String INVALID_TOKEN = "invalid_token";
+    private static Gson gson = new Gson();
     private GsonParser(){
 
     }
@@ -28,32 +30,28 @@ public class GsonParser {
     }
 
     public List<News> parseNews(String jsonObj){
+
         List<News> newsList = new ArrayList<>();
         JsonElement jElement = new JsonParser().parse(jsonObj);
+        NewsResponseResource[] newsResponseResource = gson.fromJson(jsonObj, NewsResponseResource[].class);
+
         if(jElement.isJsonArray()) {
             JsonArray news = jElement.getAsJsonArray();
-            for (JsonElement item : news) {
-                JsonObject objItem = item.getAsJsonObject();
-                List<String> urlImgBuff = new ArrayList<>();
-                JsonArray imgUrl = objItem.get("content").getAsJsonObject().get("imageLinks").getAsJsonArray();
-                for (JsonElement url : imgUrl) {
-                    urlImgBuff.add(url.getAsString());
-                }
-                newsList.add(new News(
-                        objItem.get("title").getAsString(),
-                        objItem.get("publishDate").getAsLong(),
-                        objItem.get("description").getAsString(),
-                        objItem.get("content").getAsJsonObject().get("message").getAsString(),
-                        urlImgBuff,
-                        objItem.get("author").getAsJsonObject().get("firstName").getAsString() + " " +
-                                objItem.get("author").getAsJsonObject().get("lastName").getAsString()
+            for(int i =0;i<newsResponseResource.length;i++){
+                        newsList.add(new News(
+                                newsResponseResource[i].getTitle(),
+                                newsResponseResource[i].getPublishDate(),
+                                newsResponseResource[i].getDescription(),
+                                newsResponseResource[i].getContent().getMessage(),
+                                newsResponseResource[i].getContent().getImageLinks(),
+                                newsResponseResource[i].getAuthor().getFirstName() + " " +
+                                        newsResponseResource[i].getAuthor().getLastName()
 
                 ));
-                urlImgBuff.clear();
-
             }
         }else if(jElement.isJsonObject()){
             JsonObject news = jElement.getAsJsonObject();
+            Log.e("ERROR",jsonObj);
             if(news.has("error") && news.get("error").getAsString().equals(INVALID_TOKEN)){
                 SplashScreen.oauthClient();
                 SplashScreen.getSessionManager().logoutUser();
@@ -68,7 +66,7 @@ public class GsonParser {
         if(!jObject.has("error")){
             SplashScreen.getClientApp().setTokenClient(jObject.get("access_token").getAsString());
         }else{
-            Log.e("ERROR","ERROR PARSING APP CLIENT");
+            Log.e("ERROR",json);
         }
 
     }
@@ -81,6 +79,7 @@ public class GsonParser {
             userModel.setToken_type(jObject.get("token_type").getAsString());
             SplashScreen.getSessionManager().createLoginSession(userModel.getIdnp(),userModel.getPassword(),userModel.getToken());
         }else{
+            Log.e("ERROR",json);
             if(jObject.has("error") && jObject.get("error").getAsString().equals(INVALID_TOKEN)){
                 SplashScreen.getSessionManager().logoutUser();
             }
