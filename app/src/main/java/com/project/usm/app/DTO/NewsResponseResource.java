@@ -15,7 +15,7 @@ enum Category {
 @Getter
 @Setter
 public class NewsResponseResource {
-    private Integer newsId;
+    private String id;
     private String title;
     private Long publishDate;
     private String description;
@@ -24,8 +24,8 @@ public class NewsResponseResource {
     private Category category;
     private AuthorResponseResource author;
 
-    public NewsResponseResource(Integer newsId, String title, Long publishDate, String description, Content content, Long updated, Category category, AuthorResponseResource author) {
-        this.newsId = newsId;
+    public NewsResponseResource(String id, String title, Long publishDate, String description, Content content, Long updated, Category category, AuthorResponseResource author) {
+        this.id = id;
         this.title = title;
         this.publishDate = publishDate;
         this.description = description;
@@ -38,7 +38,7 @@ public class NewsResponseResource {
     @Override
     public String toString() {
         return "NewsResponseResource{" +
-                "newsId='" + newsId + '\'' +
+                "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", publishDate=" + publishDate +
                 ", description='" + description + '\'' +

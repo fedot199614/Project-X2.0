@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.project.usm.app.DTO.NewsResponseResource;
 import com.project.usm.app.Model.ClientApp;
 import com.project.usm.app.Model.News;
@@ -33,19 +34,18 @@ public class GsonParser {
 
         List<News> newsList = new ArrayList<>();
         JsonElement jElement = new JsonParser().parse(jsonObj);
-        NewsResponseResource[] newsResponseResource = gson.fromJson(jsonObj, NewsResponseResource[].class);
-
+        List<NewsResponseResource> newsResponseResourceList = new Gson().fromJson(jsonObj, new TypeToken<ArrayList<NewsResponseResource>>(){}.getType());
         if(jElement.isJsonArray()) {
-            JsonArray news = jElement.getAsJsonArray();
-            for(int i =0;i<newsResponseResource.length;i++){
-                        newsList.add(new News(
-                                newsResponseResource[i].getTitle(),
-                                newsResponseResource[i].getPublishDate(),
-                                newsResponseResource[i].getDescription(),
-                                newsResponseResource[i].getContent().getMessage(),
-                                newsResponseResource[i].getContent().getImageLinks(),
-                                newsResponseResource[i].getAuthor().getFirstName() + " " +
-                                        newsResponseResource[i].getAuthor().getLastName()
+            for(NewsResponseResource element : newsResponseResourceList){
+                newsList.add(new News(
+                        element.getId(),
+                        element.getTitle(),
+                        element.getPublishDate(),
+                        element.getDescription(),
+                        element.getContent().getMessage(),
+                        element.getContent().getImageLinks(),
+                        element.getAuthor().getFirstName() + " " +
+                                element.getAuthor().getLastName()
 
                 ));
             }

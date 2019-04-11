@@ -62,6 +62,7 @@ public class SplashScreen extends AppCompatActivity {
                         .getTaskGet().execute();
 
                 jsonResponseNews = SplashScreen.getHttpClient().getTaskGet().get();
+
                 newsList = gsonParser.parseNews(jsonResponseNews);
             } catch (ExecutionException | InterruptedException e) {
                Log.e("ERROR APP OAUTH",e.getMessage());

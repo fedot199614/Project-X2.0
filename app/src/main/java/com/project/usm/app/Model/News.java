@@ -24,7 +24,8 @@ public class News {
     private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 
 
-    public News(String title,long publishDate, String model, String full_news,List<String> imgURL,String authorName) {
+    public News(String id,String title,long publishDate, String model, String full_news,List<String> imgURL,String authorName) {
+        this.id = Integer.parseInt(id);
         this.title = title;
         this.news = model;
         this.full_news = full_news;
