@@ -4,7 +4,7 @@ import android.support.v4.app.FragmentTransaction;
 
 public interface MainActivityView {
     void initHomePage();
-    void permissionCheck();
+   // void permissionCheck();
     void initNavigViewIcons();
     void exitDialogShow();
 }

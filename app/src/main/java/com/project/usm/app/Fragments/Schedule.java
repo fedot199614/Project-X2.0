@@ -14,6 +14,8 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
+import com.project.usm.app.AOP.Annotations.InitTabBar;
+import com.project.usm.app.AOP.Annotations.ListItemSelected;
 import com.project.usm.app.Model.ScheduleModel;
 import com.project.usm.app.R;
 import com.project.usm.app.Tools.NavItems;
@@ -67,13 +69,12 @@ public class Schedule extends Fragment implements TabLayout.OnTabSelectedListene
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    @InitTabBar(check = InitTabBar.Check.VISIBLE)
+    @ListItemSelected(item = ListItemSelected.Item.SCHEDULE)
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        TabLayout tab = initTabBar();
-        tab.setVisibility(View.VISIBLE);
-        NavItems.getNavMenu(Objects.requireNonNull(getActivity())).getItem(2).setChecked(true);
-
 
 
         List<ScheduleModel> monday = new ArrayList<>();
@@ -149,11 +150,7 @@ public class Schedule extends Fragment implements TabLayout.OnTabSelectedListene
 
     }
 
-    public TabLayout initTabBar(){
-        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
-        tabBar.setOnTabSelectedListener(this);
-        return tabBar;
-    }
+
 
     @Override
     public void onDetach() {

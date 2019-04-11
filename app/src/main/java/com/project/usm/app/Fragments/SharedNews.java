@@ -21,7 +21,7 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 
-
+import com.project.usm.app.AOP.Annotations.InitTabBar;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
 
@@ -88,13 +88,11 @@ public class SharedNews extends Fragment{
         }
     }
 
-
+    @InitTabBar(check = InitTabBar.Check.GONE)
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
 
-        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
-        tabBar.setVisibility(View.GONE);
         TextView title = (TextView) getView().findViewById(R.id.title_model_sh);
         TextView newsFull = (TextView) getView().findViewById(R.id.news_model_sh);
         Bundle bundle = getArguments();
@@ -106,9 +104,6 @@ public class SharedNews extends Fragment{
         if(!urls.isEmpty()) {
             Picasso.get().load(urls.get(0)).into(sharedImg);
         }
-
-
-
     }
 
 

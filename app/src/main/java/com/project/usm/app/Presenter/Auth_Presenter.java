@@ -92,10 +92,5 @@ public class Auth_Presenter implements IAuth_Presenter {
         transaction.replace(R.id.mainFrame, nextFragment).commit();
     }
 
-    @Override
-    public void initTabLayout() {
-        auth_view.initTabBar();
-    }
-
 
 }

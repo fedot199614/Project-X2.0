@@ -1,38 +1,16 @@
 package com.project.usm.app;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.transition.TransitionInflater;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 
 import com.joanzapata.iconify.IconDrawable;
@@ -41,13 +19,14 @@ import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer;
+import com.project.usm.app.AOP.Annotations.CheckBasePermissions;
+import com.project.usm.app.AOP.Annotations.OnExit;
 import com.project.usm.app.Fragments.Map;
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.Fragments.Schedule;
 import com.project.usm.app.Presenter.Auth_Presenter;
 import com.project.usm.app.Presenter.MainActivityPr;
-import com.project.usm.app.R;
-import com.project.usm.app.AOP.Loggable;
+import com.project.usm.app.AOP.Annotations.Loggable;
 import com.project.usm.app.Fragments.Auth;
 import com.project.usm.app.Fragments.RV_Main;
 import com.project.usm.app.Tools.NavigationViewManager;
@@ -55,10 +34,10 @@ import com.project.usm.app.View.MainActivityView;
 
 
 import java.util.HashMap;
-import java.util.Objects;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import lombok.Getter;
 
+@Getter
 @Loggable
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,MainActivityView {
 
@@ -77,21 +56,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
         fr.addToBackStack(null);
         fr.replace(R.id.mainFrame,mainNewsList).commit();
-    }
-
-    @Override
-    public void permissionCheck() {
-        if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(Objects.requireNonNull(this), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    },
-                    TAG_CODE_PERMISSION_LOCATION);
-        }
     }
 
     @Override
@@ -117,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
     @Override
     public void exitDialogShow() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -134,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dialog.show();
     }
 
-
+    @CheckBasePermissions
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,52 +115,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-
-
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,  drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.addDrawerListener(toggle);
-//        toggle.syncState();
-
-
         MainActivityPr presenter = new MainActivityPr(this);
         presenter.init();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getHeaderView(0).findViewById(R.id.imgUserNav).setOnClickListener(e->{
             drawer.closeMenu(true);
-            //drawer.closeDrawer(GravityCompat.START);
             initProfile();
-
         });
 
 
     }
 
-
+    @OnExit
     @Override
     public void onBackPressed() {
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(Gravity.START)) {
-//            drawer.closeDrawer(Gravity.START);
-//        }
-        drawer.closeMenu(true);
-         if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.SharedNews))) {
-            getSupportFragmentManager().popBackStack(getString(R.string.sharedNews), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.RV_Main))){
-            exitDialogShow();
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Registration))){
-            getSupportFragmentManager().popBackStack(getString(R.string.reg), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Auth))){
-            getSupportFragmentManager().popBackStack(getString(R.string.auth), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Map))){
-            getSupportFragmentManager().popBackStack(getString(R.string.map), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.Schedule))){
-            getSupportFragmentManager().popBackStack(getString(R.string.scheduleBack), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }else if(getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals(getString(R.string.profClass))) {
-             getSupportFragmentManager().popBackStack(getString(R.string.profile), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-         }
-
 
     }
 
@@ -259,9 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             initHomePage();
         }
 
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        drawer.closeDrawer(GravityCompat.START);
-//        drawer.closeMenu(true);
+
         drawer.closeMenu(true);
 
         return true;

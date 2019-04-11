@@ -34,6 +34,8 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
+import com.project.usm.app.AOP.Annotations.InitTabBar;
+import com.project.usm.app.AOP.Annotations.ListItemSelected;
 import com.project.usm.app.MainActivity;
 import  com.project.usm.app.Model.News;
 import com.project.usm.app.Presenter.HomeNews;
@@ -92,12 +94,13 @@ public class RV_Main extends Fragment implements Home_View {
 
         return inflater.inflate(R.layout.fragment_rv__main, container, false);
     }
-
+    @ListItemSelected(item = ListItemSelected.Item.MAIN)
+    @InitTabBar(check = InitTabBar.Check.GONE)
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
         homePresenter = new HomeNews(this);
-        homePresenter.Init(getActivity());
+        homePresenter.Init();
         homePresenter.setAnimFade(this,getActivity());
     }
 
@@ -107,11 +110,7 @@ public class RV_Main extends Fragment implements Home_View {
         }
     }
 
-    @Override
-    public void initTabBar(){
-        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
-        tabBar.setVisibility(View.GONE);
-    }
+
 
     @Override
     public void onDetach() {

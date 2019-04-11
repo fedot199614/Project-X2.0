@@ -10,7 +10,5 @@ public interface IAuth_Presenter {
     void onLogin(String email, String pass);
     void setAnimFade(Fragment fragment,Activity activity);
     void beginTransaction(Fragment firstFragment,Fragment nextFragment);
-    void initTabLayout();
-
 
 }

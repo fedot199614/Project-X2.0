@@ -7,8 +7,6 @@ import com.google.android.gms.maps.GoogleMap;
 
 public interface MapView {
     void showLoadingDialog();
-    void permissionCheck();
     void destroyLoadingDialog();
 
-    void initTabBar();
 }

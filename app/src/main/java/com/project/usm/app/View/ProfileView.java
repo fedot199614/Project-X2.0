@@ -5,5 +5,4 @@ public interface ProfileView {
     void galleryOpen();
     void initBaseOption();
     void initSettingsListener();
-    void initTabBar();
 }

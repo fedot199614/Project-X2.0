@@ -48,6 +48,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.project.usm.app.AOP.Annotations.CheckMapPermissions;
+import com.project.usm.app.AOP.Annotations.InitTabBar;
+
+import com.project.usm.app.AOP.Annotations.ListItemSelected;
 import com.project.usm.app.Presenter.MapPresenter;
 import com.project.usm.app.R;
 import com.project.usm.app.View.MapView;
@@ -55,8 +59,12 @@ import com.project.usm.app.View.MapView;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.Getter;
+
 import static android.content.Context.LOCATION_SERVICE;
 
+
+@Getter
 public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSuccessListener<Location> {
     private FusedLocationProviderClient mFusedLocationClient;
     private static final String ARG_PARAM1 = "param1";
@@ -94,6 +102,7 @@ public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSucce
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -127,12 +136,15 @@ public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSucce
     }
 
 
+    @ListItemSelected(item = ListItemSelected.Item.MAP)
+    @InitTabBar(check = InitTabBar.Check.GONE)
+    @CheckMapPermissions
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
         mapPresenter.init(getActivity());
-        mapPresenter.permCheck();
+
     }
 
 
@@ -142,37 +154,6 @@ public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSucce
         myProgress.setMessage(getString(R.string.mapW));
         myProgress.setCancelable(true);
         myProgress.show();
-    }
-
-    @Override
-    public void permissionCheck() {
-        boolean exp = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
-        if (exp) {
-
-            String[] permissions = new String[]{
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-            };
-            ActivityCompat.requestPermissions(getActivity(), permissions,
-                    REQUEST_ID_ACCESS_COURSE_FINE_LOCATION);
-            mapPresenter.destroyLoadingD();
-            getActivity().onBackPressed();
-
-        } else {
-            mMap.getUiSettings().setZoomControlsEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            mMap.setMyLocationEnabled(true);
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(this);
-
-
-        }
-    }
-
-
-    @Override
-    public void initTabBar() {
-        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
-        tabBar.setVisibility(View.GONE);
     }
 
     @Override

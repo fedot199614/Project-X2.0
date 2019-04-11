@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutionException;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
-import lombok.Getter;
 
 
 public class SplashScreen extends AppCompatActivity {

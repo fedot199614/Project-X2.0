@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.project.usm.app.AOP.Annotations.InitTabBar;
 import com.project.usm.app.MainActivity;
 import com.project.usm.app.Presenter.Auth_Presenter;
 import com.project.usm.app.R;
@@ -72,7 +73,7 @@ public class Auth extends Fragment implements Auth_View {
         }
     }
 
-
+    @InitTabBar(check = InitTabBar.Check.GONE)
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
@@ -82,7 +83,6 @@ public class Auth extends Fragment implements Auth_View {
         login = getActivity().findViewById(R.id.email);
         password = getActivity().findViewById(R.id.password);
         Auth_Presenter authPresenter = new Auth_Presenter(this);
-        authPresenter.initTabLayout();
         auth.setOnClickListener(click -> {
             authPresenter.onLogin(login.getText().toString(), password.getText().toString());
         });
@@ -107,11 +107,7 @@ public class Auth extends Fragment implements Auth_View {
         mListener = null;
     }
 
-    @Override
-    public void initTabBar(){
-        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
-        tabBar.setVisibility(View.GONE);
-    }
+
 
     @Override
     public void initAuthState() {

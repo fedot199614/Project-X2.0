@@ -10,7 +10,6 @@ public class ProfilePresenter implements IProfilePresenter{
 
     @Override
     public void initStartState() {
-        profileView.initTabBar();
         profileView.initBaseOption();
         profileView.initSettingsListener();
     }

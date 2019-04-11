@@ -28,6 +28,9 @@ import android.widget.Toast;
 
 
 import com.mxn.soul.flowingdrawer_core.BuildConfig;
+import com.project.usm.app.AOP.Annotations.CheckGalleryPermissions;
+import com.project.usm.app.AOP.Annotations.InitTabBar;
+import com.project.usm.app.AOP.Annotations.ListItemSelected;
 import com.project.usm.app.Presenter.ProfilePresenter;
 import com.project.usm.app.R;
 import com.project.usm.app.Tools.FontAwesome;
@@ -98,6 +101,8 @@ public class Profile extends Fragment implements ProfileView {
         }
     }
 
+    @ListItemSelected(item = ListItemSelected.Item.PROFILE)
+    @InitTabBar(check = InitTabBar.Check.GONE)
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -120,54 +125,21 @@ public class Profile extends Fragment implements ProfileView {
 
 
     @Override
-    public void initTabBar(){
-        TabLayout tabBar = (TabLayout) getActivity().findViewById(R.id.tabLayout);
-        tabBar.setVisibility(View.GONE);
-    }
-    @Override
     public void initBaseOption() {
-        NavItems.getNavMenu(getActivity()).getItem(1).setChecked(true);
         profImg = (CircleImageView) getActivity().findViewById(R.id.profile_image);
         navProfImg = (CircleImageView) getActivity().findViewById(R.id.nav_prof_img);
         editProfileImg = (FontAwesome) getActivity().findViewById(R.id.addProfImg);
     }
 
+    @CheckGalleryPermissions
+    public void checkPermissions(){
+
+    }
+
     @Override
     public void initSettingsListener(){
         editProfileImg.setOnClickListener(click->{
-            int permissionCheckCam = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
-            int permissionCheckWrite = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int permissionCheckRead = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-            if(permissionCheckCam != PackageManager.PERMISSION_GRANTED || permissionCheckWrite != PackageManager.PERMISSION_GRANTED || permissionCheckRead != PackageManager.PERMISSION_GRANTED){
-
-                ActivityCompat.requestPermissions(getActivity(),new String[]{
-                                Manifest.permission.CAMERA,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE},
-                        PERMISSION_REQUEST_CODE);
-
-            }else {
-
-
-                String[] list = {getString(R.string.newPhoto), getString(R.string.onGallery)};
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(getString(R.string.edit))
-                        .setItems(list, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch(which) {
-                                    case 0:
-                                        cameraOpen();
-                                        break;
-                                    case 1:
-                                        galleryOpen();
-                                        break;
-                                }
-                            }
-                        });
-
-                builder.create().show();
-
-            }
+            checkPermissions();
         });
     }
     @Override

@@ -29,9 +29,7 @@ public class HomeNews implements IHomeNews {
 
 
     @Override
-    public void Init(Activity activity) {
-        home_view.initTabBar();
-        NavItems.getNavMenu(activity).getItem(0).setChecked(true);
+    public void Init() {
         List<News> newsList = new ArrayList<>();
         newsList.addAll(SplashScreen.getNewsList());
         RecyclerView rv =  home_view.InitRV();

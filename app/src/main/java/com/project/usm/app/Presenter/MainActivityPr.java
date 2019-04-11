@@ -11,7 +11,6 @@ public class MainActivityPr {
 
     public void init(){
         main.initNavigViewIcons();
-        main.permissionCheck();
         main.initHomePage();
     }
 }

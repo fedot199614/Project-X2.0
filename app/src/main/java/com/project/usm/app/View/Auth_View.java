@@ -9,7 +9,6 @@ public interface Auth_View {
     void onLoginSuccessfully();
     void showErrorValidationLogin(int errorCode);
     void showErrorValidationPassword(int errorCode);
-    void initTabBar();
     void initAuthState();
     void initHomePage();
 }
