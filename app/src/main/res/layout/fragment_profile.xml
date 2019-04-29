@@ -62,10 +62,10 @@
     </android.support.constraint.ConstraintLayout>
 
     <TextView
-        android:id="@+id/tv_address"
+        android:id="@+id/profile_faculty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_name"
+        android:layout_below="@+id/profile_name"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -77,7 +77,7 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_name" />
 
     <com.project.usm.app.Tools.FontAwesome
         android:id="@+id/addProfImg"
@@ -98,7 +98,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imgUser"
@@ -125,7 +125,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_address">
+        app:layout_constraintTop_toBottomOf="@+id/profile_faculty">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -153,7 +153,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/profile_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="35dp"
@@ -181,147 +181,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView">
 
-        <LinearLayout
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_profile_info"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:layoutAnimation="@anim/layout_animation_fall_down"
+            android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Phone"
-                            android:textColor="@color/headings"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:text="06038354"
-                            android:textColor="#000000"
-                            android:textSize="18sp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="15dp"
-                            android:background="@color/grey" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Xxxx"
-                            android:textColor="@color/headings"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:text="Xxxx"
-                            android:textColor="#000000"
-                            android:textSize="18sp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="15dp"
-                            android:background="@color/grey" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Xxxx"
-                            android:textColor="@color/headings"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:text="Xxxxxx"
-                            android:textColor="#000000"
-                            android:textSize="18sp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="15dp"
-                            android:background="@color/grey" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Email"
-                            android:textColor="@color/headings"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-light"
-                            android:text="xxxxx@mail.ru"
-                            android:textColor="#000000"
-                            android:textSize="18sp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="15dp"
-                            android:background="@color/grey" />
-
-                    </LinearLayout>
-                </LinearLayout>
-            </ScrollView>
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-        </LinearLayout>
+
+
+
+
+
 
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

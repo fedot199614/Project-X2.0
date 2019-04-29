@@ -4,6 +4,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
+import com.project.usm.app.SplashScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -29,15 +31,18 @@ public class User implements IUser {
     private String phone;
     private int id;
     private List<BasicNameValuePair> params;
+    private List<BasicNameValuePair> paramsClient;
     private Header[] headers;
 
     public User(String email,String pass){
         this.idnp = email;
         this.password = pass;
         this.grant_type = "password";
-        this.token_type = "";
+        this.token_type = "Bearer";
         this.params = new ArrayList<>();
+        this.paramsClient = new ArrayList<>();
         this.headers = new Header[1];
+        paramsBuildClient();
         paramsBuild();
         headersBuild();
     }
@@ -84,10 +89,16 @@ public class User implements IUser {
 
 
     public  List<BasicNameValuePair> paramsBuild(){
-        params.add(new BasicNameValuePair("grant_type",this.grant_type));
         params.add(new BasicNameValuePair("username",this.idnp));
         params.add(new BasicNameValuePair("password",this.password));
         return params;
+    }
+
+    public  List<BasicNameValuePair> paramsBuildClient(){
+        paramsClient.add(new BasicNameValuePair("grant_type",this.grant_type));
+        paramsClient.add(new BasicNameValuePair("client_id",SplashScreen.getClientApp().getAppID()));
+        paramsClient.add(new BasicNameValuePair("client_secret",SplashScreen.getClientApp().getAppPassword()));
+        return paramsClient;
     }
 
     public Header[] headersBuild(){

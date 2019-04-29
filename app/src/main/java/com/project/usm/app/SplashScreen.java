@@ -11,12 +11,18 @@ import android.widget.Toast;
 
 import com.project.usm.app.Model.ClientApp;
 import com.project.usm.app.Model.News;
+import com.project.usm.app.Model.User;
+import com.project.usm.app.Module.ContextModule;
+import com.project.usm.app.Module.DaggerInjectionComponent;
+import com.project.usm.app.Module.InjectionComponent;
 import com.project.usm.app.Tools.GsonParser;
 import com.project.usm.app.Tools.HttpClient;
 import com.project.usm.app.Tools.SessionManager;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
@@ -29,6 +35,8 @@ public class SplashScreen extends AppCompatActivity {
     private static ClientApp clientApp;
     private static List<News> newsList;
     private static String jsonResponseClient,jsonResponseNews;
+    private static InjectionComponent component;
+
 
     public static void oauthClient(){
         SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(SplashScreen.getClientApp().getHeaders(),SplashScreen.getClientApp().getParams()).getTaskPost().execute();
@@ -46,12 +54,12 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        component = DaggerInjectionComponent.builder().contextModule(new ContextModule(this)).build();
         if(isOnline()) {
-            session = new SessionManager(this);
-            httpClient = new HttpClient("http://35.184.2.70","8000");
-            clientApp = new ClientApp();
-            gsonParser = GsonParser.getNewInstance();
+            session = component.getSessionManager();
+            httpClient = component.getHttpClient();
+            clientApp = component.getClientApp();
+            gsonParser = component.getGsonParser();
             oauthClient();
             try {
 
@@ -87,6 +95,10 @@ public class SplashScreen extends AppCompatActivity {
         return netInfo != null && netInfo.isConnected();
     }
 
+
+    public static InjectionComponent getComponent(){
+        return component;
+    }
     public static HttpClient getHttpClient(){
         return httpClient;
     }

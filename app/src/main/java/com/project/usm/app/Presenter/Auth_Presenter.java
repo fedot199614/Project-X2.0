@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import lombok.Getter;
+
 
 public class Auth_Presenter implements IAuth_Presenter {
     User user;
@@ -52,7 +54,7 @@ public class Auth_Presenter implements IAuth_Presenter {
         if(codeValidationIdnp == -1 && codeValidationPassword == -1) {
             auth_view.showLoading();
             List<BasicNameValuePair> clientParamPlusUserParam = new ArrayList<>();
-            clientParamPlusUserParam.addAll(SplashScreen.getClientApp().getParams());
+            clientParamPlusUserParam.addAll(user.getParamsClient());
             clientParamPlusUserParam.addAll(user.getParams());
             SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPost().execute();
             try {

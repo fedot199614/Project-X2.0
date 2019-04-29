@@ -41,6 +41,7 @@ public class SessionManager {
      */
     public void createLoginSession(String name, String email,String token) {
         // Storing login value as TRUE
+
         editor.putBoolean(IS_LOGIN, true);
         // Storing name in pref
         editor.putString(KEY_IDNP, name);
@@ -51,7 +52,13 @@ public class SessionManager {
         // commit changes
         editor.commit();
     }
+    public void updateUserToken(String token) {
 
+        editor.putString(KEY_TOKEN, token);
+
+        // commit changes
+        editor.commit();
+    }
     /**
      * Check login method wil check user login status If false it will redirect
      * user to login page Else won't do anything

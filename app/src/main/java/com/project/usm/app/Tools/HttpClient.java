@@ -19,6 +19,8 @@ import java.util.AbstractSequentialList;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpHeaders;
 import cz.msebera.android.httpclient.NameValuePair;
@@ -45,18 +47,20 @@ public class HttpClient {
     private String response;
     private String oauthService;
     private String newsService;
+    private String profileService;
     private MyTaskPost taskPost;
     private MyTaskGet taskGet;
 
 
-
+@Inject
 public HttpClient(String url,String port){
     this.url = url;
     this.port = port;
     this.client = HttpClients.createDefault();
     this.params = new ArrayList<>();
     this.oauthService = "oauth/token";
-    this.newsService = "v1/news";
+    this.newsService = "news";
+    this.profileService = "users/profile/";
 }
 
 public HttpClient buildTaskPost(){
@@ -84,7 +88,12 @@ public HttpClient news(){
     return this;
 }
 
-
+    public HttpClient profile(){
+        this.absoluteUrl = this.url+":"+this.port+"/"+this.profileService;
+        this.httpPost = new HttpPost(absoluteUrl);
+        this.httpGet = new HttpGet(absoluteUrl);
+        return this;
+    }
 
 
 

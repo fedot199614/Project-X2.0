@@ -20,10 +20,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -31,10 +34,14 @@ import com.mxn.soul.flowingdrawer_core.BuildConfig;
 import com.project.usm.app.AOP.Annotations.CheckGalleryPermissions;
 import com.project.usm.app.AOP.Annotations.InitTabBar;
 import com.project.usm.app.AOP.Annotations.ListItemSelected;
+import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.Presenter.ProfilePresenter;
 import com.project.usm.app.R;
+import com.project.usm.app.SplashScreen;
 import com.project.usm.app.Tools.FontAwesome;
 import com.project.usm.app.Tools.NavItems;
+import com.project.usm.app.Tools.RVAdapterProfileInfo;
+import com.project.usm.app.Tools.RVAdapterSchedule;
 import com.project.usm.app.View.ProfileView;
 
 import java.io.File;
@@ -44,7 +51,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BasicHeader;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
@@ -108,6 +118,39 @@ public class Profile extends Fragment implements ProfileView {
         super.onActivityCreated(savedInstanceState);
         profilePresenter = new ProfilePresenter(this);
         profilePresenter.initStartState();
+
+
+        String jsonResponseProfile = "";
+        SplashScreen.getHttpClient().buildTaskGet().profile()
+                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
+                .getTaskGet().execute();
+        try {
+            jsonResponseProfile = SplashScreen.getHttpClient().getTaskGet().get();
+        } catch (ExecutionException  | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Log.e("sdfsdfsdfq",SplashScreen.getSessionManager().getUserDetails().get("token"));
+        Log.e("sdfsdfsdf",jsonResponseProfile);
+       ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(jsonResponseProfile);
+
+
+        RecyclerView rv = (RecyclerView)getView().findViewById(R.id.rv_profile_info);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+        rv.setHasFixedSize(true);
+
+        RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo);
+        rv.setAdapter(adapter);
+
+        TextView name = (TextView) getActivity().findViewById(R.id.profile_name);
+        TextView profile_group = (TextView) getActivity().findViewById(R.id.profile_group);
+        TextView faculty = (TextView) getActivity().findViewById(R.id.profile_faculty);
+        name.setText(profInfo.getProfileResponseResource().getFirstName()+" "+profInfo.getProfileResponseResource().getLastName());
+        profile_group.setText(profInfo.getProfileResponseResource().getGroupId());
+        //faculty.setText("");
+
     }
 
     @Override
