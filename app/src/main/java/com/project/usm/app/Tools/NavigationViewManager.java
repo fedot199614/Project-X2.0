@@ -13,6 +13,7 @@ import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.project.usm.app.R;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +22,7 @@ import lombok.Setter;
 public class NavigationViewManager {
     private static final NavigationViewManager navigationViewManager = new NavigationViewManager();
 
-
+    private CircleImageView navProfImg;
     private TextView usmText;
     private TextView someInfo;
     private TextView name;
@@ -56,6 +57,7 @@ public class NavigationViewManager {
         this.imgUserNav =  navigationView.getHeaderView(0).findViewById(R.id.imgUserNav);
         this.usmLogo =  navigationView.getHeaderView(0).findViewById(R.id.usmLogo);
         this.name =  navigationView.getHeaderView(0).findViewById(R.id.name);
+        this.navProfImg = navigationView.getHeaderView(0).findViewById(R.id.nav_prof_img);
 
     }
 

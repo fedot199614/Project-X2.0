@@ -29,6 +29,7 @@ import com.project.usm.app.Presenter.MainActivityPr;
 import com.project.usm.app.AOP.Annotations.Loggable;
 import com.project.usm.app.Fragments.Auth;
 import com.project.usm.app.Fragments.RV_Main;
+import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.Tools.NavigationViewManager;
 import com.project.usm.app.View.MainActivityView;
 
@@ -73,6 +74,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             auth_presenter = new Auth_Presenter();
             HashMap<String,String> userDetails = SplashScreen.getSessionManager().getUserDetails();
             auth_presenter.createAuthUser(userDetails.get("idnp"),userDetails.get("password"),userDetails.get("token"));
+            BaseQuery.profileQueryNav();
+
+
         }else{
             navViewManager.sign_inViewVisibility();
         }

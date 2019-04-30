@@ -2,8 +2,12 @@ package com.project.usm.app.Tools;
 
 
 import android.annotation.SuppressLint;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Entity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Message;
 import android.util.Log;
@@ -12,7 +16,9 @@ import android.widget.Toast;
 import com.project.usm.app.MainActivity;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.AbstractSequentialList;
@@ -22,15 +28,20 @@ import java.util.List;
 import javax.inject.Inject;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpHeaders;
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
+import cz.msebera.android.httpclient.client.ClientProtocolException;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.CloseableHttpResponse;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import cz.msebera.android.httpclient.util.EntityUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,6 +61,7 @@ public class HttpClient {
     private String profileService;
     private MyTaskPost taskPost;
     private MyTaskGet taskGet;
+    private MyTaskGetImg taskGetImg;
 
 
 @Inject
@@ -62,6 +74,11 @@ public HttpClient(String url,String port){
     this.newsService = "news";
     this.profileService = "users/profile/";
 }
+
+public HttpClient buildTaskGetImg(){
+        this.taskGetImg = new MyTaskGetImg();
+        return this;
+    }
 
 public HttpClient buildTaskPost(){
     this.taskPost = new MyTaskPost();
@@ -95,7 +112,12 @@ public HttpClient news(){
         return this;
     }
 
-
+    public HttpClient customEndPoint(String endpoint){
+        this.absoluteUrl = endpoint;
+        this.httpPost = new HttpPost(absoluteUrl);
+        this.httpGet = new HttpGet(absoluteUrl);
+        return this;
+    }
 
 public HttpClient postRequestBuild(Header[] headers, List<BasicNameValuePair> valuePairsList){
             httpPost.setHeaders(headers);
@@ -210,6 +232,58 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
 
 
 
+        }
+    }
+
+    public class MyTaskGetImg extends AsyncTask<String, Void, Bitmap>{
+
+
+
+
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d("LOG_TAG", "BeginGet");
+        }
+
+
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            HttpResponse httpResponse;
+            Bitmap bmp = null;
+
+            try{
+                httpResponse = client.execute(httpGet);
+                // responseCode = httpResponse.getStatusLine().getStatusCode();
+
+                HttpEntity entity = httpResponse.getEntity();
+
+                if (entity != null)
+                {
+                    InputStream in = entity.getContent();
+                    bmp = BitmapFactory.decodeStream(in);
+                    in.close();
+                }
+            } catch (ClientProtocolException e)  {
+                client.getConnectionManager().shutdown();
+                e.printStackTrace();
+            } catch (IOException e) {
+                client.getConnectionManager().shutdown();
+                e.printStackTrace();
+            }
+
+
+            flushData();
+            return bmp;
+        }
+
+
+        @Override
+        protected  void onPostExecute(Bitmap result){
+            super.onPostExecute(result);
         }
     }
 

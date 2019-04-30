@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.project.usm.app.Model.User;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
+import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.View.Auth_View;
 
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ public class Auth_Presenter implements IAuth_Presenter {
                    auth_view.onLoginSuccessfully();
                    auth_view.initAuthState();
                    auth_view.initHomePage();
+                   BaseQuery.profileQueryNav();
                 }else{
                    auth_view.onLoginMessageError();
                 }

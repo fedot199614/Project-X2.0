@@ -15,6 +15,7 @@ import com.project.usm.app.Model.User;
 import com.project.usm.app.Module.ContextModule;
 import com.project.usm.app.Module.DaggerInjectionComponent;
 import com.project.usm.app.Module.InjectionComponent;
+import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.Tools.GsonParser;
 import com.project.usm.app.Tools.HttpClient;
 import com.project.usm.app.Tools.SessionManager;
@@ -26,6 +27,7 @@ import javax.inject.Inject;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class SplashScreen extends AppCompatActivity {
@@ -38,44 +40,19 @@ public class SplashScreen extends AppCompatActivity {
     private static InjectionComponent component;
 
 
-    public static void oauthClient(){
-        SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(SplashScreen.getClientApp().getHeaders(),SplashScreen.getClientApp().getParams()).getTaskPost().execute();
-        try {
-            jsonResponseClient = SplashScreen.getHttpClient().getTaskPost().get();
 
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            SplashScreen.getHttpClient().getTaskPost().cancel(true);
-        }
-
-        gsonParser.parseClientApp(jsonResponseClient);
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         component = DaggerInjectionComponent.builder().contextModule(new ContextModule(this)).build();
         if(isOnline()) {
+
             session = component.getSessionManager();
             httpClient = component.getHttpClient();
             clientApp = component.getClientApp();
             gsonParser = component.getGsonParser();
-            oauthClient();
-            try {
-
-                SplashScreen.getHttpClient().buildTaskGet().news()
-                        .getRequestBuild(new Header[]{new BasicHeader("Authorization",
-                                SplashScreen.getClientApp().getTokenType()+" "+SplashScreen.getClientApp().getTokenClient())})
-                        .getTaskGet().execute();
-
-                jsonResponseNews = SplashScreen.getHttpClient().getTaskGet().get();
-
-                newsList = gsonParser.parseNews(jsonResponseNews);
-            } catch (ExecutionException | InterruptedException e) {
-               Log.e("ERROR APP OAUTH",e.getMessage());
-            } finally {
-                SplashScreen.getHttpClient().getTaskGet().cancel(true);
-            }
+            BaseQuery.oauthClient(gsonParser);
+            newsList = BaseQuery.getNews(gsonParser);
 
 
             Intent intent = new Intent(this, MainActivity.class);

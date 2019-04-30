@@ -64,7 +64,7 @@ public class GsonParser {
             JsonObject news = jElement.getAsJsonObject();
             Log.e("ERROR",jsonObj);
             if(news.has("error") && news.get("error").getAsString().equals(INVALID_TOKEN)){
-                SplashScreen.oauthClient();
+                BaseQuery.oauthClient(SplashScreen.getGsonParser());
                 SplashScreen.getSessionManager().logoutUser();
             }
         }
@@ -121,6 +121,7 @@ public class GsonParser {
             SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPost().execute();
             try {
                 String response = SplashScreen.getHttpClient().getTaskPost().get();
+
                 JsonElement jElement = new JsonParser().parse(response);
                 JsonObject jObject = jElement.getAsJsonObject();
                 SplashScreen.getSessionManager().updateUserToken(jObject.get("access_token").getAsString());
