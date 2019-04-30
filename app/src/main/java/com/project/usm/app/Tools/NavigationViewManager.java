@@ -1,6 +1,5 @@
 package com.project.usm.app.Tools;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
@@ -57,7 +56,7 @@ public class NavigationViewManager {
         this.imgUserNav =  navigationView.getHeaderView(0).findViewById(R.id.imgUserNav);
         this.usmLogo =  navigationView.getHeaderView(0).findViewById(R.id.usmLogo);
         this.name =  navigationView.getHeaderView(0).findViewById(R.id.name);
-        this.navProfImg = navigationView.getHeaderView(0).findViewById(R.id.nav_prof_img);
+        this.navProfImg = navigationView.getHeaderView(0).findViewById(R.id.member_avatar);
 
     }
 

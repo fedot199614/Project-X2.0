@@ -10,7 +10,7 @@ import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
 
-import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -57,6 +57,50 @@ public class BaseQuery {
         parser.parseClientApp(jsonResponseClient);
     }
 
+    public static List<ProfileInfo> membersGroupQuery(GsonParser parser, String grID){
+        String json = "";
+        List<ProfileInfo> profInfoList = new LinkedList<>();
+        SplashScreen.getHttpClient().buildTaskGet().membersService(grID)
+                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
+                .getTaskGet().execute();
+        try {
+
+            json = SplashScreen.getHttpClient().getTaskGet().get();
+
+            profInfoList = parser.parseMembers(json);
+
+        } catch (ExecutionException  | InterruptedException e) {
+            e.printStackTrace();
+        }finally {
+            SplashScreen.getHttpClient().getTaskGet().cancel(true);
+        }
+
+
+        for(ProfileInfo element : profInfoList){
+            Bitmap Response = null;
+            SplashScreen.getHttpClient().buildTaskGetImg().customEndPoint(element.getProfileResponseResource().getProfileImageUrl())
+                    .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                            "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
+                    .getTaskGetImg().execute();
+            try {
+
+                Response = SplashScreen.getHttpClient().getTaskGetImg().get();
+                element.setAvatar(Response);
+            } catch (ExecutionException  | InterruptedException e) {
+                e.printStackTrace();
+            }
+            finally {
+                SplashScreen.getHttpClient().getTaskGetImg().cancel(true);
+            }
+        }
+
+        return profInfoList;
+
+    }
+
+
+
     public static ProfileInfo profileQueryNav(){
         CircleImageView navProfImg = NavigationViewManager.getNewInstance().getNavProfImg();
         TextView navName = NavigationViewManager.getNewInstance().getName();
@@ -71,9 +115,11 @@ public class BaseQuery {
             jsonResponseProfile = SplashScreen.getHttpClient().getTaskGet().get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            SplashScreen.getHttpClient().getTaskGet().cancel(true);
         }
 
-
+        Log.e("sdf",jsonResponseProfile);
         ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(jsonResponseProfile);
 
 
@@ -95,9 +141,12 @@ public class BaseQuery {
 
         } catch (ExecutionException  | InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            SplashScreen.getHttpClient().getTaskGetImg().cancel(true);
         }
 
         return profInfo;
+
     }
 
 
@@ -120,6 +169,8 @@ public class BaseQuery {
             jsonResponseProfile = SplashScreen.getHttpClient().getTaskGet().get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            SplashScreen.getHttpClient().getTaskGet().cancel(true);
         }
 
 

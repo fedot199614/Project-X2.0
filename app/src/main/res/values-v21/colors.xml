@@ -17,10 +17,11 @@
     <color name="followers">#0D5D98</color>
     <color name="headings">#3797CF</color>
     <color name="solidCircle">#AAFFFFFF</color>
+    <color name="circleGrey">#747c7f</color>
     <color name="circleBorder">#50FFFFFF</color>
     <color name="followersBg">#4c5d7c</color>
     <color name="followingBg">#556989</color>
-    <color name="grey">#E5E5E5</color>
+    <color name="grey">#e5e5e5</color>
     <color name="btnColor">#364a4c</color>
     <color name="online">#008000</color>
     <color name="offline">#7e7e7e</color>

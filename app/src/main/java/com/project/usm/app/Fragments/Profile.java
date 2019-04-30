@@ -1,71 +1,41 @@
 package com.project.usm.app.Fragments;
 
 
-import android.Manifest;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-import com.mxn.soul.flowingdrawer_core.BuildConfig;
 import com.project.usm.app.AOP.Annotations.CheckGalleryPermissions;
 import com.project.usm.app.AOP.Annotations.InitTabBar;
 import com.project.usm.app.AOP.Annotations.ListItemSelected;
+import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.Presenter.ProfilePresenter;
 import com.project.usm.app.R;
-import com.project.usm.app.SplashScreen;
 import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.Tools.FontAwesome;
-import com.project.usm.app.Tools.NavItems;
 import com.project.usm.app.Tools.RVAdapterProfileInfo;
-import com.project.usm.app.Tools.RVAdapterSchedule;
 import com.project.usm.app.View.ProfileView;
-import com.squareup.picasso.Picasso;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.client.ClientProtocolException;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
-import cz.msebera.android.httpclient.message.BasicHeader;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
@@ -139,10 +109,36 @@ public class Profile extends Fragment implements ProfileView {
         rv.setHasFixedSize(true);
 
         ProfileInfo profInfo  = BaseQuery.profileQuery(getActivity());
-        RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo);
+        RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo,getActivity());
         rv.setAdapter(adapter);
 
+        TextView textGroup = (TextView) getActivity().findViewById(R.id.profile_group);
+        textGroup.setOnClickListener(click->{
+            GroupMembers sn = new GroupMembers();
+            setAnimFade(sn,getActivity());
+            beginTransaction(getFragmentManager(),sn,"membersGroup",textGroup.getText().toString());
+        });
 
+
+    }
+
+    public void setAnimFade(Fragment fragment, Activity activity) {
+
+        Transition changeTransform = TransitionInflater.from(activity).inflateTransition(R.transition.change_img_transform);
+        fragment.setSharedElementReturnTransition(changeTransform);
+        fragment.setSharedElementEnterTransition(changeTransform);
+
+        fragment.setExitTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.explode));
+        fragment.setEnterTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.explode));
+    }
+
+    public void beginTransaction(FragmentManager frManager, Fragment nextFragment, String backStackTag,String idGroup) {
+        FragmentTransaction transaction = frManager.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString("grId", idGroup);
+        nextFragment.setArguments(bundle);
+        transaction.addToBackStack(backStackTag);
+        transaction.replace(R.id.mainFrame,nextFragment).commit();
     }
 
     @Override
@@ -162,7 +158,7 @@ public class Profile extends Fragment implements ProfileView {
     @Override
     public void initBaseOption() {
         profImg = (CircleImageView) getActivity().findViewById(R.id.profile_image);
-        navProfImg = (CircleImageView) getActivity().findViewById(R.id.nav_prof_img);
+        navProfImg = (CircleImageView) getActivity().findViewById(R.id.member_avatar);
         editProfileImg = (FontAwesome) getActivity().findViewById(R.id.addProfImg);
     }
 

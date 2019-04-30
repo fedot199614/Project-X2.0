@@ -71,6 +71,27 @@ public class GsonParser {
         return newsList;
     }
 
+    public List<ProfileInfo> parseMembers(String jsonObj){
+
+        List<ProfileInfo> membersList = new ArrayList<>();
+        JsonElement jElement = new JsonParser().parse(jsonObj);
+        Log.e("wwer",jsonObj);
+        List<UserProfileResponseResource> newsResponseResourceList = gson.fromJson(jsonObj, new TypeToken<ArrayList<UserProfileResponseResource>>(){}.getType());
+        if(jElement.isJsonArray()) {
+            for(UserProfileResponseResource element : newsResponseResourceList){
+                membersList.add(new ProfileInfo(element));
+            }
+        }else if(jElement.isJsonObject()){
+            JsonObject news = jElement.getAsJsonObject();
+            Log.e("ERROR",jsonObj);
+            if(news.has("error") && news.get("error").getAsString().equals(INVALID_TOKEN)){
+                BaseQuery.oauthClient(SplashScreen.getGsonParser());
+                SplashScreen.getSessionManager().logoutUser();
+            }
+        }
+        return membersList;
+    }
+
     public void parseClientApp(String json){
         JsonElement jElement = new JsonParser().parse(json);
         JsonObject jObject = jElement.getAsJsonObject();
@@ -81,6 +102,8 @@ public class GsonParser {
         }
 
     }
+
+
 
     public void parseUser(String json,User userModel){
         this.user = userModel;
@@ -105,6 +128,7 @@ public class GsonParser {
 
 
     public ProfileInfo parseProfile(String json){
+
         JsonElement element = new JsonParser().parse(json);
         JsonObject obj = element.getAsJsonObject();
         ProfileInfo profileInfo;
@@ -121,7 +145,7 @@ public class GsonParser {
             SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPost().execute();
             try {
                 String response = SplashScreen.getHttpClient().getTaskPost().get();
-
+                Log.e("tut2", response);
                 JsonElement jElement = new JsonParser().parse(response);
                 JsonObject jObject = jElement.getAsJsonObject();
                 SplashScreen.getSessionManager().updateUserToken(jObject.get("access_token").getAsString());
@@ -136,11 +160,13 @@ public class GsonParser {
                     .getTaskGet().execute();
             try {
                 jsonResponseProfile = SplashScreen.getHttpClient().getTaskGet().get();
+                Log.e("tut1", jsonResponseProfile);
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
             UserProfileResponseResource profile = gson.fromJson(jsonResponseProfile, UserProfileResponseResource.class);
             profileInfo = new ProfileInfo(profile);
+
         }
         return profileInfo;
     }

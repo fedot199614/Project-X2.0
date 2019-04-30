@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.AbstractSequentialList;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,6 +38,7 @@ import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.CloseableHttpResponse;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.client.utils.URLEncodedUtils;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
@@ -50,6 +52,7 @@ import lombok.Setter;
 public class HttpClient {
     private CloseableHttpClient client;
     private List<NameValuePair> params;
+    private String groupMembersService;
     private String url;
     private String port;
     private String absoluteUrl;
@@ -73,12 +76,15 @@ public HttpClient(String url,String port){
     this.oauthService = "oauth/token";
     this.newsService = "news";
     this.profileService = "users/profile/";
+    this.groupMembersService = "users/query";
 }
 
 public HttpClient buildTaskGetImg(){
         this.taskGetImg = new MyTaskGetImg();
         return this;
     }
+
+
 
 public HttpClient buildTaskPost(){
     this.taskPost = new MyTaskPost();
@@ -105,19 +111,35 @@ public HttpClient news(){
     return this;
 }
 
-    public HttpClient profile(){
+public HttpClient profile(){
         this.absoluteUrl = this.url+":"+this.port+"/"+this.profileService;
         this.httpPost = new HttpPost(absoluteUrl);
         this.httpGet = new HttpGet(absoluteUrl);
         return this;
-    }
+}
 
-    public HttpClient customEndPoint(String endpoint){
+public HttpClient membersService(String query){
+
+        this.absoluteUrl = this.url+":"+this.port+"/"+this.groupMembersService;
+        if(!this.absoluteUrl.endsWith("?")) {
+            this.absoluteUrl += "?";
+        }
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("groupId", query));
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        this.absoluteUrl+=paramString;
+
+        this.httpPost = new HttpPost(absoluteUrl);
+        this.httpGet = new HttpGet(absoluteUrl);
+        return this;
+}
+
+public HttpClient customEndPoint(String endpoint){
         this.absoluteUrl = endpoint;
         this.httpPost = new HttpPost(absoluteUrl);
         this.httpGet = new HttpGet(absoluteUrl);
         return this;
-    }
+}
 
 public HttpClient postRequestBuild(Header[] headers, List<BasicNameValuePair> valuePairsList){
             httpPost.setHeaders(headers);
@@ -135,6 +157,7 @@ public HttpClient getRequestBuild(Header[] headers){
         httpGet.setHeaders(headers);
     return this;
 }
+
 
 public void flushData(){
     params.clear();

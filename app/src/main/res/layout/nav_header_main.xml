@@ -63,7 +63,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/nav_prof_img"
+                android:id="@+id/member_avatar"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerHorizontal="true"
@@ -82,10 +82,10 @@
                 android:text="@string/fa_icon_online"
                 android:textColor="@color/online"
                 android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="@+id/nav_prof_img"
-                app:layout_constraintEnd_toEndOf="@+id/nav_prof_img"
+                app:layout_constraintBottom_toBottomOf="@+id/member_avatar"
+                app:layout_constraintEnd_toEndOf="@+id/member_avatar"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/nav_prof_img"
+                app:layout_constraintStart_toStartOf="@+id/member_avatar"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
 

@@ -27,6 +27,7 @@
             android:textSize="18sp" />
 
         <com.project.usm.app.Tools.FontAwesome
+            android:id="@+id/edit_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"

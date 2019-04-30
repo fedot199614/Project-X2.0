@@ -3,7 +3,6 @@ package com.project.usm.app.Tools;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +72,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
             news = (TextView) itemView.findViewById(R.id.news_model);
-            title = (TextView) itemView.findViewById(R.id.title_model);
+            title = (TextView) itemView.findViewById(R.id.member_name);
             time = (TextView) itemView.findViewById(R.id.time);
             author = (TextView) itemView.findViewById(R.id.authorName);
             img = (ImageView)itemView.findViewById(R.id.imagePrev);

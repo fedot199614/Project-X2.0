@@ -2,6 +2,7 @@ package com.project.usm.app.Model;
 
 
 
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
@@ -33,6 +34,7 @@ public class ProfileInfo {
     Map<String,String> data = new HashMap<>();
     private List<String> title = new ArrayList<>();
     private List<String> info = new ArrayList<>();
+    private Bitmap avatar;
 
 
     public ProfileInfo(UserProfileResponseResource profileResponseResource) {

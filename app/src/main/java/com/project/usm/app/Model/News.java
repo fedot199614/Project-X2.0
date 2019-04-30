@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class News {
     private String publishDate;
     private List<String> imgURL = new ArrayList<>();
     private String authorName;
-    private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+    private SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
 
     public News(String id,String title,long publishDate, String model, String full_news,List<String> imgURL,String authorName) {
@@ -29,7 +30,7 @@ public class News {
         this.title = title;
         this.news = model;
         this.full_news = full_news;
-        this.publishDate = format.format(new Date(publishDate));
+        this.publishDate = format.format(new Date(TimeUnit.SECONDS.toMillis(publishDate)));
         this.imgURL.addAll(imgURL);
         this.authorName = authorName;
         //this.id = id;
