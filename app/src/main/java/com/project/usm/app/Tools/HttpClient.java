@@ -2,6 +2,7 @@ package com.project.usm.app.Tools;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,10 +11,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.transition.TransitionInflater;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.MainActivity;
+import com.project.usm.app.Model.User;
+import com.project.usm.app.R;
+import com.project.usm.app.SplashScreen;
+import com.project.usm.app.View.Auth_View;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -38,6 +49,7 @@ import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.CloseableHttpResponse;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.client.methods.HttpPut;
 import cz.msebera.android.httpclient.client.utils.URLEncodedUtils;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
@@ -56,18 +68,22 @@ public class HttpClient {
     private String url;
     private String port;
     private String absoluteUrl;
+    private HttpPut httpPut;
     private HttpPost httpPost;
     private HttpGet httpGet;
+    private String updateService;
     private String response;
     private String oauthService;
     private String newsService;
     private String profileService;
     private MyTaskPost taskPost;
+    private MyTaskPostAuth taskPostAuth;
     private MyTaskGet taskGet;
     private MyTaskGetImg taskGetImg;
+    private MyTaskPut taskPut;
 
 
-@Inject
+    @Inject
 public HttpClient(String url,String port){
     this.url = url;
     this.port = port;
@@ -77,6 +93,7 @@ public HttpClient(String url,String port){
     this.newsService = "news";
     this.profileService = "users/profile/";
     this.groupMembersService = "users/query";
+    this.updateService = "users/update";
 }
 
 public HttpClient buildTaskGetImg(){
@@ -84,7 +101,10 @@ public HttpClient buildTaskGetImg(){
         return this;
     }
 
-
+    public HttpClient buildTaskPostAuth(Activity activity, Auth_View auth_view, User user){
+        this.taskPostAuth = new MyTaskPostAuth(activity,auth_view,user);
+        return this;
+    }
 
 public HttpClient buildTaskPost(){
     this.taskPost = new MyTaskPost();
@@ -96,6 +116,10 @@ public HttpClient buildTaskGet(){
     return this;
 }
 
+    public HttpClient buildTaskPut(){
+        this.taskPut = new MyTaskPut();
+        return this;
+    }
 
 public HttpClient oauth(){
     this.absoluteUrl = this.url+":"+this.port+"/"+this.oauthService;
@@ -116,6 +140,21 @@ public HttpClient profile(){
         this.httpPost = new HttpPost(absoluteUrl);
         this.httpGet = new HttpGet(absoluteUrl);
         return this;
+}
+
+public HttpClient update(String queryName,String query){
+    this.absoluteUrl = this.url+":"+this.port+"/"+this.updateService;
+    if(!this.absoluteUrl.endsWith("?")) {
+        this.absoluteUrl += "?";
+    }
+    List<NameValuePair> params = new LinkedList<NameValuePair>();
+    params.add(new BasicNameValuePair(queryName, query));
+    String paramString = URLEncodedUtils.format(params, "utf-8");
+    this.absoluteUrl+=paramString;
+    this.httpPut = new HttpPut(absoluteUrl);
+    this.httpPost = new HttpPost(absoluteUrl);
+    this.httpGet = new HttpGet(absoluteUrl);
+    return this;
 }
 
 public HttpClient membersService(String query){
@@ -159,6 +198,11 @@ public HttpClient getRequestBuild(Header[] headers){
 }
 
 
+public HttpClient putRequestBuild(Header[] headers){
+        httpPut.setHeaders(headers);
+        return this;
+}
+
 public void flushData(){
     params.clear();
 
@@ -168,7 +212,78 @@ public void closeClient() throws IOException {
     client.close();
 }
 
+    public class MyTaskPostAuth extends AsyncTask<String, Void, String>{
 
+        Activity activity;
+        Auth_View auth_view;
+        User user;
+        private ProgressDialog dialog;
+        public MyTaskPostAuth(Activity activity, Auth_View auth_view, User user){
+            this.activity = activity;
+            this.auth_view = auth_view;
+            this.user = user;
+            this.dialog = new ProgressDialog(activity);
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            //super.onPreExecute();
+            Log.d("LOG_TAG", "BeginPostAuth");
+            dialog.setMessage("Авторизация. Подождите...");
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                httpResponse = client.execute(httpPost);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            flushData();
+            return res;
+        }
+
+
+        @Override
+        protected  void onPostExecute(String result){
+            super.onPostExecute(result);
+            SplashScreen.getGsonParser().parseUser(result,user);
+
+            if(SplashScreen.getSessionManager().isLoggedIn()){
+                auth_view.onLoginSuccessfully();
+                auth_view.initAuthState();
+                auth_view.initHomePage();
+                SplashScreen.setProfileInfo(BaseQuery.profileQuery());
+                SplashScreen.setProfileInfoList(BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId()));
+
+                MainActivity.getNavManager().getNavProfImg().setImageBitmap(SplashScreen.getProfileInfo().getAvatar());
+                MainActivity.getNavManager().getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
+                MainActivity.getNavManager().getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
+            }else{
+                auth_view.onLoginMessageError();
+            }
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+    }
 
 public class MyTaskPost extends AsyncTask<String, Void, String>{
 
@@ -212,7 +327,48 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
             super.onPostExecute(result);
         }
     }
+    public class MyTaskPut extends AsyncTask<String, Void, String>{
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            Log.d("LOG_TAG", "BeginPut");
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                httpResponse = client.execute(httpPut);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            flushData();
+            return res;
+        }
+
+        @Override
+        protected  void onPostExecute(String result){
+            super.onPostExecute(result);
+            SplashScreen.getGsonParser().parseProfile(true,result);
+            Toast.makeText(MainActivity.getNavManager().getContext(),"Сохранено",Toast.LENGTH_SHORT).show();
+
+        }
+
+    }
 
 
     public class MyTaskGet extends AsyncTask<String, Void, String>{
@@ -252,7 +408,6 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
-
 
 
         }

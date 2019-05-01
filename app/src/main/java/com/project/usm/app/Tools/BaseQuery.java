@@ -2,6 +2,9 @@ package com.project.usm.app.Tools;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -57,6 +60,15 @@ public class BaseQuery {
         parser.parseClientApp(jsonResponseClient);
     }
 
+    public static void updateData(String queryName, String query){
+        String jsonResponseProfile = " ";
+        SplashScreen.getHttpClient().buildTaskPut().update(queryName,query)
+                .putRequestBuild(new Header[]{new BasicHeader("Authorization",
+                "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
+                .getTaskPut().execute();
+    }
+
+
     public static List<ProfileInfo> membersGroupQuery(GsonParser parser, String grID){
         String json = "";
         List<ProfileInfo> profInfoList = new LinkedList<>();
@@ -99,66 +111,7 @@ public class BaseQuery {
 
     }
 
-
-
-    public static ProfileInfo profileQueryNav(){
-        CircleImageView navProfImg = NavigationViewManager.getNewInstance().getNavProfImg();
-        TextView navName = NavigationViewManager.getNewInstance().getName();
-
-
-        String jsonResponseProfile = "";
-        SplashScreen.getHttpClient().buildTaskGet().profile()
-                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
-                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
-                .getTaskGet().execute();
-        try {
-            jsonResponseProfile = SplashScreen.getHttpClient().getTaskGet().get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }finally {
-            SplashScreen.getHttpClient().getTaskGet().cancel(true);
-        }
-
-        Log.e("sdf",jsonResponseProfile);
-        ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(jsonResponseProfile);
-
-
-        navName.setText(profInfo.getProfileResponseResource().getFirstName()+" "+profInfo.getProfileResponseResource().getLastName());
-
-
-        Bitmap Response = null;
-        SplashScreen.getHttpClient().buildTaskGetImg().customEndPoint(profInfo.getProfileResponseResource().getProfileImageUrl())
-                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
-                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
-                .getTaskGetImg().execute();
-        try {
-
-            Response = SplashScreen.getHttpClient().getTaskGetImg().get();
-
-            navProfImg.setImageBitmap(Response);
-
-
-
-        } catch (ExecutionException  | InterruptedException e) {
-            e.printStackTrace();
-        }finally {
-            SplashScreen.getHttpClient().getTaskGetImg().cancel(true);
-        }
-
-        return profInfo;
-
-    }
-
-
-
-    public static ProfileInfo profileQuery(Activity activity){
-        CircleImageView profImg = (CircleImageView) activity.findViewById(R.id.profile_image);
-        CircleImageView navProfImg = NavigationViewManager.getNewInstance().getNavProfImg();
-        TextView name = (TextView) activity.findViewById(R.id.profile_name_lastname);
-        TextView profile_group = (TextView) activity.findViewById(R.id.profile_group);
-        TextView faculty = (TextView) activity.findViewById(R.id.profile_faculty);
-        TextView navName = NavigationViewManager.getNewInstance().getName();
-
+    public static ProfileInfo profileQuery(){
 
         String jsonResponseProfile = "";
         SplashScreen.getHttpClient().buildTaskGet().profile()
@@ -174,11 +127,9 @@ public class BaseQuery {
         }
 
 
-        ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(jsonResponseProfile);
-        name.setText(profInfo.getProfileResponseResource().getFirstName()+" "+profInfo.getProfileResponseResource().getLastName());
-        navName.setText(profInfo.getProfileResponseResource().getFirstName()+" "+profInfo.getProfileResponseResource().getLastName());
-        profile_group.setText(profInfo.getProfileResponseResource().getGroupId());
-
+        ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(false,jsonResponseProfile);
+        //Log.e("werwwer",jsonResponseProfile);
+        //Log.e("wersdfsdf",profInfo.getProfileResponseResource().getProfileImageUrl());
         Bitmap Response = null;
         SplashScreen.getHttpClient().buildTaskGetImg().customEndPoint(profInfo.getProfileResponseResource().getProfileImageUrl())
                 .getRequestBuild(new Header[]{new BasicHeader("Authorization",
@@ -187,11 +138,7 @@ public class BaseQuery {
         try {
 
             Response = SplashScreen.getHttpClient().getTaskGetImg().get();
-
-            navProfImg.setImageBitmap(Response);
-            profImg.setImageBitmap(Response);
-
-
+            profInfo.setAvatar(Response);
         } catch (ExecutionException  | InterruptedException e) {
             e.printStackTrace();
         }

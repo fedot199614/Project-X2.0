@@ -40,6 +40,8 @@ public class UserProfileResponseResource {
     private String lastUpdated;
     private Boolean smsNotificationActive;
     private Boolean emailNotificationActive;
+    private String speciality;
+    private String faculty;
 
     @Override
     public String toString() {

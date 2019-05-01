@@ -82,7 +82,7 @@ public class Auth extends Fragment implements Auth_View {
         Button auth = getActivity().findViewById(R.id.registrationBtn);
         login = getActivity().findViewById(R.id.email);
         password = getActivity().findViewById(R.id.password);
-        Auth_Presenter authPresenter = new Auth_Presenter(this);
+        Auth_Presenter authPresenter = new Auth_Presenter(this,getActivity());
         auth.setOnClickListener(click -> {
             authPresenter.onLogin(login.getText().toString(), password.getText().toString());
         });

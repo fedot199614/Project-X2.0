@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navViewManager = NavigationViewManager.getNewInstance();
         navViewManager.setContext(this);
+        navViewManager.setMainActivity(this);
         navViewManager.setNavigationView(findViewById(R.id.nav_view));
         navViewManager.basicInit();
         navViewManager.initIcons();
@@ -74,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             auth_presenter = new Auth_Presenter();
             HashMap<String,String> userDetails = SplashScreen.getSessionManager().getUserDetails();
             auth_presenter.createAuthUser(userDetails.get("idnp"),userDetails.get("password"),userDetails.get("token"));
-            BaseQuery.profileQueryNav();
-
-
+            navViewManager.getNavProfImg().setImageBitmap(SplashScreen.getProfileInfo().getAvatar());
+            navViewManager.getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
+            navViewManager.getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
         }else{
             navViewManager.sign_inViewVisibility();
         }
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    public void initProfile(){
+    public  void initProfile(){
         Profile profile = new Profile();
         FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
         fr.addToBackStack(getString(R.string.profile));

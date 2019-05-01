@@ -8,6 +8,8 @@ import android.transition.TransitionInflater;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.project.usm.app.MainActivity;
+import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.Model.User;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
@@ -25,8 +27,9 @@ import lombok.Getter;
 public class Auth_Presenter implements IAuth_Presenter {
     User user;
     Auth_View auth_view;
-    public Auth_Presenter(Auth_View auth) {
-
+    Activity activity;
+    public Auth_Presenter(Auth_View auth,Activity activity) {
+        this.activity = activity;
         this.auth_view = auth;
     }
 
@@ -53,30 +56,37 @@ public class Auth_Presenter implements IAuth_Presenter {
             auth_view.showErrorValidationPassword(codeValidationPassword);
         }
         if(codeValidationIdnp == -1 && codeValidationPassword == -1) {
-            auth_view.showLoading();
+            //auth_view.showLoading();
             List<BasicNameValuePair> clientParamPlusUserParam = new ArrayList<>();
             clientParamPlusUserParam.addAll(user.getParamsClient());
             clientParamPlusUserParam.addAll(user.getParams());
-            SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPost().execute();
-            try {
-                String response =  SplashScreen.getHttpClient().getTaskPost().get();
-
-                auth_view.hideLoading();
-                SplashScreen.getGsonParser().parseUser(response,user);
-
-                if(SplashScreen.getSessionManager().isLoggedIn()){
-                   auth_view.onLoginSuccessfully();
-                   auth_view.initAuthState();
-                   auth_view.initHomePage();
-                   BaseQuery.profileQueryNav();
-                }else{
-                   auth_view.onLoginMessageError();
-                }
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }finally {
-                SplashScreen.getHttpClient().getTaskPost().cancel(true);
-            }
+            SplashScreen.getHttpClient().buildTaskPostAuth(activity,auth_view,user).oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPostAuth().execute();
+//            try {
+//
+//
+//                //String response =  SplashScreen.getHttpClient().getTaskPost().get();
+//
+//                //auth_view.hideLoading();
+//                SplashScreen.getGsonParser().parseUser(response,user);
+//
+//                if(SplashScreen.getSessionManager().isLoggedIn()){
+//                   auth_view.onLoginSuccessfully();
+//                   auth_view.initAuthState();
+//                   auth_view.initHomePage();
+//                   SplashScreen.setProfileInfo(BaseQuery.profileQuery());
+//                   SplashScreen.setProfileInfoList(BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId()));
+//
+//                   MainActivity.getNavManager().getNavProfImg().setImageBitmap(SplashScreen.getProfileInfo().getAvatar());
+//                   MainActivity.getNavManager().getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
+//                   MainActivity.getNavManager().getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
+//                }else{
+//                   auth_view.onLoginMessageError();
+//                }
+//            } catch (ExecutionException | InterruptedException e) {
+//                e.printStackTrace();
+//            }finally {
+//                SplashScreen.getHttpClient().getTaskPost().cancel(true);
+//            }
 
         }
 

@@ -127,14 +127,22 @@ public class GsonParser {
 
 
 
-    public ProfileInfo parseProfile(String json){
+    public ProfileInfo parseProfile(Boolean update,String json){
 
         JsonElement element = new JsonParser().parse(json);
         JsonObject obj = element.getAsJsonObject();
-        ProfileInfo profileInfo;
+        ProfileInfo profileInfo = null;
         if(!obj.has("error")) {
-            UserProfileResponseResource profile = gson.fromJson(json, UserProfileResponseResource.class);
-             profileInfo = new ProfileInfo(profile);
+            if(!update) {
+                UserProfileResponseResource profile = gson.fromJson(json, UserProfileResponseResource.class);
+                profileInfo = new ProfileInfo(profile);
+            }else{
+
+                UserProfileResponseResource profile = gson.fromJson(json, UserProfileResponseResource.class);
+                SplashScreen.getProfileInfo().setProfileResponseResource(profile);
+                SplashScreen.getProfileInfo().updateData();
+
+            }
         }else{
             if(SplashScreen.getSessionManager().isLoggedIn()){
                 this.user = new User(SplashScreen.getSessionManager().getUserDetails().get("idnp"),SplashScreen.getSessionManager().getUserDetails().get("password"));
@@ -145,7 +153,7 @@ public class GsonParser {
             SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPost().execute();
             try {
                 String response = SplashScreen.getHttpClient().getTaskPost().get();
-                Log.e("tut2", response);
+
                 JsonElement jElement = new JsonParser().parse(response);
                 JsonObject jObject = jElement.getAsJsonObject();
                 SplashScreen.getSessionManager().updateUserToken(jObject.get("access_token").getAsString());
@@ -160,12 +168,19 @@ public class GsonParser {
                     .getTaskGet().execute();
             try {
                 jsonResponseProfile = SplashScreen.getHttpClient().getTaskGet().get();
-                Log.e("tut1", jsonResponseProfile);
+
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
-            UserProfileResponseResource profile = gson.fromJson(jsonResponseProfile, UserProfileResponseResource.class);
-            profileInfo = new ProfileInfo(profile);
+            if(!update) {
+                UserProfileResponseResource profile = gson.fromJson(jsonResponseProfile, UserProfileResponseResource.class);
+                profileInfo = new ProfileInfo(profile);
+            }else{
+                UserProfileResponseResource profile = gson.fromJson(jsonResponseProfile, UserProfileResponseResource.class);
+                SplashScreen.getProfileInfo().setProfileResponseResource(profile);
+                SplashScreen.getProfileInfo().updateData();
+
+            }
 
         }
         return profileInfo;

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,10 +15,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.project.usm.app.AOP.Annotations.CheckGalleryPermissions;
@@ -27,12 +30,16 @@ import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.Presenter.ProfilePresenter;
 import com.project.usm.app.R;
+import com.project.usm.app.SplashScreen;
 import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.Tools.FontAwesome;
+import com.project.usm.app.Tools.NavigationViewManager;
 import com.project.usm.app.Tools.RVAdapterProfileInfo;
 import com.project.usm.app.View.ProfileView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +99,22 @@ public class Profile extends Fragment implements ProfileView {
         }
     }
 
+public void setData(ProfileInfo profileInfo){
+    CircleImageView profImg = (CircleImageView) getActivity().findViewById(R.id.profile_image);
+    CircleImageView navProfImg = NavigationViewManager.getNewInstance().getNavProfImg();
+    TextView name = (TextView) getActivity().findViewById(R.id.profile_name_lastname);
+    TextView profile_group = (TextView) getActivity().findViewById(R.id.profile_group);
+    TextView faculty = (TextView) getActivity().findViewById(R.id.profile_faculty);
+    TextView navName = NavigationViewManager.getNewInstance().getName();
 
+    name.setText(profileInfo.getProfileResponseResource().getFirstName()+" "+profileInfo.getProfileResponseResource().getLastName());
+    navName.setText(profileInfo.getProfileResponseResource().getFirstName()+" "+profileInfo.getProfileResponseResource().getLastName());
+    profile_group.setText(profileInfo.getProfileResponseResource().getGroupId());
+    faculty.setText(profileInfo.getProfileResponseResource().getFaculty());
+
+    navProfImg.setImageBitmap(profileInfo.getAvatar());
+    profImg.setImageBitmap(profileInfo.getAvatar());
+}
 
 
     @ListItemSelected(item = ListItemSelected.Item.PROFILE)
@@ -103,17 +125,22 @@ public class Profile extends Fragment implements ProfileView {
         profilePresenter = new ProfilePresenter(this);
         profilePresenter.initStartState();
 
+
+
+
         RecyclerView rv = (RecyclerView)getActivity().findViewById(R.id.rv_profile_info);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
 
-        ProfileInfo profInfo  = BaseQuery.profileQuery(getActivity());
+        ProfileInfo profInfo  = SplashScreen.getProfileInfo();
+        setData(profInfo);
         RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo,getActivity());
         rv.setAdapter(adapter);
 
         TextView textGroup = (TextView) getActivity().findViewById(R.id.profile_group);
         textGroup.setOnClickListener(click->{
+            Toast.makeText(getActivity(),"Загрузка...",Toast.LENGTH_SHORT).show();
             GroupMembers sn = new GroupMembers();
             setAnimFade(sn,getActivity());
             beginTransaction(getFragmentManager(),sn,"membersGroup",textGroup.getText().toString());
@@ -173,18 +200,35 @@ public class Profile extends Fragment implements ProfileView {
             checkPermissions();
         });
     }
+
+    public byte[] getByteArray(Bitmap btm){
+        ByteArrayOutputStream baos= new ByteArrayOutputStream();
+        btm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] byteArray = baos.toByteArray();
+        return byteArray;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK){
             Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
             profImg.setImageBitmap(imageBitmap);
             navProfImg.setImageBitmap(imageBitmap);
+            getByteArray(imageBitmap);
         }else if(requestCode == GALLERY_REQUEST_CODE){
 
             if(resultCode == RESULT_OK){
+
                 Uri selectedImage = data.getData();
-                profImg.setImageURI(selectedImage);
-                navProfImg.setImageURI(selectedImage);
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                profImg.setImageBitmap(bitmap);
+                navProfImg.setImageBitmap(bitmap);
+                getByteArray(bitmap);
             }
 
 //            if (data != null && data.getExtras() != null) {

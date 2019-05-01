@@ -27,6 +27,7 @@ public class SessionManager {
     // Email address (make variable public to access from outside)
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_TOKEN = "token";
+    public static final String KEY_GROUP = "grID";
 
     // Constructor
     @SuppressLint("CommitPrefEdits")
@@ -55,6 +56,13 @@ public class SessionManager {
     public void updateUserToken(String token) {
 
         editor.putString(KEY_TOKEN, token);
+
+        // commit changes
+        editor.commit();
+    }
+    public void addUserGroup(String group) {
+
+        editor.putString(KEY_GROUP, group);
 
         // commit changes
         editor.commit();
@@ -91,6 +99,7 @@ public class SessionManager {
         // user email id
         user.put(KEY_PASSWORD, pref.getString(KEY_PASSWORD, null));
         user.put(KEY_TOKEN, pref.getString(KEY_TOKEN, null));
+        user.put(KEY_GROUP, pref.getString(KEY_GROUP, null));
         // return user
         return user;
     }

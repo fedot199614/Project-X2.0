@@ -5,10 +5,13 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.project.usm.app.R;
 
@@ -18,16 +21,19 @@ public class CustomDialogClass extends Dialog implements
     private Activity c;
     private Dialog d;
     private Button yes;
+    private TextView textUpdate;
     private TextInputLayout textInputLayout;
     private TextInputEditText textInputEditText;
-    private String quyery,queryName;
+    private String title,queryName;
 
 
-    public CustomDialogClass(Activity a,String quyery,String queryName) {
+
+    public CustomDialogClass(TextView s, Activity a, String title, String queryName) {
         super(a);
         this.c = a;
-        this.quyery= quyery;
-        this.queryName =queryName;
+        this.title= title;
+        this.queryName = queryName;
+        this.textUpdate = s;
     }
 
     @Override
@@ -38,7 +44,7 @@ public class CustomDialogClass extends Dialog implements
         yes = (Button) findViewById(R.id.update_btn_ok);
 
         textInputLayout = (TextInputLayout) findViewById(R.id.update_text_input);
-        textInputLayout.setHint(queryName);
+        textInputLayout.setHint(title);
         textInputEditText = (TextInputEditText) findViewById(R.id.update_text_input_inner);
         yes.setOnClickListener(this);
 
@@ -50,12 +56,12 @@ public class CustomDialogClass extends Dialog implements
         switch (v.getId()) {
             case R.id.update_btn_ok:
                 String text = textInputEditText.getText().toString();
-                Log.e("dfsdf",text);
-                if(text.length()<=0){
-                    textInputLayout.setError("Заполните поле!");
+
+                if(text.length()==0){
+                    Toast.makeText(c,"Поле пустое",Toast.LENGTH_SHORT).show();
                 }else{
-
-
+                    BaseQuery.updateData(queryName,text);
+                    textUpdate.setText(text);
                     dismiss();
                 }
 

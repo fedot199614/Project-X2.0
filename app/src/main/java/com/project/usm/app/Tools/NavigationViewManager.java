@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+import com.project.usm.app.MainActivity;
 import com.project.usm.app.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -20,7 +21,7 @@ import lombok.Setter;
 @Getter
 public class NavigationViewManager {
     private static final NavigationViewManager navigationViewManager = new NavigationViewManager();
-
+    private MainActivity mainActivity;
     private CircleImageView navProfImg;
     private TextView usmText;
     private TextView someInfo;

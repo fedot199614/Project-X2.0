@@ -88,8 +88,8 @@ public class GroupMembers extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
-        Bundle bundle = getArguments();
-        List<ProfileInfo> profInfo  = BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),bundle.getString("grId"));
+
+        List<ProfileInfo> profInfo  = SplashScreen.getProfileInfoList();
         RVAdapterGroupMembers adapter = new RVAdapterGroupMembers(profInfo);
         rv.setAdapter(adapter);
 

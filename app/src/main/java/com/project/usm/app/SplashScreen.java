@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.project.usm.app.Model.ClientApp;
 import com.project.usm.app.Model.News;
-import com.project.usm.app.Model.User;
+import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.Module.ContextModule;
 import com.project.usm.app.Module.DaggerInjectionComponent;
 import com.project.usm.app.Module.InjectionComponent;
@@ -21,16 +21,10 @@ import com.project.usm.app.Tools.HttpClient;
 import com.project.usm.app.Tools.SessionManager;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Inject;
-
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class SplashScreen extends AppCompatActivity {
+    private static ProfileInfo profileInfo;
     private static GsonParser gsonParser;
     private static SessionManager session;
     private static HttpClient httpClient;
@@ -38,6 +32,7 @@ public class SplashScreen extends AppCompatActivity {
     private static List<News> newsList;
     private static String jsonResponseClient,jsonResponseNews;
     private static InjectionComponent component;
+    private static List<ProfileInfo> profInfoList;
 
 
 
@@ -53,7 +48,11 @@ public class SplashScreen extends AppCompatActivity {
             gsonParser = component.getGsonParser();
             BaseQuery.oauthClient(gsonParser);
             newsList = BaseQuery.getNews(gsonParser);
+            if(session.isLoggedIn()) {
+                profileInfo  = BaseQuery.profileQuery();
+                profInfoList = BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),profileInfo.getProfileResponseResource().getGroupId());
 
+            }
 
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -72,7 +71,9 @@ public class SplashScreen extends AppCompatActivity {
         return netInfo != null && netInfo.isConnected();
     }
 
-
+    public static ProfileInfo getProfileInfo(){
+        return profileInfo;
+    }
     public static InjectionComponent getComponent(){
         return component;
     }
@@ -91,5 +92,15 @@ public class SplashScreen extends AppCompatActivity {
     public static SessionManager getSessionManager(){
         return session;
     }
+    public static void setProfileInfo(ProfileInfo profileInfo){
+        SplashScreen.profileInfo = profileInfo;
+    }
 
+    public static void setProfileInfoList(List<ProfileInfo> profileInfo){
+        SplashScreen.profInfoList = profileInfo;
+    }
+
+    public static List<ProfileInfo> getProfileInfoList(){
+        return profInfoList;
+    }
 }
