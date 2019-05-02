@@ -32,6 +32,7 @@ import com.project.usm.app.Fragments.RV_Main;
 import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.Tools.NavigationViewManager;
 import com.project.usm.app.View.MainActivityView;
+import com.squareup.picasso.Picasso;
 
 
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             auth_presenter = new Auth_Presenter();
             HashMap<String,String> userDetails = SplashScreen.getSessionManager().getUserDetails();
             auth_presenter.createAuthUser(userDetails.get("idnp"),userDetails.get("password"),userDetails.get("token"));
-            navViewManager.getNavProfImg().setImageBitmap(SplashScreen.getProfileInfo().getAvatar());
+            Picasso.get().load(SplashScreen.getProfileInfo().getProfileResponseResource().getProfileImageUrl()).into(navViewManager.getNavProfImg());
             navViewManager.getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
             navViewManager.getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
         }else{

@@ -36,6 +36,7 @@ import com.project.usm.app.Tools.FontAwesome;
 import com.project.usm.app.Tools.NavigationViewManager;
 import com.project.usm.app.Tools.RVAdapterProfileInfo;
 import com.project.usm.app.View.ProfileView;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,7 +59,7 @@ public class Profile extends Fragment implements ProfileView {
     private CircleImageView profImg,navProfImg;
     private final int CAMERA_REQUEST_CODE = 0;
     private final int GALLERY_REQUEST_CODE = 1;
-
+    private ProfileInfo profInfo;
     private String mParam1;
     private String mParam2;
 
@@ -112,8 +113,9 @@ public void setData(ProfileInfo profileInfo){
     profile_group.setText(profileInfo.getProfileResponseResource().getGroupId());
     faculty.setText(profileInfo.getProfileResponseResource().getFaculty());
 
-    navProfImg.setImageBitmap(profileInfo.getAvatar());
-    profImg.setImageBitmap(profileInfo.getAvatar());
+
+    Picasso.get().load(profileInfo.getProfileResponseResource().getProfileImageUrl()).into(profImg);
+    Picasso.get().load(profileInfo.getProfileResponseResource().getProfileImageUrl()).into(navProfImg);
 }
 
 
@@ -126,14 +128,12 @@ public void setData(ProfileInfo profileInfo){
         profilePresenter.initStartState();
 
 
-
-
         RecyclerView rv = (RecyclerView)getActivity().findViewById(R.id.rv_profile_info);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
 
-        ProfileInfo profInfo  = SplashScreen.getProfileInfo();
+        profInfo  = SplashScreen.getProfileInfo();
         setData(profInfo);
         RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo,getActivity());
         rv.setAdapter(adapter);
@@ -201,12 +201,7 @@ public void setData(ProfileInfo profileInfo){
         });
     }
 
-    public byte[] getByteArray(Bitmap btm){
-        ByteArrayOutputStream baos= new ByteArrayOutputStream();
-        btm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] byteArray = baos.toByteArray();
-        return byteArray;
-    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -214,7 +209,8 @@ public void setData(ProfileInfo profileInfo){
             Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
             profImg.setImageBitmap(imageBitmap);
             navProfImg.setImageBitmap(imageBitmap);
-            getByteArray(imageBitmap);
+            BaseQuery.updateData(imageBitmap,getActivity(),profInfo);
+
         }else if(requestCode == GALLERY_REQUEST_CODE){
 
             if(resultCode == RESULT_OK){
@@ -228,7 +224,8 @@ public void setData(ProfileInfo profileInfo){
                 }
                 profImg.setImageBitmap(bitmap);
                 navProfImg.setImageBitmap(bitmap);
-                getByteArray(bitmap);
+
+                BaseQuery.updateData(bitmap,getActivity(),profInfo);
             }
 
 //            if (data != null && data.getExtras() != null) {

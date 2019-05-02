@@ -60,6 +60,15 @@ public class BaseQuery {
         parser.parseClientApp(jsonResponseClient);
     }
 
+    public static void updateData(Bitmap bitmap, Activity activity,ProfileInfo profileInfo){
+        String jsonResponseProfile = " ";
+        SplashScreen.getHttpClient().buildTaskPostImg(bitmap,activity,profileInfo).imgPostIntoService()
+                .postRequestBuild(new Header[]{new BasicHeader("Authorization",
+                        "Client-ID 4d70425633d094e")})
+                .getTaskPostImg().execute();
+    }
+
+
     public static void updateData(String queryName, String query){
         String jsonResponseProfile = " ";
         SplashScreen.getHttpClient().buildTaskPut().update(queryName,query)
@@ -69,7 +78,19 @@ public class BaseQuery {
     }
 
 
-    public static List<ProfileInfo> membersGroupQuery(GsonParser parser, String grID){
+    public static void membersGroupQuery(GsonParser parser, String grID){
+        String json = "";
+        List<ProfileInfo> profInfoList = new LinkedList<>();
+        SplashScreen.getHttpClient().buildTaskGetGroupMember().membersService(grID)
+                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
+                .getTaskGetGroupMember().execute();
+
+
+    }
+
+
+    public static List<ProfileInfo> membersGroupQueryAsynck(GsonParser parser, String grID){
         String json = "";
         List<ProfileInfo> profInfoList = new LinkedList<>();
         SplashScreen.getHttpClient().buildTaskGet().membersService(grID)
@@ -86,25 +107,6 @@ public class BaseQuery {
             e.printStackTrace();
         }finally {
             SplashScreen.getHttpClient().getTaskGet().cancel(true);
-        }
-
-
-        for(ProfileInfo element : profInfoList){
-            Bitmap Response = null;
-            SplashScreen.getHttpClient().buildTaskGetImg().customEndPoint(element.getProfileResponseResource().getProfileImageUrl())
-                    .getRequestBuild(new Header[]{new BasicHeader("Authorization",
-                            "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
-                    .getTaskGetImg().execute();
-            try {
-
-                Response = SplashScreen.getHttpClient().getTaskGetImg().get();
-                element.setAvatar(Response);
-            } catch (ExecutionException  | InterruptedException e) {
-                e.printStackTrace();
-            }
-            finally {
-                SplashScreen.getHttpClient().getTaskGetImg().cancel(true);
-            }
         }
 
         return profInfoList;
@@ -126,22 +128,7 @@ public class BaseQuery {
             SplashScreen.getHttpClient().getTaskGet().cancel(true);
         }
 
-
         ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(false,jsonResponseProfile);
-        //Log.e("werwwer",jsonResponseProfile);
-        //Log.e("wersdfsdf",profInfo.getProfileResponseResource().getProfileImageUrl());
-        Bitmap Response = null;
-        SplashScreen.getHttpClient().buildTaskGetImg().customEndPoint(profInfo.getProfileResponseResource().getProfileImageUrl())
-                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
-                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
-                .getTaskGetImg().execute();
-        try {
-
-            Response = SplashScreen.getHttpClient().getTaskGetImg().get();
-            profInfo.setAvatar(Response);
-        } catch (ExecutionException  | InterruptedException e) {
-            e.printStackTrace();
-        }
 
         return profInfo;
     }

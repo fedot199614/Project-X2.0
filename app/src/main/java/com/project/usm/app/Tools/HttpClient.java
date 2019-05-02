@@ -10,6 +10,7 @@ import android.content.Entity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,17 +22,22 @@ import android.widget.Toast;
 
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.MainActivity;
+import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.Model.User;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
 import com.project.usm.app.View.Auth_View;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.AbstractSequentialList;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -51,9 +57,12 @@ import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.client.methods.HttpPut;
 import cz.msebera.android.httpclient.client.utils.URLEncodedUtils;
+import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
+import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import lombok.Getter;
@@ -72,6 +81,7 @@ public class HttpClient {
     private HttpPost httpPost;
     private HttpGet httpGet;
     private String updateService;
+    private String imgService;
     private String response;
     private String oauthService;
     private String newsService;
@@ -81,7 +91,8 @@ public class HttpClient {
     private MyTaskGet taskGet;
     private MyTaskGetImg taskGetImg;
     private MyTaskPut taskPut;
-
+    private MyTaskPostImg taskPostImg;
+    private MyTaskGetGroupMember taskGetGroupMember;
 
     @Inject
 public HttpClient(String url,String port){
@@ -94,10 +105,16 @@ public HttpClient(String url,String port){
     this.profileService = "users/profile/";
     this.groupMembersService = "users/query";
     this.updateService = "users/update";
+    this.imgService = "https://api.imgur.com/3/upload";
 }
 
 public HttpClient buildTaskGetImg(){
         this.taskGetImg = new MyTaskGetImg();
+        return this;
+    }
+
+ public HttpClient buildTaskPostImg(Bitmap bitmap,Activity activity,ProfileInfo profileInfo){
+        this.taskPostImg = new MyTaskPostImg(bitmap,activity,profileInfo);
         return this;
     }
 
@@ -115,6 +132,11 @@ public HttpClient buildTaskGet(){
     this.taskGet = new MyTaskGet();
     return this;
 }
+
+    public HttpClient buildTaskGetGroupMember() {
+        this.taskGetGroupMember = new MyTaskGetGroupMember();
+        return this;
+    }
 
     public HttpClient buildTaskPut(){
         this.taskPut = new MyTaskPut();
@@ -157,6 +179,12 @@ public HttpClient update(String queryName,String query){
     return this;
 }
 
+    public HttpClient imgPostIntoService(){
+        this.absoluteUrl = this.imgService;
+        this.httpPost = new HttpPost(absoluteUrl);
+        return this;
+    }
+
 public HttpClient membersService(String query){
 
         this.absoluteUrl = this.url+":"+this.port+"/"+this.groupMembersService;
@@ -198,10 +226,15 @@ public HttpClient getRequestBuild(Header[] headers){
 }
 
 
-public HttpClient putRequestBuild(Header[] headers){
-        httpPut.setHeaders(headers);
+public HttpClient postRequestBuild(Header[] headers){
+        httpPost.setHeaders(headers);
         return this;
 }
+    public HttpClient putRequestBuild(Header[] headers){
+        httpPut.setHeaders(headers);
+        return this;
+    }
+
 
 public void flushData(){
     params.clear();
@@ -211,6 +244,8 @@ public void flushData(){
 public void closeClient() throws IOException {
     client.close();
 }
+
+
 
     public class MyTaskPostAuth extends AsyncTask<String, Void, String>{
 
@@ -270,9 +305,8 @@ public void closeClient() throws IOException {
                 auth_view.initAuthState();
                 auth_view.initHomePage();
                 SplashScreen.setProfileInfo(BaseQuery.profileQuery());
-                SplashScreen.setProfileInfoList(BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId()));
-
-                MainActivity.getNavManager().getNavProfImg().setImageBitmap(SplashScreen.getProfileInfo().getAvatar());
+                BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId());
+                Picasso.get().load(SplashScreen.getProfileInfo().getProfileResponseResource().getProfileImageUrl()).into(MainActivity.getNavManager().getNavProfImg());
                 MainActivity.getNavManager().getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
                 MainActivity.getNavManager().getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
             }else{
@@ -371,6 +405,153 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
     }
 
 
+    public class MyTaskPostImg extends AsyncTask<String, Void, String>{
+        File file;
+        Activity activity;
+        Bitmap bitmap;
+        String path_external = Environment.getExternalStorageDirectory() + File.separator + "temporary_file.jpg";
+        ProfileInfo profileInfo;
+        public MyTaskPostImg(Bitmap bitmap, Activity activity, ProfileInfo profileInfo) {
+            this.bitmap = bitmap;
+            this.activity= activity;
+            this.profileInfo = profileInfo;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            Log.d("LOG_TAG", "BeginPut");
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            //String[] array = profileInfo.getProfileResponseResource().getProfileImageUrl().replace("//","/").split("/");
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            file = new File(path_external);
+            try {
+                FileOutputStream fo = new FileOutputStream(file);
+                fo.write(bytes.toByteArray());
+                fo.flush();
+                fo.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            byte[] byteArray = bytes.toByteArray();
+//            String str = "";
+//            try {
+//                str = new String(byteArray, "UTF-8");
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                HttpEntity entity = MultipartEntityBuilder.create()
+                        .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                        .addBinaryBody("image",file)
+                        .addTextBody("type", "file")
+                        .addTextBody("name", "upload.jpg")
+                        .build();
+                httpPost.setEntity(entity);
+                httpResponse = client.execute(httpPost);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            String urlImg = "";
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+                Log.e("ertertert",res);
+                urlImg = SplashScreen.getGsonParser().parseImgUrl(res);
+
+                Log.e("ertertert23",urlImg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            absoluteUrl = url+":"+port+"/"+updateService;
+            if(!absoluteUrl.endsWith("?")) {
+                absoluteUrl += "?";
+            }
+            List<NameValuePair> params = new LinkedList<NameValuePair>();
+            params.add(new BasicNameValuePair("profileImageUrl", urlImg));
+            String paramString = URLEncodedUtils.format(params, "utf-8");
+            absoluteUrl+=paramString;
+            httpPut = new HttpPut(absoluteUrl);
+            httpPut.setHeader(new BasicHeader("Authorization",
+                    "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token")));
+            try {
+                httpResponse = client.execute(httpPut);
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+                Log.e("ertertert12431",res);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            flushData();
+            return res;
+        }
+
+        @Override
+        protected  void onPostExecute(String result){
+            super.onPostExecute(result);
+            //Log.e("ertertert",result);
+            SplashScreen.getGsonParser().parseProfile(true,result);
+            Toast.makeText(MainActivity.getNavManager().getContext(),"Сохранено",Toast.LENGTH_SHORT).show();
+
+
+        }
+
+    }
+    public class MyTaskGetGroupMember extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            Log.d("LOG_TAG", "BeginGet");
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                httpResponse = client.execute(httpGet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            flushData();
+            return res;
+        }
+
+
+        @Override
+        protected  void onPostExecute(String result){
+            super.onPostExecute(result);
+            SplashScreen.setProfileInfoList(SplashScreen.getGsonParser().parseMembers(result));
+
+        }
+    }
+
     public class MyTaskGet extends AsyncTask<String, Void, String>{
 
         @Override
@@ -408,8 +589,6 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
-
-
         }
     }
 
@@ -438,6 +617,7 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
                 // responseCode = httpResponse.getStatusLine().getStatusCode();
 
                 HttpEntity entity = httpResponse.getEntity();
+
 
                 if (entity != null)
                 {

@@ -41,7 +41,6 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         component = DaggerInjectionComponent.builder().contextModule(new ContextModule(this)).build();
         if(isOnline()) {
-
             session = component.getSessionManager();
             httpClient = component.getHttpClient();
             clientApp = component.getClientApp();
@@ -50,7 +49,7 @@ public class SplashScreen extends AppCompatActivity {
             newsList = BaseQuery.getNews(gsonParser);
             if(session.isLoggedIn()) {
                 profileInfo  = BaseQuery.profileQuery();
-                profInfoList = BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),profileInfo.getProfileResponseResource().getGroupId());
+                BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),profileInfo.getProfileResponseResource().getGroupId());
 
             }
 

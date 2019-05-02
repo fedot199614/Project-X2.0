@@ -124,7 +124,14 @@ public class GsonParser {
 
     }
 
+    public String parseImgUrl(String json){
 
+        JsonElement element = new JsonParser().parse(json);
+        JsonObject obj = element.getAsJsonObject();
+        String res = obj.get("data").getAsJsonObject().get("link").getAsString();
+
+        return res;
+    }
 
 
     public ProfileInfo parseProfile(Boolean update,String json){

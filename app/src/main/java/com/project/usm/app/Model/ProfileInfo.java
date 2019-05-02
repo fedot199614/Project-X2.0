@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.project.usm.app.DTO.UserProfileResponseResource;
 
@@ -37,7 +38,6 @@ public class ProfileInfo {
     private List<String> title;
     private Map<String,Boolean> editable = new LinkedHashMap<>();
     private List<String> info;
-    private Bitmap avatar;
 
     public void updateData(){
         data.put("Адрес",this.profileResponseResource.getStreetAddress()); editable.put("streetAddress",true);
@@ -46,7 +46,6 @@ public class ProfileInfo {
         data.put("Номер группы",this.profileResponseResource.getGroupId()); editable.put("1",false);
         data.put("Форма обучения",String.valueOf(this.profileResponseResource.getEducationFormType())); editable.put("2",false);
         data.put("Номер студ. книжки",this.profileResponseResource.getCarnetId()); editable.put("3",false);
-        data.put("Пол",this.profileResponseResource.getSex()); editable.put("4",false);
         title = new LinkedList<>();
         info = new LinkedList<>();
 
@@ -67,7 +66,6 @@ public class ProfileInfo {
         data.put("Номер группы",this.profileResponseResource.getGroupId()); editable.put("1",false);
         data.put("Форма обучения",String.valueOf(this.profileResponseResource.getEducationFormType())); editable.put("2",false);
         data.put("Номер студ. книжки",this.profileResponseResource.getCarnetId()); editable.put("3",false);
-        data.put("Пол",this.profileResponseResource.getSex()); editable.put("4",false);
         title = new LinkedList<>();
         info = new LinkedList<>();
 

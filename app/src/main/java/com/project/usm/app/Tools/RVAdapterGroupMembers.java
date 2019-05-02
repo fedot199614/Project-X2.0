@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -38,7 +39,8 @@ public MemberViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) 
 @Override
 public void onBindViewHolder(@NonNull MemberViewHolder personViewHolder, int i) {
         personViewHolder.name.setText(profileInfo.get(i).getProfileResponseResource().getFirstName()+" "+profileInfo.get(i).getProfileResponseResource().getLastName());
-        personViewHolder.img.setImageBitmap(profileInfo.get(i).getAvatar());
+        Picasso.get().load(profileInfo.get(i).getProfileResponseResource().getProfileImageUrl()).into( personViewHolder.img);
+        //personViewHolder.img.setImageBitmap(profileInfo.get(i).getAvatar());
 }
 
 @Override
