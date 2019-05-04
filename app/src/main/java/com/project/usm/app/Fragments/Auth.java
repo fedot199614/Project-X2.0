@@ -125,7 +125,7 @@ public class Auth extends Fragment implements Auth_View {
 
     @Override
     public void showLoading() {
-         dialog = ProgressDialog.show(getContext(),"","Авторизация. Подождите..");
+         dialog = ProgressDialog.show(getContext(),"",getString(R.string.autorizationWait));
     }
 
     @Override
@@ -137,12 +137,12 @@ public class Auth extends Fragment implements Auth_View {
 
     @Override
     public void onLoginMessageError() {
-        Toast.makeText(getContext(),"Ошибка авторизации",Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(),getString(R.string.authorizationFaled),Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onLoginSuccessfully() {
-        Toast.makeText(getContext(),"Успешная авторизация",Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(),getString(R.string.succecs),Toast.LENGTH_LONG).show();
     }
 
     @Override

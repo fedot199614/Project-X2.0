@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -69,19 +70,27 @@ public class BaseQuery {
     }
 
 
-    public static void updateData(String queryName, String query){
+    public static void updateData(Activity activity,String queryName, String query){
         String jsonResponseProfile = " ";
-        SplashScreen.getHttpClient().buildTaskPut().update(queryName,query)
+        SplashScreen.getHttpClient().buildTaskPut(activity).update(queryName,query)
                 .putRequestBuild(new Header[]{new BasicHeader("Authorization",
                 "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
                 .getTaskPut().execute();
     }
 
+    public static void scheduleQuery(RecyclerView rv,Activity activity,String query){
+        String jsonResponseProfile = " ";
+        SplashScreen.getHttpClient().buildTaskGetSchedule(rv,activity).getSchedule(query)
+                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
+                .getTaskSchedule().execute();
+    }
 
-    public static void membersGroupQuery(GsonParser parser, String grID){
+
+    public static void membersGroupQuery(RecyclerView rv,Activity activity,GsonParser parser, String grID){
         String json = "";
         List<ProfileInfo> profInfoList = new LinkedList<>();
-        SplashScreen.getHttpClient().buildTaskGetGroupMember().membersService(grID)
+        SplashScreen.getHttpClient().buildTaskGetGroupMember(rv,activity).membersService(grID)
                 .getRequestBuild(new Header[]{new BasicHeader("Authorization",
                         "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
                 .getTaskGetGroupMember().execute();
@@ -90,7 +99,7 @@ public class BaseQuery {
     }
 
 
-    public static List<ProfileInfo> membersGroupQueryAsynck(GsonParser parser, String grID){
+    public static List<ProfileInfo> membersGroupQueryAsynck(Activity activity,GsonParser parser, String grID){
         String json = "";
         List<ProfileInfo> profInfoList = new LinkedList<>();
         SplashScreen.getHttpClient().buildTaskGet().membersService(grID)
@@ -101,7 +110,7 @@ public class BaseQuery {
 
             json = SplashScreen.getHttpClient().getTaskGet().get();
 
-            profInfoList = parser.parseMembers(json);
+            profInfoList = parser.parseMembers(activity,json);
 
         } catch (ExecutionException  | InterruptedException e) {
             e.printStackTrace();
@@ -113,7 +122,7 @@ public class BaseQuery {
 
     }
 
-    public static ProfileInfo profileQuery(){
+    public static ProfileInfo profileQuery(Activity activity){
 
         String jsonResponseProfile = "";
         SplashScreen.getHttpClient().buildTaskGet().profile()
@@ -128,7 +137,7 @@ public class BaseQuery {
             SplashScreen.getHttpClient().getTaskGet().cancel(true);
         }
 
-        ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(false,jsonResponseProfile);
+        ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(activity,false,jsonResponseProfile);
 
         return profInfo;
     }

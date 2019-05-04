@@ -132,7 +132,7 @@ public void setData(ProfileInfo profileInfo){
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
-
+        SplashScreen.getProfileInfo().updateData();
         profInfo  = SplashScreen.getProfileInfo();
         setData(profInfo);
         RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo,getActivity());
@@ -140,9 +140,9 @@ public void setData(ProfileInfo profileInfo){
 
         TextView textGroup = (TextView) getActivity().findViewById(R.id.profile_group);
         textGroup.setOnClickListener(click->{
-            Toast.makeText(getActivity(),"Загрузка...",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),getString(R.string.loading),Toast.LENGTH_SHORT).show();
             GroupMembers sn = new GroupMembers();
-            setAnimFade(sn,getActivity());
+            //setAnimFade(sn,getActivity());
             beginTransaction(getFragmentManager(),sn,"membersGroup",textGroup.getText().toString());
         });
 

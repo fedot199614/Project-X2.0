@@ -88,48 +88,15 @@ public class GroupMembers extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
-        BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId());
-        List<ProfileInfo> profInfo  = SplashScreen.getProfileInfoList();
-        RVAdapterGroupMembers adapter = new RVAdapterGroupMembers(profInfo);
-        rv.setAdapter(adapter);
+        BaseQuery.membersGroupQuery(rv,getActivity(),SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId());
 
-        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(rv.getContext(), R.anim.layout_animation_fall_down);
-        rv.setLayoutAnimation(controller);
-        rv.getAdapter().notifyDataSetChanged();
-        rv.scheduleLayoutAnimation();
-        itemClickListener(rv,profInfo);
+
+
 
 
     }
 
 
-    public void itemClickListener(RecyclerView rv,  List<ProfileInfo> profInfo) {
-        rv.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), rv ,new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                alertDialog.setTitle("Информация");
-                List<String> titles = profInfo.get(position).getTitle();
-                List<String> info = profInfo.get(position).getInfo();
-                String res = "";
-                for(int i=0;i<titles.size();i++){
-                    res += titles.get(i)+": "+info.get(i)+"\n";
-                }
-                alertDialog.setMessage(res);
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
-    }
 
 
 

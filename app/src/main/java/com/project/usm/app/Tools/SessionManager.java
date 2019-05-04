@@ -28,6 +28,7 @@ public class SessionManager {
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_TOKEN = "token";
     public static final String KEY_GROUP = "grID";
+    public static final String KEY_LOCALIZATION = "LOCAL";
 
     // Constructor
     @SuppressLint("CommitPrefEdits")
@@ -66,6 +67,28 @@ public class SessionManager {
 
         // commit changes
         editor.commit();
+    }
+    public void setLocalizationApp(String localization) {
+
+        editor.putString(KEY_LOCALIZATION, localization);
+
+        // commit changes
+        editor.commit();
+    }
+
+    public Boolean isSessionContainLocalizationValue(){
+        if(pref.contains(KEY_LOCALIZATION)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public String getLocalizationApp() {
+
+       return pref.getString(KEY_LOCALIZATION,null);
+        // commit changes
+
     }
     /**
      * Check login method wil check user login status If false it will redirect

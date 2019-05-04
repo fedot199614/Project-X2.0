@@ -18,6 +18,8 @@ import com.project.usm.app.AOP.Annotations.InitTabBar;
 import com.project.usm.app.AOP.Annotations.ListItemSelected;
 import com.project.usm.app.Model.ScheduleModel;
 import com.project.usm.app.R;
+import com.project.usm.app.SplashScreen;
+import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.Tools.NavItems;
 
 import com.project.usm.app.Tools.RVAdapterSchedule;
@@ -29,7 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class Schedule extends Fragment implements TabLayout.OnTabSelectedListener{
+public class Schedule extends Fragment{
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -77,65 +79,65 @@ public class Schedule extends Fragment implements TabLayout.OnTabSelectedListene
         super.onActivityCreated(state);
 
 
-        List<ScheduleModel> monday = new ArrayList<>();
-        monday.add(new ScheduleModel("9:45","11:15","4","Propr.intel","413","Bodiul.T"));
-        monday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
-        monday.add(new ScheduleModel("13:30","15:00","4","Manag. Inovat","413","Sperelup.L"));
-        monday.add(new ScheduleModel("8:00","9:30","4","Manag. Inovat","332","Sperelup.L"));
-        monday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
-        monday.add(new ScheduleModel("11:30","13:00","4","Proect. Intert","247","Sirkeli.V"));
-        monday.add(new ScheduleModel("13:30","15:00","4","Prog. Driverilor","138","Narolschi.I"));
-
-        List<ScheduleModel> tuesday = new ArrayList<>();
-        tuesday.add(new ScheduleModel("8:00","9:30","4","Manag. Inovat","332","Sperelup.L"));
-        tuesday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
-        tuesday.add(new ScheduleModel("11:30","13:00","4","Proect. Intert","247","Sirkeli.V"));
-        tuesday.add(new ScheduleModel("13:30","15:00","4","Prog. Driverilor","138","Narolschi.I"));
-
-        List<ScheduleModel> wednesday = new ArrayList<>();
-        wednesday.add(new ScheduleModel("8:00","9:30","4","Sistem. Intelegenta","421b","Capatina.G"));
-        wednesday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
-        wednesday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
-
-        List<ScheduleModel> thursday = new ArrayList<>();
-        thursday.add(new ScheduleModel("8:00","9:30","4","Sistem. Intelegenta","421b","Capatina.G"));
-        thursday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
-        thursday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
-        thursday.add(new ScheduleModel("8:00","9:30","4","Sistem. Intelegenta","421b","Capatina.G"));
-        thursday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
-        thursday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
-        thursday.add(new ScheduleModel("9:45","11:15","4","Propr.intel","413","Bodiul.T"));
-        thursday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
-        thursday.add(new ScheduleModel("13:30","15:00","4","Manag. Inovat","413","Sperelup.L"));
-        thursday.add(new ScheduleModel("8:00","9:30","4","Manag. Inovat","332","Sperelup.L"));
-        thursday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
-        thursday.add(new ScheduleModel("11:30","13:00","4","Proect. Intert","247","Sirkeli.V"));
-        thursday.add(new ScheduleModel("13:30","15:00","4","Prog. Driverilor","138","Narolschi.I"));
-
-        List<ScheduleModel> friday = new ArrayList<>();
-        friday.add(new ScheduleModel("8:00","9:30","4","Sistem. Intelegenta","421b","Capatina.G"));
-        friday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
-        friday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
-        friday.add(new ScheduleModel("9:45","11:15","4","Propr.intel","413","Bodiul.T"));
-        friday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
-        friday.add(new ScheduleModel("13:30","15:00","4","Manag. Inovat","413","Sperelup.L"));
-        friday.add(new ScheduleModel("8:00","9:30","4","Manag. Inovat","332","Sperelup.L"));
-        friday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
-        friday.add(new ScheduleModel("11:30","13:00","4","Proect. Intert","247","Sirkeli.V"));
-        friday.add(new ScheduleModel("13:30","15:00","4","Prog. Driverilor","138","Narolschi.I"));
-
-        List<ScheduleModel> saturday = new ArrayList<>();
-        List<ScheduleModel> sunday = new ArrayList<>();
-
-        mapSchedule = new HashMap<>();
-
-        mapSchedule.put(0,monday);
-        mapSchedule.put(1,tuesday);
-        mapSchedule.put(2,wednesday);
-        mapSchedule.put(3,thursday);
-        mapSchedule.put(4,friday);
-        mapSchedule.put(5,saturday);
-        mapSchedule.put(6,sunday);
+//        List<ScheduleModel> monday = new ArrayList<>();
+//        monday.add(new ScheduleModel("9:45","11:15","4","Propr.intel","413","Bodiul.T"));
+//        monday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
+//        monday.add(new ScheduleModel("13:30","15:00","4","Manag. Inovat","413","Sperelup.L"));
+//        monday.add(new ScheduleModel("8:00","9:30","4","Manag. Inovat","332","Sperelup.L"));
+//        monday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
+//        monday.add(new ScheduleModel("11:30","13:00","4","Proect. Intert","247","Sirkeli.V"));
+//        monday.add(new ScheduleModel("13:30","15:00","4","Prog. Driverilor","138","Narolschi.I"));
+//
+//        List<ScheduleModel> tuesday = new ArrayList<>();
+//        tuesday.add(new ScheduleModel("8:00","9:30","4","Manag. Inovat","332","Sperelup.L"));
+//        tuesday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
+//        tuesday.add(new ScheduleModel("11:30","13:00","4","Proect. Intert","247","Sirkeli.V"));
+//        tuesday.add(new ScheduleModel("13:30","15:00","4","Prog. Driverilor","138","Narolschi.I"));
+//
+//        List<ScheduleModel> wednesday = new ArrayList<>();
+//        wednesday.add(new ScheduleModel("8:00","9:30","4","Sistem. Intelegenta","421b","Capatina.G"));
+//        wednesday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
+//        wednesday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
+//
+//        List<ScheduleModel> thursday = new ArrayList<>();
+//        thursday.add(new ScheduleModel("8:00","9:30","4","Sistem. Intelegenta","421b","Capatina.G"));
+//        thursday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
+//        thursday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
+//        thursday.add(new ScheduleModel("8:00","9:30","4","Sistem. Intelegenta","421b","Capatina.G"));
+//        thursday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
+//        thursday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
+//        thursday.add(new ScheduleModel("9:45","11:15","4","Propr.intel","413","Bodiul.T"));
+//        thursday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
+//        thursday.add(new ScheduleModel("13:30","15:00","4","Manag. Inovat","413","Sperelup.L"));
+//        thursday.add(new ScheduleModel("8:00","9:30","4","Manag. Inovat","332","Sperelup.L"));
+//        thursday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
+//        thursday.add(new ScheduleModel("11:30","13:00","4","Proect. Intert","247","Sirkeli.V"));
+//        thursday.add(new ScheduleModel("13:30","15:00","4","Prog. Driverilor","138","Narolschi.I"));
+//
+//        List<ScheduleModel> friday = new ArrayList<>();
+//        friday.add(new ScheduleModel("8:00","9:30","4","Sistem. Intelegenta","421b","Capatina.G"));
+//        friday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
+//        friday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
+//        friday.add(new ScheduleModel("9:45","11:15","4","Propr.intel","413","Bodiul.T"));
+//        friday.add(new ScheduleModel("11:30","13:00","4","Propr.intel","413","Bodiul.T"));
+//        friday.add(new ScheduleModel("13:30","15:00","4","Manag. Inovat","413","Sperelup.L"));
+//        friday.add(new ScheduleModel("8:00","9:30","4","Manag. Inovat","332","Sperelup.L"));
+//        friday.add(new ScheduleModel("9:45","11:15","4","Sistem. Intelegenta","413","Capatina.G"));
+//        friday.add(new ScheduleModel("11:30","13:00","4","Proect. Intert","247","Sirkeli.V"));
+//        friday.add(new ScheduleModel("13:30","15:00","4","Prog. Driverilor","138","Narolschi.I"));
+//
+//        List<ScheduleModel> saturday = new ArrayList<>();
+//        List<ScheduleModel> sunday = new ArrayList<>();
+//
+//        mapSchedule = new HashMap<>();
+//
+//        mapSchedule.put(0,monday);
+//        mapSchedule.put(1,tuesday);
+//        mapSchedule.put(2,wednesday);
+//        mapSchedule.put(3,thursday);
+//        mapSchedule.put(4,friday);
+//        mapSchedule.put(5,saturday);
+//        mapSchedule.put(6,sunday);
 
 
 
@@ -144,9 +146,9 @@ public class Schedule extends Fragment implements TabLayout.OnTabSelectedListene
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
 
-        adapter = new RVAdapterSchedule(monday);
-        rv.setAdapter(adapter);
-
+//        adapter = new RVAdapterSchedule(monday);
+//        rv.setAdapter(adapter);
+        BaseQuery.scheduleQuery(rv,getActivity(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId());
 
     }
 
@@ -165,23 +167,8 @@ public class Schedule extends Fragment implements TabLayout.OnTabSelectedListene
         rv.scheduleLayoutAnimation();
     }
 
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        runLayoutAnimation();
-        adapter = new RVAdapterSchedule(mapSchedule.get(tab.getPosition()));
-        rv.setAdapter(adapter);
 
-    }
 
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
-    }
 
 
     public interface OnFragmentInteractionListener {

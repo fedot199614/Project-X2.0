@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.project.usm.app.DTO.SubjectResponseResource;
 import com.project.usm.app.Model.ScheduleModel;
 import com.project.usm.app.R;
 
@@ -17,8 +18,8 @@ public class RVAdapterSchedule extends RecyclerView.Adapter<RVAdapterSchedule.Sc
 
 
 
-    List<ScheduleModel> sch;
-   public RVAdapterSchedule(List<ScheduleModel> sch){
+    List<SubjectResponseResource> sch;
+   public RVAdapterSchedule(List<SubjectResponseResource> sch){
 
        this.sch = sch;
     }
@@ -34,10 +35,12 @@ public class RVAdapterSchedule extends RecyclerView.Adapter<RVAdapterSchedule.Sc
 
     @Override
     public void onBindViewHolder(@NonNull Schedule personViewHolder, int i) {
-        personViewHolder.subjectName.setText(sch.get(i).getSubjectName());
-        personViewHolder.professorName.setText(sch.get(i).getProfessorName()+" "+sch.get(i).getCabinetNumber()+"/"+sch.get(i).getBlock());
-        personViewHolder.textViewtimeStart.setText(sch.get(i).getTimeStart());
-        personViewHolder.textViewtimeEnd.setText(sch.get(i).getTimeEnd());
+       if(sch.get(i).getSubject() != null) {
+           personViewHolder.subjectName.setText(sch.get(i).getSubject());
+           personViewHolder.professorName.setText(sch.get(i).getProfessor() + " " + sch.get(i).getLectureRoom());
+           personViewHolder.textViewtimeStart.setText(sch.get(i).getTime().split(" ")[0]);
+           personViewHolder.textViewtimeEnd.setText(sch.get(i).getTime().split(" ")[1]);
+       }
         //personViewHolder.personPhoto.setImageResource(persons.get(i).photoId);
     }
 

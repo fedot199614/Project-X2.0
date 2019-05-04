@@ -70,7 +70,7 @@ public class Aspects {
             tabBar.setVisibility(View.GONE);
         }else{
             Schedule schedule = (Schedule) joinPoint.getTarget();
-            tabBar.setOnTabSelectedListener(schedule);
+            //tabBar.setOnTabSelectedListener(schedule);
             tabBar.setVisibility(View.VISIBLE);
         }
     }

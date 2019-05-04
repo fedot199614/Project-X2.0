@@ -2,10 +2,13 @@ package com.project.usm.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import com.project.usm.app.Tools.HttpClient;
 import com.project.usm.app.Tools.SessionManager;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class SplashScreen extends AppCompatActivity {
@@ -48,14 +52,26 @@ public class SplashScreen extends AppCompatActivity {
             BaseQuery.oauthClient(gsonParser);
             newsList = BaseQuery.getNews(gsonParser);
             if(session.isLoggedIn()) {
-                profileInfo  = BaseQuery.profileQuery();
-                BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),profileInfo.getProfileResponseResource().getGroupId());
+                profileInfo  = BaseQuery.profileQuery(this);
+                //BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),profileInfo.getProfileResponseResource().getGroupId());
 
             }
+            if(SplashScreen.getSessionManager().isSessionContainLocalizationValue()){
+                Locale myLocale = new Locale(SplashScreen.getSessionManager().getLocalizationApp());
+                Resources res = getResources();
+                DisplayMetrics dm = res.getDisplayMetrics();
+                Configuration conf = res.getConfiguration();
+                conf.locale = myLocale;
+                res.updateConfiguration(conf, dm);
+                Intent refresh = new Intent(this, MainActivity.class);
+                startActivity(refresh);
+                finish();
+            }else {
 
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }else{
             Toast.makeText(this, getString(R.string.inetConnection), Toast.LENGTH_LONG).show();
             finish();

@@ -1,5 +1,6 @@
 package com.project.usm.app.Tools;
 
+import android.app.Activity;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
@@ -11,22 +12,36 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.project.usm.app.DTO.DayResponseResource;
 import com.project.usm.app.DTO.NewsResponseResource;
+import com.project.usm.app.DTO.ScheduleResponseResource;
+import com.project.usm.app.DTO.SubjectResponseResource;
 import com.project.usm.app.DTO.UserProfileResponseResource;
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.Model.ClientApp;
 import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.ProfileInfo;
+import com.project.usm.app.Model.ScheduleModel;
 import com.project.usm.app.Model.User;
 import com.project.usm.app.SplashScreen;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import ma.glasnost.orika.CustomMapper;
+import ma.glasnost.orika.MappedTypePair;
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 public class GsonParser {
     private static User user;
@@ -71,7 +86,7 @@ public class GsonParser {
         return newsList;
     }
 
-    public List<ProfileInfo> parseMembers(String jsonObj){
+    public List<ProfileInfo> parseMembers(Activity activity,String jsonObj){
 
         List<ProfileInfo> membersList = new ArrayList<>();
         JsonElement jElement = new JsonParser().parse(jsonObj);
@@ -79,7 +94,7 @@ public class GsonParser {
         List<UserProfileResponseResource> newsResponseResourceList = gson.fromJson(jsonObj, new TypeToken<ArrayList<UserProfileResponseResource>>(){}.getType());
         if(jElement.isJsonArray()) {
             for(UserProfileResponseResource element : newsResponseResourceList){
-                membersList.add(new ProfileInfo(element));
+                membersList.add(new ProfileInfo(activity,element));
             }
         }else if(jElement.isJsonObject()){
             JsonObject news = jElement.getAsJsonObject();
@@ -124,6 +139,89 @@ public class GsonParser {
 
     }
 
+
+    public Map<Integer,List<SubjectResponseResource>> parseSchedule(String json){
+        Map<Integer,List<SubjectResponseResource>> mapSchedule = null;
+        JsonElement jElement = new JsonParser().parse(json);
+        JsonObject jObject = jElement.getAsJsonObject();
+        ScheduleResponseResource schedule = null;
+        if(!jObject.has("error")){
+            schedule = gson.fromJson(json, ScheduleResponseResource.class);
+            mapSchedule = new HashMap<>();
+            for(DayResponseResource element : schedule.getDays()){
+                List<SubjectResponseResource> list2 = element.getSubjects();
+                switch(element.getDay()){
+                    case "MONDAY":
+                        mapSchedule.put(0,list2);
+                        break;
+                    case "TUESDAY":
+                        mapSchedule.put(1,list2);
+                        break;
+                    case "WEDNESDAY":
+                        mapSchedule.put(2,list2);
+                        break;
+                    case "THURSDAY":
+                        mapSchedule.put(3,list2);
+                        break;
+                    case "FRIDAY":
+
+                        mapSchedule.put(4,list2);
+                        break;
+                    case "SATURDAY":
+                        mapSchedule.put(5,list2);
+                        break;
+                    case "SUNDAY":
+                        mapSchedule.put(6,list2);
+                        break;
+
+                }
+            };
+
+//            MapperFactory factory = new DefaultMapperFactory.Builder().build();
+//            factory.classMap(SubjectResponseResource.class,ScheduleModel.class)
+//                    .byDefault()
+//                    .customize(new CustomMapper<SubjectResponseResource, ScheduleModel>() {
+//                        @Override
+//                        public void mapAtoB(SubjectResponseResource subjectResponseResource, ScheduleModel scheduleModel, MappingContext context) {
+//                            scheduleModel.setTimeStart(subjectResponseResource.getTime().split(" ")[0]);
+//                            scheduleModel.setTimeEnd(subjectResponseResource.getTime().split(" ")[1]);
+//                            scheduleModel.setBlock(subjectResponseResource.getLectureRoom().split("/")[1]);
+//                            scheduleModel.setCabinetNumber(subjectResponseResource.getLectureRoom().split("/")[0]);
+//                        }
+//                    }).register();
+//
+//            factory.classMap(DayResponseResource.class,ScheduleModel.class)
+//                    .field("day","day")
+//                    .register();
+//
+//            factory.classMap(ScheduleResponseResource.class,ScheduleModel.class)
+//                    .register();
+//
+//
+//            List<ScheduleModel> list = new LinkedList<>();
+//
+//            MapperFacade facade = factory.getMapperFacade();
+//            if(schedule != null) {
+//                list = facade.mapAsList(schedule.getDays(), ScheduleModel.class);
+//            }
+//
+//            Log.e("ewrwer",list.get(0).toString());
+
+
+
+
+        }else{
+
+            if(jObject.has("error") && jObject.get("error").getAsString().equals(INVALID_TOKEN)){
+                SplashScreen.getSessionManager().logoutUser();
+            }
+        }
+
+
+        return  mapSchedule;
+
+    }
+
     public String parseImgUrl(String json){
 
         JsonElement element = new JsonParser().parse(json);
@@ -134,7 +232,7 @@ public class GsonParser {
     }
 
 
-    public ProfileInfo parseProfile(Boolean update,String json){
+    public ProfileInfo parseProfile(Activity activity,Boolean update,String json){
 
         JsonElement element = new JsonParser().parse(json);
         JsonObject obj = element.getAsJsonObject();
@@ -142,7 +240,7 @@ public class GsonParser {
         if(!obj.has("error")) {
             if(!update) {
                 UserProfileResponseResource profile = gson.fromJson(json, UserProfileResponseResource.class);
-                profileInfo = new ProfileInfo(profile);
+                profileInfo = new ProfileInfo(activity,profile);
             }else{
 
                 UserProfileResponseResource profile = gson.fromJson(json, UserProfileResponseResource.class);
@@ -181,7 +279,7 @@ public class GsonParser {
             }
             if(!update) {
                 UserProfileResponseResource profile = gson.fromJson(jsonResponseProfile, UserProfileResponseResource.class);
-                profileInfo = new ProfileInfo(profile);
+                profileInfo = new ProfileInfo(activity,profile);
             }else{
                 UserProfileResponseResource profile = gson.fromJson(jsonResponseProfile, UserProfileResponseResource.class);
                 SplashScreen.getProfileInfo().setProfileResponseResource(profile);

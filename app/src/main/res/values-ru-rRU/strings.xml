@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mapReady">Карта готова!</string>
+    <string name="mapW">Пожалуйста подождите...</string>
+    <string name="wrongFormat">Неверный формат</string>
+    <string name="wrongLength">Неверная длина</string>
+    <string name="emptyInput">Поле не может быть пустым</string>
+    <string name="leave">Хотите выйти?</string>
+    <string name="exit">Выход</string>
+    <string name="inetConnection">Проверьте интернет соединение!</string>
+    <string name="autorization">Авторизация</string>
+    <string name="enter">Войти</string>
+    <string name="home">Главная</string>
+    <string name="Mapp">Карта</string>
+    <string name="schedule">Расписание</string>
+    <string name="password">Пароль</string>
+    <string name="prof">Профиль</string>
+    <string name="onGallery">Выбрать фото из галереи</string>
+    <string name="newPhoto">Сделать новое фото</string>
+    <string name="edit">Редактирование</string>
+    <string name="chosePhoto">Выбирите фото</string>
+    <string name="out">Выйти</string>
+    <string name="info">Информация</string>
+    <string name="adress">Адрес</string>
+    <string name="phone">Телефон</string>
+    <string name="group">Номер группы</string>
+    <string name="form">Форма обучения</string>
+    <string name="card">Номер студ. книжки</string>
+    <string name="myMarks">Мои оценки</string>
+    <string name="empty">Поле пустое</string>
+    <string name="save">Сохранено</string>
+    <string name="noLecture">Нет пар!</string>
+    <string name="succecs">Успешная авторизация</string>
+    <string name="mapL">Загрузка местоположения...</string>
+    <string name="monday">Пн</string>
+    <string name="tuesday">Вт</string>
+    <string name="wednesday">Ср</string>
+    <string name="thursday">Чт</string>
+    <string name="friday">Пт</string>
+    <string name="saturday">Сб</string>
+    <string name="sunday">Вс</string>
+    <string name="autorizationWait">Авторизация. Подождите...</string>
+    <string name="authorizationFaled">Ошибка авторизации</string>
+    <string name="loading">Загрузка...</string>
+    <string name="updateData">Обновление данных...</string>
+</resources>

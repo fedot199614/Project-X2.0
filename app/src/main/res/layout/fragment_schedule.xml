@@ -7,6 +7,7 @@
     tools:context=".Fragments.Schedule">
 
     <!-- TODO: Update blank fragment layout -->
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_schedule"
         android:layout_width="match_parent"

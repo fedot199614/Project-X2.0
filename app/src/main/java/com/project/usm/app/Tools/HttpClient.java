@@ -3,23 +3,31 @@ package com.project.usm.app.Tools;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Entity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Message;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
+import com.project.usm.app.DTO.SubjectResponseResource;
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.MainActivity;
 import com.project.usm.app.Model.ProfileInfo;
@@ -40,8 +48,11 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.AbstractSequentialList;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -86,6 +97,7 @@ public class HttpClient {
     private String oauthService;
     private String newsService;
     private String profileService;
+    private String scheduleService;
     private MyTaskPost taskPost;
     private MyTaskPostAuth taskPostAuth;
     private MyTaskGet taskGet;
@@ -93,6 +105,7 @@ public class HttpClient {
     private MyTaskPut taskPut;
     private MyTaskPostImg taskPostImg;
     private MyTaskGetGroupMember taskGetGroupMember;
+    private MyTaskGetSchedule taskSchedule;
 
     @Inject
 public HttpClient(String url,String port){
@@ -106,10 +119,15 @@ public HttpClient(String url,String port){
     this.groupMembersService = "users/query";
     this.updateService = "users/update";
     this.imgService = "https://api.imgur.com/3/upload";
+    this.scheduleService = "schedule/week";
 }
 
 public HttpClient buildTaskGetImg(){
         this.taskGetImg = new MyTaskGetImg();
+        return this;
+    }
+    public HttpClient buildTaskGetSchedule(RecyclerView rv,Activity activity){
+        this.taskSchedule = new MyTaskGetSchedule(rv,activity);
         return this;
     }
 
@@ -133,13 +151,13 @@ public HttpClient buildTaskGet(){
     return this;
 }
 
-    public HttpClient buildTaskGetGroupMember() {
-        this.taskGetGroupMember = new MyTaskGetGroupMember();
+    public HttpClient buildTaskGetGroupMember(RecyclerView rv, Activity activity) {
+        this.taskGetGroupMember = new MyTaskGetGroupMember(rv,activity);
         return this;
     }
 
-    public HttpClient buildTaskPut(){
-        this.taskPut = new MyTaskPut();
+    public HttpClient buildTaskPut(Activity activity){
+        this.taskPut = new MyTaskPut(activity);
         return this;
     }
 
@@ -178,6 +196,20 @@ public HttpClient update(String queryName,String query){
     this.httpGet = new HttpGet(absoluteUrl);
     return this;
 }
+    public HttpClient getSchedule(String query){
+        this.absoluteUrl = this.url+":"+this.port+"/"+this.scheduleService;
+        if(!this.absoluteUrl.endsWith("?")) {
+            this.absoluteUrl += "?";
+        }
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("groupId", query));
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        this.absoluteUrl+=paramString;
+        this.httpPut = new HttpPut(absoluteUrl);
+        this.httpPost = new HttpPost(absoluteUrl);
+        this.httpGet = new HttpGet(absoluteUrl);
+        return this;
+    }
 
     public HttpClient imgPostIntoService(){
         this.absoluteUrl = this.imgService;
@@ -265,7 +297,7 @@ public void closeClient() throws IOException {
         protected void onPreExecute() {
             //super.onPreExecute();
             Log.d("LOG_TAG", "BeginPostAuth");
-            dialog.setMessage("Авторизация. Подождите...");
+            dialog.setMessage(activity.getString(R.string.autorizationWait));
             dialog.show();
         }
 
@@ -304,8 +336,8 @@ public void closeClient() throws IOException {
                 auth_view.onLoginSuccessfully();
                 auth_view.initAuthState();
                 auth_view.initHomePage();
-                SplashScreen.setProfileInfo(BaseQuery.profileQuery());
-                BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId());
+                SplashScreen.setProfileInfo(BaseQuery.profileQuery(activity));
+                //BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId());
                 Picasso.get().load(SplashScreen.getProfileInfo().getProfileResponseResource().getProfileImageUrl()).into(MainActivity.getNavManager().getNavProfImg());
                 MainActivity.getNavManager().getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
                 MainActivity.getNavManager().getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
@@ -363,6 +395,11 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
     }
     public class MyTaskPut extends AsyncTask<String, Void, String>{
 
+        Activity activity;
+        public MyTaskPut(Activity act){
+            this.activity = act;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -397,8 +434,8 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
-            SplashScreen.getGsonParser().parseProfile(true,result);
-            Toast.makeText(MainActivity.getNavManager().getContext(),"Сохранено",Toast.LENGTH_SHORT).show();
+            SplashScreen.getGsonParser().parseProfile(activity,true,result);
+            Toast.makeText(MainActivity.getNavManager().getContext(),activity.getString(R.string.save),Toast.LENGTH_SHORT).show();
 
         }
 
@@ -409,19 +446,22 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         File file;
         Activity activity;
         Bitmap bitmap;
+        ProgressDialog dialog;
         String path_external = Environment.getExternalStorageDirectory() + File.separator + "temporary_file.jpg";
         ProfileInfo profileInfo;
         public MyTaskPostImg(Bitmap bitmap, Activity activity, ProfileInfo profileInfo) {
             this.bitmap = bitmap;
             this.activity= activity;
             this.profileInfo = profileInfo;
+            this.dialog = new ProgressDialog(activity);
         }
 
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
+            dialog.setMessage(activity.getString(R.string.loading));
+            dialog.show();
             Log.d("LOG_TAG", "BeginPut");
         }
 
@@ -503,8 +543,9 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
             //Log.e("ertertert",result);
-            SplashScreen.getGsonParser().parseProfile(true,result);
-            Toast.makeText(MainActivity.getNavManager().getContext(),"Сохранено",Toast.LENGTH_SHORT).show();
+            SplashScreen.getGsonParser().parseProfile(activity,true,result);
+            dialog.dismiss();
+            Toast.makeText(MainActivity.getNavManager().getContext(),activity.getString(R.string.save),Toast.LENGTH_SHORT).show();
 
 
         }
@@ -512,10 +553,22 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
     }
     public class MyTaskGetGroupMember extends AsyncTask<String, Void, String>{
 
+
+
+        Activity activity;
+        RecyclerView rv;
+        ProgressDialog pr;
+        public  MyTaskGetGroupMember(RecyclerView rv,Activity activity){
+            this.activity = activity;
+            this.rv = rv;
+            this.pr = new ProgressDialog(activity);
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
+            pr.setMessage(activity.getString(R.string.updateData));
+            pr.show();
             Log.d("LOG_TAG", "BeginGet");
         }
 
@@ -547,8 +600,42 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
-            SplashScreen.setProfileInfoList(SplashScreen.getGsonParser().parseMembers(result));
+            SplashScreen.setProfileInfoList(SplashScreen.getGsonParser().parseMembers(activity,result));
 
+            List<ProfileInfo> profInfo  = SplashScreen.getProfileInfoList();
+            RVAdapterGroupMembers adapter = new RVAdapterGroupMembers(profInfo);
+            rv.setAdapter(adapter);
+
+            LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(rv.getContext(), R.anim.layout_animation_fall_down);
+            rv.setLayoutAnimation(controller);
+            rv.getAdapter().notifyDataSetChanged();
+            rv.scheduleLayoutAnimation();
+            rv.addOnItemTouchListener(new RecyclerItemClickListener(activity, rv ,new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
+                    alertDialog.setTitle(activity.getString(R.string.info));
+                    List<String> titles = profInfo.get(position).getTitle();
+                    List<String> info = profInfo.get(position).getInfo();
+                    String res = "";
+                    for(int i=0;i<titles.size();i++){
+                        res += titles.get(i)+": "+info.get(i)+"\n";
+                    }
+                    alertDialog.setMessage(res);
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                @Override
+                public void onLongItemClick(View view, int position) {
+
+                }
+            }));
+            pr.dismiss();
         }
     }
 
@@ -645,6 +732,114 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         }
     }
 
+    public class MyTaskGetSchedule extends AsyncTask<String, Void, String> implements TabLayout.OnTabSelectedListener{
 
+        Activity activity;
+        ProgressDialog dialog;
+        RecyclerView rv;
+        RVAdapterSchedule adapter;
+        Map<Integer,List<SubjectResponseResource>> map;
+        public MyTaskGetSchedule(RecyclerView rv,Activity activity){
+            this.activity = activity;
+            this.dialog = new ProgressDialog(activity);
+            this.rv = rv;
+        }
+
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage(activity.getString(R.string.loading));
+            dialog.show();
+            Log.d("LOG_TAG", "BeginGet");
+        }
+
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                httpResponse = client.execute(httpGet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+                Log.e("dsasadasd",res);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            flushData();
+            return res;
+        }
+        public void runLayoutAnimation(){
+            LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(rv.getContext(), R.anim.layout_animation_fall_down);
+            rv.setLayoutAnimation(controller);
+            rv.getAdapter().notifyDataSetChanged();
+            rv.scheduleLayoutAnimation();
+        }
+
+        @Override
+        protected  void onPostExecute(String result){
+            super.onPostExecute(result);
+            TabLayout tabBar = (TabLayout) activity.findViewById(R.id.tabLayout);
+            tabBar.setOnTabSelectedListener(this);
+
+            map = SplashScreen.getGsonParser().parseSchedule(result);
+            if(!map.get(0).isEmpty()){
+                adapter = new RVAdapterSchedule(map.get(0));
+                rv.setAdapter(adapter);
+
+            }else{
+                RVAdapterNoData adapter = new RVAdapterNoData(activity);
+                rv.setAdapter(adapter);
+            }
+
+
+//            Set<Integer> keys = map.keySet();
+//
+//            for(Integer key : keys){
+//                if(!map.get(key).isEmpty()){
+//                    adapter = new RVAdapterSchedule(map.get(key));
+//                    rv.setAdapter(adapter);
+//                    break;
+//                }
+//            }
+
+
+
+            dialog.dismiss();
+        }
+
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            runLayoutAnimation();
+            if(map.get(tab.getPosition()).isEmpty()){
+                RVAdapterNoData adapter = new RVAdapterNoData(activity);
+                rv.setAdapter(adapter);
+            }else {
+                adapter = new RVAdapterSchedule(map.get(tab.getPosition()));
+                rv.setAdapter(adapter);
+            }
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+
+        }
+    }
 
 }

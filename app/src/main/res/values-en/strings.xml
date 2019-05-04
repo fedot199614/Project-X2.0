@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mapReady">Map is ready!</string>
+    <string name="mapW">Please wait...</string>
+    <string name="wrongFormat">Wrong format</string>
+    <string name="wrongLength">Wrong length</string>
+    <string name="emptyInput">Input is empty!</string>
+    <string name="leave">Want to leave?</string>
+    <string name="exit">Exit</string>
+    <string name="inetConnection">Check internet connection</string>
+    <string name="autorization">Authorization</string>
+    <string name="enter">Sing In</string>
+    <string name="home">Main</string>
+    <string name="Mapp">Map</string>
+    <string name="schedule">Schedule</string>
+    <string name="password">Password</string>
+    <string name="prof">Profile</string>
+    <string name="onGallery">Select a photo from the gallery</string>
+    <string name="newPhoto">Take a new photo</string>
+    <string name="edit">Edit</string>
+    <string name="chosePhoto">Select a photo</string>
+    <string name="out">Log out</string>
+    <string name="info">Info</string>
+    <string name="adress">Address</string>
+    <string name="phone">Phone</string>
+    <string name="group">Group number</string>
+    <string name="form">Form of study</string>
+    <string name="card">Student book</string>
+    <string name="myMarks">Marks</string>
+    <string name="empty">Input is empty!</string>
+    <string name="save">Saved</string>
+    <string name="noLecture">No data</string>
+    <string name="succecs">Authorization success</string>
+    <string name="mapL">Loading location...</string>
+    <string name="monday">Mo</string>
+    <string name="tuesday">Tu</string>
+    <string name="wednesday">We</string>
+    <string name="thursday">Th</string>
+    <string name="friday">Fr</string>
+    <string name="saturday">Sa</string>
+    <string name="sunday">Su</string>
+    <string name="autorizationWait">Authorization. Wait...</string>
+    <string name="authorizationFaled">Authorisation Error</string>
+    <string name="loading">Loading..</string>
+    <string name="updateData">Data update..</string>
+</resources>

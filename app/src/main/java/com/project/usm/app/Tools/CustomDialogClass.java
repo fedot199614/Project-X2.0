@@ -58,9 +58,9 @@ public class CustomDialogClass extends Dialog implements
                 String text = textInputEditText.getText().toString();
 
                 if(text.length()==0){
-                    Toast.makeText(c,"Поле пустое",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(c, c.getString(R.string.empty),Toast.LENGTH_SHORT).show();
                 }else{
-                    BaseQuery.updateData(queryName,text);
+                    BaseQuery.updateData(c,queryName,text);
                     textUpdate.setText(text);
                     dismiss();
                 }
