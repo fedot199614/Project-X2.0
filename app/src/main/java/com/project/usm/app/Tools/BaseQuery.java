@@ -10,6 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
 import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.R;
@@ -148,5 +151,12 @@ public class BaseQuery {
                 .getRequestBuild(new Header[]{new BasicHeader("Authorization",
                         "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
                 .getTaskMarks().execute();
+    }
+
+    public static void mapQuery(Activity activity, GoogleMap mMap, Marker marker) {
+        SplashScreen.getHttpClient().buildTaskGetMap(mMap,activity,marker).getRequestMap()
+                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                        "Bearer "+SplashScreen.getClientApp().getTokenClient())})
+                .getTaskMap().execute();
     }
 }

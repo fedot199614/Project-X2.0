@@ -11,6 +11,9 @@ import android.content.DialogInterface;
 import android.content.Entity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Message;
@@ -27,6 +30,22 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
+
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.project.usm.app.DTO.MapPointResponseResource;
 import com.project.usm.app.DTO.StudentMarkDataResponseResource;
 import com.project.usm.app.DTO.SubjectResponseResource;
 import com.project.usm.app.Fragments.Profile;
@@ -37,6 +56,8 @@ import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
 import com.project.usm.app.View.Auth_View;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Document;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -100,6 +121,7 @@ public class HttpClient {
     private String profileService;
     private String scheduleService;
     private String markService;
+    private String mapService;
     private MyTaskPost taskPost;
     private MyTaskPostAuth taskPostAuth;
     private MyTaskGet taskGet;
@@ -109,6 +131,7 @@ public class HttpClient {
     private MyTaskGetGroupMember taskGetGroupMember;
     private MyTaskGetSchedule taskSchedule;
     private MyTaskGetMarks taskMarks;
+    private MyTaskGetMap taskMap;
 
     @Inject
 public HttpClient(String url,String port){
@@ -124,6 +147,7 @@ public HttpClient(String url,String port){
     this.imgService = "https://api.imgur.com/3/upload";
     this.scheduleService = "schedule/week";
     this.markService = "marks";
+    this.mapService = "map/points";
 }
 
 public HttpClient buildTaskGetImg(){
@@ -136,6 +160,11 @@ public HttpClient buildTaskGetImg(){
     }
     public HttpClient buildTaskGetMarks(RecyclerView rv,Activity activity){
         this.taskMarks = new MyTaskGetMarks(rv,activity);
+        return this;
+    }
+
+    public HttpClient buildTaskGetMap(GoogleMap map,Activity activity,Marker marker){
+        this.taskMap = new MyTaskGetMap(activity,map,marker);
         return this;
     }
 
@@ -220,6 +249,14 @@ public HttpClient update(String queryName,String query){
     }
     public HttpClient getRequestSchedule(){
         this.absoluteUrl = this.url+":"+this.port+"/"+this.markService;
+        this.httpPut = new HttpPut(absoluteUrl);
+        this.httpPost = new HttpPost(absoluteUrl);
+        this.httpGet = new HttpGet(absoluteUrl);
+        return this;
+    }
+
+    public HttpClient getRequestMap(){
+        this.absoluteUrl = this.url+":"+this.port+"/"+this.mapService;
         this.httpPut = new HttpPut(absoluteUrl);
         this.httpPost = new HttpPost(absoluteUrl);
         this.httpGet = new HttpGet(absoluteUrl);
@@ -924,6 +961,88 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
             runLayoutAnimation();
             dialog.dismiss();
         }
+    }
+
+
+
+    public class MyTaskGetMap extends AsyncTask<String, Void, List<MapPointResponseResource>> implements GoogleMap.OnInfoWindowClickListener{
+
+        Activity activity;
+        ProgressDialog dialog;
+        GoogleMap map;
+        FusedLocationProviderClient clientLocation;
+        private Marker markerStart;
+        List<Polyline> polylines;
+        public MyTaskGetMap(Activity activity,GoogleMap map,Marker markerStart){
+            this.activity = activity;
+            this.dialog = new ProgressDialog(activity);
+            this.map = map;
+            this.markerStart = markerStart;
+            this.polylines = new ArrayList<>();
+        }
+
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage(activity.getString(R.string.loading));
+            dialog.show();
+            Log.d("LOG_TAG", "BeginGet");
+        }
+
+
+
+        @Override
+        protected List<MapPointResponseResource> doInBackground(String... strings) {
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                httpResponse = client.execute(httpGet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+                Log.e("map",res);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+           List<MapPointResponseResource>  mapData = SplashScreen.getGsonParser().parseMap(res);
+
+
+
+            flushData();
+            return mapData;
+        }
+
+
+        @Override
+        protected  void onPostExecute(List<MapPointResponseResource> result){
+            super.onPostExecute(result);
+            map.setOnInfoWindowClickListener(this);
+            for(MapPointResponseResource mapPoint : result){
+                MarkerOptions markerOptions =  new MarkerOptions()
+                        .position(new LatLng(mapPoint.getLatitude(), mapPoint.getLongitude()))
+                        .snippet("Address: "+mapPoint.getAddress())
+                        .title(mapPoint.getTitle());
+
+                Marker sd = map.addMarker(markerOptions);
+
+            }
+            dialog.dismiss();
+        }
+
+        @Override
+        public void onInfoWindowClick(Marker marker) {
+            Log.e("dfsdfsd",String.valueOf(marker.getPosition()));
+        }
+
     }
 
 }

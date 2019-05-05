@@ -54,6 +54,7 @@ import com.project.usm.app.AOP.Annotations.InitTabBar;
 import com.project.usm.app.AOP.Annotations.ListItemSelected;
 import com.project.usm.app.Presenter.MapPresenter;
 import com.project.usm.app.R;
+import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.View.MapView;
 
 import java.util.List;
@@ -65,7 +66,7 @@ import static android.content.Context.LOCATION_SERVICE;
 
 
 @Getter
-public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSuccessListener<Location> {
+public class Map extends Fragment implements MapView, OnSuccessListener<Location> ,OnMapReadyCallback{
     private FusedLocationProviderClient mFusedLocationClient;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -145,6 +146,7 @@ public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSucce
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
         mapPresenter.init(getActivity());
 
+
     }
 
 
@@ -152,8 +154,8 @@ public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSucce
     public void showLoadingDialog() {
         myProgress.setTitle(getString(R.string.mapL));
         myProgress.setMessage(getString(R.string.mapW));
-        myProgress.setCancelable(true);
-        myProgress.show();
+       // myProgress.setCancelable(true);
+        //myProgress.show();
     }
 
     @Override
@@ -163,7 +165,7 @@ public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSucce
 
     @Override
     public void onSuccess(Location location) {
-        mapPresenter.destroyLoadingD();
+        //mapPresenter.destroyLoadingD();
         if(marker!=null){
             marker.remove();
         }
@@ -173,11 +175,12 @@ public class Map extends Fragment implements MapView, OnMapReadyCallback,OnSucce
                             marker = mMap.addMarker(markerOp);
                             CameraPosition cameraPosition = new CameraPosition.Builder()
                                     .target(new LatLng(location.getLatitude(), location.getLongitude()))
-                                    .zoom(17)                   // Sets the zoom
+                                    .zoom(13)                   // Sets the zoom
                                     .bearing(90)                // Sets the orientation of the camera to east
                                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                                     .build();                   // Creates a CameraPosition from the builder
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                            BaseQuery.mapQuery(getActivity(),mMap,marker);
         }
     }
 

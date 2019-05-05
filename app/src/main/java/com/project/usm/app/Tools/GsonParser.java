@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.project.usm.app.DTO.DayResponseResource;
+import com.project.usm.app.DTO.MapPointResponseResource;
 import com.project.usm.app.DTO.NewsResponseResource;
 import com.project.usm.app.DTO.ScheduleResponseResource;
 import com.project.usm.app.DTO.StudentMarkDataResponseResource;
@@ -228,8 +229,6 @@ public class GsonParser {
         StudentMarkDataResponseResource markData = null;
         if(!jObject.has("error")){
             markData = gson.fromJson(json, StudentMarkDataResponseResource.class);
-            Log.e("asdasda",String.valueOf(markData.getYears().size()));
-            Log.e("asdasda2",String.valueOf(markData.getYears().get(0).getTerms().get(0).getMarks().get(0).getEcts()));
         }else{
             if(jObject.has("error") && jObject.get("error").getAsString().equals(INVALID_TOKEN)){
                 SplashScreen.getSessionManager().logoutUser();
@@ -238,6 +237,17 @@ public class GsonParser {
 
 
         return  markData;
+
+    }
+
+    public List<MapPointResponseResource> parseMap(String json){
+        JsonElement jElement = new JsonParser().parse(json);
+        //JsonObject jObject = jElement.getAsJsonObject();
+
+
+        List<MapPointResponseResource>   mapData = gson.fromJson(json, new TypeToken<LinkedList<MapPointResponseResource>>(){}.getType());
+
+        return  mapData;
 
     }
 
