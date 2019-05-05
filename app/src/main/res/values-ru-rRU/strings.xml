@@ -43,4 +43,11 @@
     <string name="authorizationFaled">Ошибка авторизации</string>
     <string name="loading">Загрузка...</string>
     <string name="updateData">Обновление данных...</string>
+    <string name="semectr">Семестр</string>
+    <string name="discipline">Дисциплина</string>
+    <string name="mark">Оценка</string>
+    <string name="credits">Кредиты</string>
+    <string name="middleYear">Средний балл за год</string>
+    <string name="term">Семестр</string>
+    <string name="middleTerm">Средний балл за семестр</string>
 </resources>

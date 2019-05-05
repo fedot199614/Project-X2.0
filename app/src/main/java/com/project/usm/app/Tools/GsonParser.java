@@ -15,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 import com.project.usm.app.DTO.DayResponseResource;
 import com.project.usm.app.DTO.NewsResponseResource;
 import com.project.usm.app.DTO.ScheduleResponseResource;
+import com.project.usm.app.DTO.StudentMarkDataResponseResource;
 import com.project.usm.app.DTO.SubjectResponseResource;
 import com.project.usm.app.DTO.UserProfileResponseResource;
 import com.project.usm.app.Fragments.Profile;
@@ -219,6 +220,24 @@ public class GsonParser {
 
 
         return  mapSchedule;
+
+    }
+    public StudentMarkDataResponseResource parseMarks(String json){
+        JsonElement jElement = new JsonParser().parse(json);
+        JsonObject jObject = jElement.getAsJsonObject();
+        StudentMarkDataResponseResource markData = null;
+        if(!jObject.has("error")){
+            markData = gson.fromJson(json, StudentMarkDataResponseResource.class);
+            Log.e("asdasda",String.valueOf(markData.getYears().size()));
+            Log.e("asdasda2",String.valueOf(markData.getYears().get(0).getTerms().get(0).getMarks().get(0).getEcts()));
+        }else{
+            if(jObject.has("error") && jObject.get("error").getAsString().equals(INVALID_TOKEN)){
+                SplashScreen.getSessionManager().logoutUser();
+            }
+        }
+
+
+        return  markData;
 
     }
 

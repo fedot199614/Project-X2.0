@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Profile profile = new Profile();
         FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
         fr.addToBackStack(getString(R.string.profile));
-        profile.setExitTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.explode));
+        profile.setExitTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.fade));
         profile.setEnterTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.explode));
         fr.replace(R.id.mainFrame,profile).commit();
     }

@@ -74,11 +74,11 @@
                 android:textSize="18dp"
                 android:transitionName="sh_title"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/divider2"
+                app:layout_constraintStart_toStartOf="@+id/divider3"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/divider2"
+                android:id="@+id/divider3"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
@@ -117,7 +117,7 @@
                 android:transitionName="sh_mews"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/divider2" />
+                app:layout_constraintStart_toStartOf="@+id/divider3" />
 
         </android.support.constraint.ConstraintLayout>
 

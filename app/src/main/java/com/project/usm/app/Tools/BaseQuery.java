@@ -3,6 +3,7 @@ package com.project.usm.app.Tools;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
@@ -140,5 +141,12 @@ public class BaseQuery {
         ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(activity,false,jsonResponseProfile);
 
         return profInfo;
+    }
+
+    public static void marksQuery(RecyclerView rv, Activity activity) {
+        SplashScreen.getHttpClient().buildTaskGetMarks(rv,activity).getRequestSchedule()
+                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
+                .getTaskMarks().execute();
     }
 }

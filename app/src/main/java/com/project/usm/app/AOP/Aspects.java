@@ -55,6 +55,8 @@ public class Aspects {
             appCompatActivity.getSupportFragmentManager().popBackStack(appCompatActivity.getString(R.string.profile), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }else if(appCompatActivity.getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("GroupMembers")){
             appCompatActivity.getSupportFragmentManager().popBackStack("membersGroup", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }else if(appCompatActivity.getSupportFragmentManager().getFragments().get(0).getClass().getSimpleName().equals("Marks")){
+            appCompatActivity.getSupportFragmentManager().popBackStack("marks", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
 
     }

@@ -34,7 +34,7 @@
                 android:layout_weight="1"
                 android:contentDescription="TODO"
                 android:transitionName="img"
-                app:layout_constraintBottom_toTopOf="@+id/divider2"
+                app:layout_constraintBottom_toTopOf="@+id/divider3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@mipmap/no_img_small" />
@@ -95,14 +95,14 @@
                 android:textColor="@color/secondText"
                 android:textSize="14dp"
                 android:transitionName="sh_mews"
-                app:layout_constraintBottom_toTopOf="@+id/divider2"
+                app:layout_constraintBottom_toTopOf="@+id/divider3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/imagePrev"
                 app:layout_constraintTop_toBottomOf="@+id/member_name" />
 
             <LinearLayout
-                android:id="@+id/divider2"
+                android:id="@+id/divider3"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"

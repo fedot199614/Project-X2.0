@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.maps.model.Marker;
 import com.project.usm.app.AOP.Annotations.CheckGalleryPermissions;
 import com.project.usm.app.AOP.Annotations.InitTabBar;
 import com.project.usm.app.AOP.Annotations.ListItemSelected;
@@ -145,6 +146,16 @@ public void setData(ProfileInfo profileInfo){
             //setAnimFade(sn,getActivity());
             beginTransaction(getFragmentManager(),sn,"membersGroup",textGroup.getText().toString());
         });
+
+        TextView textMarks = (TextView) getActivity().findViewById(R.id.my_marks);
+        textMarks.setOnClickListener(click->{
+            Toast.makeText(getActivity(),getString(R.string.loading),Toast.LENGTH_SHORT).show();
+            Marks sn = new Marks();
+            //setAnimFade(sn,getActivity());
+            beginTransaction(getFragmentManager(),sn,"marks",textGroup.getText().toString());
+        });
+
+
 
 
     }

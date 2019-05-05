@@ -27,6 +27,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
+import com.project.usm.app.DTO.StudentMarkDataResponseResource;
 import com.project.usm.app.DTO.SubjectResponseResource;
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.MainActivity;
@@ -98,6 +99,7 @@ public class HttpClient {
     private String newsService;
     private String profileService;
     private String scheduleService;
+    private String markService;
     private MyTaskPost taskPost;
     private MyTaskPostAuth taskPostAuth;
     private MyTaskGet taskGet;
@@ -106,6 +108,7 @@ public class HttpClient {
     private MyTaskPostImg taskPostImg;
     private MyTaskGetGroupMember taskGetGroupMember;
     private MyTaskGetSchedule taskSchedule;
+    private MyTaskGetMarks taskMarks;
 
     @Inject
 public HttpClient(String url,String port){
@@ -120,6 +123,7 @@ public HttpClient(String url,String port){
     this.updateService = "users/update";
     this.imgService = "https://api.imgur.com/3/upload";
     this.scheduleService = "schedule/week";
+    this.markService = "marks";
 }
 
 public HttpClient buildTaskGetImg(){
@@ -128,6 +132,10 @@ public HttpClient buildTaskGetImg(){
     }
     public HttpClient buildTaskGetSchedule(RecyclerView rv,Activity activity){
         this.taskSchedule = new MyTaskGetSchedule(rv,activity);
+        return this;
+    }
+    public HttpClient buildTaskGetMarks(RecyclerView rv,Activity activity){
+        this.taskMarks = new MyTaskGetMarks(rv,activity);
         return this;
     }
 
@@ -205,6 +213,13 @@ public HttpClient update(String queryName,String query){
         params.add(new BasicNameValuePair("groupId", query));
         String paramString = URLEncodedUtils.format(params, "utf-8");
         this.absoluteUrl+=paramString;
+        this.httpPut = new HttpPut(absoluteUrl);
+        this.httpPost = new HttpPost(absoluteUrl);
+        this.httpGet = new HttpGet(absoluteUrl);
+        return this;
+    }
+    public HttpClient getRequestSchedule(){
+        this.absoluteUrl = this.url+":"+this.port+"/"+this.markService;
         this.httpPut = new HttpPut(absoluteUrl);
         this.httpPost = new HttpPost(absoluteUrl);
         this.httpGet = new HttpGet(absoluteUrl);
@@ -794,8 +809,8 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
             tabBar.setOnTabSelectedListener(this);
 
             map = SplashScreen.getGsonParser().parseSchedule(result);
-            if(!map.get(0).isEmpty()){
-                adapter = new RVAdapterSchedule(map.get(0));
+            if(!map.get(tabBar.getSelectedTabPosition()).isEmpty()){
+                adapter = new RVAdapterSchedule(map.get(tabBar.getSelectedTabPosition()));
                 rv.setAdapter(adapter);
 
             }else{
@@ -839,6 +854,75 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         public void onTabReselected(TabLayout.Tab tab) {
 
+        }
+    }
+
+
+    public class MyTaskGetMarks extends AsyncTask<String, Void, RVAdapterMarks>{
+
+        Activity activity;
+        ProgressDialog dialog;
+        RecyclerView rv;
+
+        Map<Integer,List<SubjectResponseResource>> map;
+        public MyTaskGetMarks(RecyclerView rv,Activity activity){
+            this.activity = activity;
+            this.dialog = new ProgressDialog(activity);
+            this.rv = rv;
+        }
+
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage(activity.getString(R.string.loading));
+            dialog.show();
+            Log.d("LOG_TAG", "BeginGet");
+        }
+
+
+
+        @Override
+        protected RVAdapterMarks doInBackground(String... strings) {
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                httpResponse = client.execute(httpGet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+                Log.e("marks",res);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            StudentMarkDataResponseResource markData = SplashScreen.getGsonParser().parseMarks(res);
+            RVAdapterMarks adapter = new RVAdapterMarks(markData.getYears(),activity);
+
+
+            flushData();
+            return adapter;
+        }
+        public void runLayoutAnimation(){
+            LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(rv.getContext(), R.anim.layout_animation_fall_down);
+            rv.setLayoutAnimation(controller);
+            rv.getAdapter().notifyDataSetChanged();
+            rv.scheduleLayoutAnimation();
+        }
+
+        @Override
+        protected  void onPostExecute(RVAdapterMarks result){
+            super.onPostExecute(result);
+            rv.setAdapter(result);
+            runLayoutAnimation();
+            dialog.dismiss();
         }
     }
 

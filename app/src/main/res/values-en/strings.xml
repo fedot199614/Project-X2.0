@@ -43,4 +43,11 @@
     <string name="authorizationFaled">Authorisation Error</string>
     <string name="loading">Loading..</string>
     <string name="updateData">Data update..</string>
+    <string name="semectr">Term</string>
+    <string name="discipline">Discipline</string>
+    <string name="mark">Mark</string>
+    <string name="credits">Credits</string>
+    <string name="term">Term</string>
+    <string name="middleYear">Annual average grade</string>
+    <string name="middleTerm">terminal average grade</string>
 </resources>
