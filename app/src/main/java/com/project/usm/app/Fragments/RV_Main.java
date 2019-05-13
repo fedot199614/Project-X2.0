@@ -101,8 +101,9 @@ public class RV_Main extends Fragment implements Home_View {
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        BaseQuery.getNews(getActivity(),this,this,SplashScreen.getGsonParser());
         homePresenter = new HomeNews(this);
+        BaseQuery.getNews(homePresenter,getActivity(),this,this,SplashScreen.getGsonParser());
+
 
     }
 
@@ -207,11 +208,6 @@ public class RV_Main extends Fragment implements Home_View {
         rv.setLayoutAnimation(controller);
         rv.getAdapter().notifyDataSetChanged();
         rv.scheduleLayoutAnimation();
-    }
-
-    @Override
-    public void repeatQuery() {
-        BaseQuery.getNews(getActivity(),this,this,SplashScreen.getGsonParser());
     }
 
     public interface OnFragmentInteractionListener {

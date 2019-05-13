@@ -15,6 +15,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.ProfileInfo;
+import com.project.usm.app.Presenter.HomeNews;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
 import com.project.usm.app.View.Home_View;
@@ -28,12 +29,12 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BaseQuery {
-    public static List<News> getNews(Activity activity, Fragment fragment, Home_View view,GsonParser parser){
+    public static List<News> getNews(HomeNews presenter,Activity activity, Fragment fragment, Home_View view, GsonParser parser){
         List<News> newsList = null;
         String jsonResponseNews = " ";
 
 
-            SplashScreen.getHttpClient().buildTaskGetNews(activity,fragment,view).news()
+            SplashScreen.getHttpClient().buildTaskGetNews(presenter,activity,fragment,view).news()
                     .getRequestBuild(new Header[]{new BasicHeader("Authorization",
                             SplashScreen.getClientApp().getTokenType()+" "+SplashScreen.getClientApp().getTokenClient())})
                     .getTaskGetNews().execute();

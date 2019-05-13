@@ -191,8 +191,8 @@ public HttpClient buildTaskGet(){
     this.taskGet = new MyTaskGet();
     return this;
 }
-public HttpClient buildTaskGetNews(Activity activity,Fragment fragment,Home_View view){
-        this.taskGetNews = new MyTaskGetNews(activity,fragment,view);
+public HttpClient buildTaskGetNews(HomeNews presenter,Activity activity,Fragment fragment,Home_View view){
+        this.taskGetNews = new MyTaskGetNews(presenter,activity,fragment,view);
         return this;
     }
 
@@ -744,11 +744,13 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         Activity activity;
         Home_View view;
         Fragment fragment;
-        public MyTaskGetNews(Activity activity, Fragment fragment,Home_View view) {
+        HomeNews homePresenter;
+        public MyTaskGetNews(HomeNews presenter,Activity activity, Fragment fragment,Home_View view) {
             this.activity = activity;
             this.dialog = new ProgressDialog(activity);
             this.view = view;
             this.fragment = fragment;
+            this.homePresenter = presenter;
         }
 
         @Override
@@ -790,7 +792,6 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
             Log.e("sdsdfd234s",result);
             List<News> list = SplashScreen.getGsonParser().parseNews(result);
             SplashScreen.setNewsList(list);
-            HomeNews homePresenter = new HomeNews(view);
             homePresenter.Init();
             homePresenter.setAnimFade(fragment,activity);
             dialog.dismiss();
