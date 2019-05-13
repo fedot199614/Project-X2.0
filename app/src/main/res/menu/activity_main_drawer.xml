@@ -1,34 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/grp1" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@android:drawable/ic_menu_help"
-            android:title="Главная" />
+            android:title="@string/home"
+            />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/profile"
             android:icon="@android:drawable/ic_menu_help"
-            android:title="xxx" />
+            android:title="@string/prof" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_schedule"
             android:icon="@android:drawable/ic_menu_help"
-            android:title="xxx" />
+            android:title="@string/schedule" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/map"
             android:icon="@android:drawable/ic_menu_help"
-            android:title="xxx" />
+            android:title="@string/Mapp" />
     </group>
 
-    <item android:title="Авторизация">
-        <menu>
+    <group  android:id="@+id/grp2" >
+
             <item
                 android:id="@+id/nav_logIn"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Войти" />
-        </menu>
-    </item>
+                android:title="@string/enter"
+                android:checked="false"/>
+        <item
+            android:id="@+id/nav_Out"
+            android:title="@string/out" />
+
+    </group>
 
 </menu>

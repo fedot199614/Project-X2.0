@@ -1,18 +1,28 @@
 package com.project.usm.app.Fragments;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.project.usm.app.AOP.Annotations.InitTabBar;
+import com.project.usm.app.Presenter.ProfilePresenter;
 import com.project.usm.app.R;
+import com.project.usm.app.SplashScreen;
+import com.project.usm.app.Tools.BaseQuery;
+import com.project.usm.app.Tools.RVAdapterProfileInfo;
+
+public class Marks extends Fragment {
 
 
-public class Registration extends Fragment {
-    private ProgressBar progressBar;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -22,14 +32,14 @@ public class Registration extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public Registration() {
-        // Required empty public constructor
+    public Marks() {
+
     }
 
 
 
-    public static Registration newInstance(String param1, String param2) {
-        Registration fragment = new Registration();
+    public static Marks newInstance(String param1, String param2) {
+        Marks fragment = new Marks();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -50,7 +60,7 @@ public class Registration extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_registration, container, false);
+        return inflater.inflate(R.layout.fragment_marks, container, false);
     }
 
 
@@ -60,17 +70,24 @@ public class Registration extends Fragment {
         }
     }
 
+    @InitTabBar(check = InitTabBar.Check.GONE)
     @Override
-    public void onActivityCreated(Bundle state) {
-        super.onActivityCreated(state);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        progressBar = getActivity().findViewById(R.id.progressBarAuth);
-        progressBar.setVisibility(View.INVISIBLE);
+
+
+        RecyclerView rv = (RecyclerView)getActivity().findViewById(R.id.rv_main_mark);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+        rv.setHasFixedSize(true);
+        BaseQuery.marksQuery(rv,getActivity());
+
+
 
 
 
     }
-
 
     @Override
     public void onDetach() {

@@ -46,6 +46,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support:design:28.0.0'
@@ -67,10 +68,24 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.16.18'
     compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
     annotationProcessor 'org.projectlombok:lombok:1.16.18'
+    implementation 'ma.glasnost.orika:orika-core:1.4.2'
     //implementation files('libs/aspectj.jar')
     //implementation 'maven:maven-aspectj-plugin:4.0'
     //implementation 'org.aspectj:aspectjlib:1.6.2'
     //implementation 'org.aspectj:aspectjweaver:1.9.2'
     //implementation 'org.springframework:spring-aspects:5.1.2.RELEASE'
     implementation 'com.google.dagger:dagger:2.19'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.19'
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+    implementation 'com.joanzapata.iconify:android-iconify-fontawesome:2.2.2'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation 'com.google.android.gms:play-services-maps:16.1.0' // para mapas
+    implementation 'com.google.android.gms:play-services-location:16.0.0' // para gps
+    implementation 'com.mxn.soul:flowingdrawer-core:2.0.0'
+    implementation 'com.nineoldandroids:library:2.4.0'
+    implementation group: 'cz.msebera.android', name: 'httpclient', version: '4.4.1.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+
 }

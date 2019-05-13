@@ -6,10 +6,18 @@
     tools:context=".Fragments.RV_Main">
 
     <!-- TODO: Update blank fragment layout -->
+    <android.support.v4.widget.SwipeRefreshLayout
+
+        android:id="@+id/container"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:layoutAnimation="@anim/layout_animation_fall_down"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </LinearLayout>

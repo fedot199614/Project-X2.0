@@ -2,7 +2,8 @@ package com.project.usm.app.Model;
 
 public interface IUser {
     boolean validationPhone();
-    int isValidData();
+    int isValidIdnp();
+    int isValidPassword();
     //some methods for webservicies
 
 }

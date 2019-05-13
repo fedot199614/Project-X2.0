@@ -1,7 +1,10 @@
 package com.project.usm.app.Fragments;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
 
 import android.support.v4.app.Fragment;
@@ -13,15 +16,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.project.usm.app.AOP.Annotations.InitTabBar;
+import com.project.usm.app.MainActivity;
 import com.project.usm.app.Presenter.Auth_Presenter;
 import com.project.usm.app.R;
+import com.project.usm.app.Tools.KeyBoardManager;
 import com.project.usm.app.View.Auth_View;
 
 public class Auth extends Fragment implements Auth_View {
-    private ProgressBar progressBar;
     private TextInputEditText login;
     private TextInputEditText password;
+    private ProgressDialog dialog;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -66,36 +73,33 @@ public class Auth extends Fragment implements Auth_View {
         }
     }
 
-
+    @InitTabBar(check = InitTabBar.Check.GONE)
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        TextView forgot = getActivity().findViewById(R.id.forgot);
-        Button registration = getActivity().findViewById(R.id.registration);
+
+
         Button auth = getActivity().findViewById(R.id.registrationBtn);
         login = getActivity().findViewById(R.id.email);
         password = getActivity().findViewById(R.id.password);
-        progressBar = getActivity().findViewById(R.id.progressBarAuth);
-        progressBar.setVisibility(View.INVISIBLE);
-        Auth_Presenter authPresenter = new Auth_Presenter(this);
-
+        Auth_Presenter authPresenter = new Auth_Presenter(this,getActivity());
         auth.setOnClickListener(click -> {
             authPresenter.onLogin(login.getText().toString(), password.getText().toString());
+        });
+        login.setOnFocusChangeListener((v,hasFocus)->{
+            if(!hasFocus){
+            KeyBoardManager.hideKeyboard(v);
+        }
+        });
 
+        password.setOnFocusChangeListener((v,hasFocus)->{
+            if(!hasFocus){
+                KeyBoardManager.hideKeyboard(v);
+            }
         });
-        registration.setOnClickListener(click -> {
-            authPresenter.setAnimFade(this,getActivity());
-            Registration registrationFR = new Registration();
-            authPresenter.setAnimFade(registrationFR,getActivity());
-            authPresenter.beginTransaction(this,registrationFR);
-        });
-        forgot.setOnClickListener(click -> {
 
-        });
 
     }
-
-
 
     @Override
     public void onDetach() {
@@ -103,32 +107,67 @@ public class Auth extends Fragment implements Auth_View {
         mListener = null;
     }
 
+
+
+    @Override
+    public void initAuthState() {
+        MainActivity.getNavManager().sign_outViewVisibility();
+    }
+
+    @Override
+    public void initHomePage() {
+        RV_Main mainNewsList = new RV_Main();
+        FragmentTransaction fr = getActivity().getSupportFragmentManager().beginTransaction();
+        fr.addToBackStack(null);
+        fr.replace(R.id.mainFrame,mainNewsList).commit();
+    }
+
+
     @Override
     public void showLoading() {
-
-        progressBar.setVisibility(View.VISIBLE);
+         dialog = ProgressDialog.show(getContext(),"",getString(R.string.autorizationWait));
     }
 
     @Override
     public void hideLoading() {
-
-        progressBar.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void onLoginMessage() {
+        dialog.dismiss();
 
     }
 
+
     @Override
-    public void showErrorValidation(int errorCodeValidation) {
+    public void onLoginMessageError() {
+        Toast.makeText(getContext(),getString(R.string.authorizationFaled),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onLoginSuccessfully() {
+        Toast.makeText(getContext(),getString(R.string.succecs),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showErrorValidationLogin(int errorCodeValidation) {
 
         if(errorCodeValidation==0) {
-            login.setError("Логин не может быть пустым");
+            login.setError(getString(R.string.emptyInput));
         }else if(errorCodeValidation==1){
-            login.setError("Неверный формат логина.");
+            login.setError(getString(R.string.wrongFormat));
         }else if(errorCodeValidation==2){
-            password.setError("Слишком короткий пароль");
+            login.setError(getString(R.string.wrongLength));
+        }
+    }
+
+    @Override
+    public void showErrorValidationPassword(int errorCodeValidation) {
+
+        if(errorCodeValidation==0) {
+            password.setError(getString(R.string.emptyInput));
+        }else if(errorCodeValidation==1){
+            password.setError(getString(R.string.wrongFormat));
+        }else if(errorCodeValidation==2){
+            password.setError(getString(R.string.wrongLength));
+        }else if(errorCodeValidation==3) {
+            password.setError(getString(R.string.wrongLength));
         }
     }
 

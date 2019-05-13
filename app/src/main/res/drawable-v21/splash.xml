@@ -7,7 +7,7 @@
         <bitmap
             android:id="@+id/logo"
             android:gravity="center"
-            android:src="@drawable/usm_logo" />
+            android:src="@mipmap/usm_logo" />
     </item>
 
 </layer-list>
