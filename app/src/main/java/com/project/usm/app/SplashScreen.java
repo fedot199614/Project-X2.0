@@ -23,6 +23,7 @@ import com.project.usm.app.Tools.GsonParser;
 import com.project.usm.app.Tools.HttpClient;
 import com.project.usm.app.Tools.SessionManager;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,7 +51,7 @@ public class SplashScreen extends AppCompatActivity {
             clientApp = component.getClientApp();
             gsonParser = component.getGsonParser();
             BaseQuery.oauthClient(gsonParser);
-            newsList = BaseQuery.getNews(gsonParser);
+            newsList = new LinkedList<>();
             if(session.isLoggedIn()) {
                 profileInfo  = BaseQuery.profileQuery(this);
                 //BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),profileInfo.getProfileResponseResource().getGroupId());
@@ -113,6 +114,10 @@ public class SplashScreen extends AppCompatActivity {
 
     public static void setProfileInfoList(List<ProfileInfo> profileInfo){
         SplashScreen.profInfoList = profileInfo;
+    }
+
+    public static void setNewsList(List<News> list){
+        SplashScreen.newsList = list;
     }
 
     public static List<ProfileInfo> getProfileInfoList(){

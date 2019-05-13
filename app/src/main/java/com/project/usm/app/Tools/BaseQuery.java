@@ -17,6 +17,7 @@ import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
+import com.project.usm.app.View.Home_View;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,24 +28,20 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BaseQuery {
-    public static List<News> getNews(GsonParser parser){
+    public static List<News> getNews(Activity activity, Fragment fragment, Home_View view,GsonParser parser){
         List<News> newsList = null;
         String jsonResponseNews = " ";
-        try {
 
-            SplashScreen.getHttpClient().buildTaskGet().news()
+
+            SplashScreen.getHttpClient().buildTaskGetNews(activity,fragment,view).news()
                     .getRequestBuild(new Header[]{new BasicHeader("Authorization",
                             SplashScreen.getClientApp().getTokenType()+" "+SplashScreen.getClientApp().getTokenClient())})
-                    .getTaskGet().execute();
+                    .getTaskGetNews().execute();
 
-            jsonResponseNews = SplashScreen.getHttpClient().getTaskGet().get();
 
-            newsList = parser.parseNews(jsonResponseNews);
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e("ERROR APP OAUTH",e.getMessage());
-        } finally {
-            SplashScreen.getHttpClient().getTaskGet().cancel(true);
-        }
+
+
+
 
         return newsList;
     }

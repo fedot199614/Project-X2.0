@@ -50,11 +50,14 @@ import com.project.usm.app.DTO.StudentMarkDataResponseResource;
 import com.project.usm.app.DTO.SubjectResponseResource;
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.MainActivity;
+import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.Model.User;
+import com.project.usm.app.Presenter.HomeNews;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
 import com.project.usm.app.View.Auth_View;
+import com.project.usm.app.View.Home_View;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Document;
@@ -132,6 +135,7 @@ public class HttpClient {
     private MyTaskGetSchedule taskSchedule;
     private MyTaskGetMarks taskMarks;
     private MyTaskGetMap taskMap;
+    private MyTaskGetNews taskGetNews;
 
     @Inject
 public HttpClient(String url,String port){
@@ -187,6 +191,10 @@ public HttpClient buildTaskGet(){
     this.taskGet = new MyTaskGet();
     return this;
 }
+public HttpClient buildTaskGetNews(Activity activity,Fragment fragment,Home_View view){
+        this.taskGetNews = new MyTaskGetNews(activity,fragment,view);
+        return this;
+    }
 
     public HttpClient buildTaskGetGroupMember(RecyclerView rv, Activity activity) {
         this.taskGetGroupMember = new MyTaskGetGroupMember(rv,activity);
@@ -728,6 +736,64 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
+        }
+    }
+
+    public class MyTaskGetNews extends AsyncTask<String, Void, String>{
+        ProgressDialog dialog;
+        Activity activity;
+        Home_View view;
+        Fragment fragment;
+        public MyTaskGetNews(Activity activity, Fragment fragment,Home_View view) {
+            this.activity = activity;
+            this.dialog = new ProgressDialog(activity);
+            this.view = view;
+            this.fragment = fragment;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage(activity.getString(R.string.loading));
+            dialog.show();
+            Log.d("LOG_TAG", "BeginGet");
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                httpResponse = client.execute(httpGet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            flushData();
+            return res;
+        }
+
+
+        @Override
+        protected  void onPostExecute(String result){
+            super.onPostExecute(result);
+            Log.e("sdsdfd234s",result);
+            List<News> list = SplashScreen.getGsonParser().parseNews(result);
+            SplashScreen.setNewsList(list);
+            HomeNews homePresenter = new HomeNews(view);
+            homePresenter.Init();
+            homePresenter.setAnimFade(fragment,activity);
+            dialog.dismiss();
         }
     }
 

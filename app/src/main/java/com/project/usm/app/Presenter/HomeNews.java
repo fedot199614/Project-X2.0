@@ -14,6 +14,7 @@ import android.view.View;
 import com.project.usm.app.Model.News;
 import com.project.usm.app.R;
 import com.project.usm.app.SplashScreen;
+import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.Tools.NavItems;
 import com.project.usm.app.View.Home_View;
 
@@ -48,7 +49,7 @@ public class HomeNews implements IHomeNews {
         fragment.setSharedElementReturnTransition(changeTransform);
         fragment.setSharedElementEnterTransition(changeTransform);
 
-        fragment.setExitTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.explode));
+        //fragment.setExitTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.explode));
         fragment.setEnterTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.explode));
     }
 
@@ -74,6 +75,8 @@ public class HomeNews implements IHomeNews {
 
     @Override
     public void refreshAnim() {
+        home_view.repeatQuery();
         home_view.runLayoutAnimation();
+       // home_view.repeatQuery();
     }
 }

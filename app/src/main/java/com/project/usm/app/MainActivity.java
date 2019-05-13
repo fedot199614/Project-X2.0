@@ -173,6 +173,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SplashScreen.getSessionManager().setLocalizationApp(String.valueOf(item.getTitle()));
             setLocale(String.valueOf(item.getTitle()));
             return true;
+        }else if(id == R.id.ro){
+            SplashScreen.getSessionManager().setLocalizationApp(String.valueOf(item.getTitle()));
+            setLocale(String.valueOf(item.getTitle()));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

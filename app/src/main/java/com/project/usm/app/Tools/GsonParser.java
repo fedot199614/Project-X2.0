@@ -59,7 +59,7 @@ public class GsonParser {
     }
 
     public List<News> parseNews(String jsonObj){
-
+        Log.e("sdfsdf",jsonObj);
         List<News> newsList = new ArrayList<>();
         JsonElement jElement = new JsonParser().parse(jsonObj);
         List<NewsResponseResource> newsResponseResourceList = gson.fromJson(jsonObj, new TypeToken<ArrayList<NewsResponseResource>>(){}.getType());
@@ -82,7 +82,7 @@ public class GsonParser {
             Log.e("ERROR",jsonObj);
             if(news.has("error") && news.get("error").getAsString().equals(INVALID_TOKEN)){
                 BaseQuery.oauthClient(SplashScreen.getGsonParser());
-                SplashScreen.getSessionManager().logoutUser();
+                //SplashScreen.getSessionManager().logoutUser();
             }
         }
         return newsList;

@@ -40,6 +40,8 @@ import com.project.usm.app.MainActivity;
 import  com.project.usm.app.Model.News;
 import com.project.usm.app.Presenter.HomeNews;
 import  com.project.usm.app.R;
+import com.project.usm.app.SplashScreen;
+import com.project.usm.app.Tools.BaseQuery;
 import com.project.usm.app.Tools.NavItems;
 import  com.project.usm.app.Tools.RVAdapter;
 import  com.project.usm.app.Tools.RecyclerItemClickListener;
@@ -99,9 +101,9 @@ public class RV_Main extends Fragment implements Home_View {
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
+        BaseQuery.getNews(getActivity(),this,this,SplashScreen.getGsonParser());
         homePresenter = new HomeNews(this);
-        homePresenter.Init();
-        homePresenter.setAnimFade(this,getActivity());
+
     }
 
     public void onButtonPressed(Uri uri) {
@@ -154,7 +156,7 @@ public class RV_Main extends Fragment implements Home_View {
     public void onRefresh() {
         SwipeRefreshLayout refresh =  (SwipeRefreshLayout)getActivity().findViewById(R.id.container);
         refresh.setOnRefreshListener(()->{
-            Toast.makeText(getContext(), "Жду сервис!!!!!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Жду сервис!!!!!", Toast.LENGTH_SHORT).show();
             homePresenter.refreshAnim();
             refresh.setRefreshing(false);
             //---------------------------------------------------TEST
@@ -205,6 +207,11 @@ public class RV_Main extends Fragment implements Home_View {
         rv.setLayoutAnimation(controller);
         rv.getAdapter().notifyDataSetChanged();
         rv.scheduleLayoutAnimation();
+    }
+
+    @Override
+    public void repeatQuery() {
+        BaseQuery.getNews(getActivity(),this,this,SplashScreen.getGsonParser());
     }
 
     public interface OnFragmentInteractionListener {

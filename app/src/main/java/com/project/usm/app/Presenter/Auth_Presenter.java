@@ -56,37 +56,10 @@ public class Auth_Presenter implements IAuth_Presenter {
             auth_view.showErrorValidationPassword(codeValidationPassword);
         }
         if(codeValidationIdnp == -1 && codeValidationPassword == -1) {
-            //auth_view.showLoading();
             List<BasicNameValuePair> clientParamPlusUserParam = new ArrayList<>();
             clientParamPlusUserParam.addAll(user.getParamsClient());
             clientParamPlusUserParam.addAll(user.getParams());
             SplashScreen.getHttpClient().buildTaskPostAuth(activity,auth_view,user).oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPostAuth().execute();
-//            try {
-//
-//
-//                //String response =  SplashScreen.getHttpClient().getTaskPost().get();
-//
-//                //auth_view.hideLoading();
-//                SplashScreen.getGsonParser().parseUser(response,user);
-//
-//                if(SplashScreen.getSessionManager().isLoggedIn()){
-//                   auth_view.onLoginSuccessfully();
-//                   auth_view.initAuthState();
-//                   auth_view.initHomePage();
-//                   SplashScreen.setProfileInfo(BaseQuery.profileQuery());
-//                   SplashScreen.setProfileInfoList(BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),SplashScreen.getProfileInfo().getProfileResponseResource().getGroupId()));
-//
-//                   MainActivity.getNavManager().getNavProfImg().setImageBitmap(SplashScreen.getProfileInfo().getAvatar());
-//                   MainActivity.getNavManager().getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
-//                   MainActivity.getNavManager().getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
-//                }else{
-//                   auth_view.onLoginMessageError();
-//                }
-//            } catch (ExecutionException | InterruptedException e) {
-//                e.printStackTrace();
-//            }finally {
-//                SplashScreen.getHttpClient().getTaskPost().cancel(true);
-//            }
 
         }
 

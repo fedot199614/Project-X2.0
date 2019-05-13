@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:transitionName="sh_cv"
-        app:cardElevation="6dp"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true"
         app:contentPadding="@dimen/activity_horizontal_margin">
@@ -89,7 +88,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@mipmap/no_img_big" />
-
 
 
             </android.support.constraint.ConstraintLayout>

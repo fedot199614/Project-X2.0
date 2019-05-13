@@ -143,7 +143,6 @@ public void setData(ProfileInfo profileInfo){
         textGroup.setOnClickListener(click->{
             Toast.makeText(getActivity(),getString(R.string.loading),Toast.LENGTH_SHORT).show();
             GroupMembers sn = new GroupMembers();
-            //setAnimFade(sn,getActivity());
             beginTransaction(getFragmentManager(),sn,"membersGroup",textGroup.getText().toString());
         });
 
@@ -151,11 +150,8 @@ public void setData(ProfileInfo profileInfo){
         textMarks.setOnClickListener(click->{
             Toast.makeText(getActivity(),getString(R.string.loading),Toast.LENGTH_SHORT).show();
             Marks sn = new Marks();
-            //setAnimFade(sn,getActivity());
             beginTransaction(getFragmentManager(),sn,"marks",textGroup.getText().toString());
         });
-
-
 
 
     }
