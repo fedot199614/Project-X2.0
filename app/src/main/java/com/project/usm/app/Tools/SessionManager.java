@@ -29,6 +29,9 @@ public class SessionManager {
     public static final String KEY_TOKEN = "token";
     public static final String KEY_GROUP = "grID";
     public static final String KEY_LOCALIZATION = "LOCAL";
+    public static final String KEY_URL_IMG = "IMG";
+    public static final String KEY_NAME = "NAME";
+    public static final String KEY_SPECIALITY = "SPECIALITY";
 
     // Constructor
     @SuppressLint("CommitPrefEdits")
@@ -76,6 +79,16 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void setProfileData(String urlImg,String name,String speciality) {
+
+        editor.putString(KEY_URL_IMG, urlImg);
+        editor.putString(KEY_NAME, name);
+        editor.putString(KEY_SPECIALITY, speciality);
+
+        // commit changes
+        editor.commit();
+    }
+
     public Boolean isSessionContainLocalizationValue(){
         if(pref.contains(KEY_LOCALIZATION)){
             return true;
@@ -87,6 +100,27 @@ public class SessionManager {
     public String getLocalizationApp() {
 
        return pref.getString(KEY_LOCALIZATION,null);
+        // commit changes
+
+    }
+
+    public String getImgUrl() {
+
+        return pref.getString(KEY_URL_IMG,null);
+        // commit changes
+
+    }
+
+    public String getName() {
+
+        return pref.getString(KEY_NAME,null);
+        // commit changes
+
+    }
+
+    public String getSpeciality() {
+
+        return pref.getString(KEY_SPECIALITY,null);
         // commit changes
 
     }

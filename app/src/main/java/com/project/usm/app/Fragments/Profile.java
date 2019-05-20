@@ -101,23 +101,23 @@ public class Profile extends Fragment implements ProfileView {
         }
     }
 
-public void setData(ProfileInfo profileInfo){
-    CircleImageView profImg = (CircleImageView) getActivity().findViewById(R.id.profile_image);
-    CircleImageView navProfImg = NavigationViewManager.getNewInstance().getNavProfImg();
-    TextView name = (TextView) getActivity().findViewById(R.id.profile_name_lastname);
-    TextView profile_group = (TextView) getActivity().findViewById(R.id.profile_group);
-    TextView faculty = (TextView) getActivity().findViewById(R.id.profile_faculty);
-    TextView navName = NavigationViewManager.getNewInstance().getName();
-
-    name.setText(profileInfo.getProfileResponseResource().getFirstName()+" "+profileInfo.getProfileResponseResource().getLastName());
-    navName.setText(profileInfo.getProfileResponseResource().getFirstName()+" "+profileInfo.getProfileResponseResource().getLastName());
-    profile_group.setText(profileInfo.getProfileResponseResource().getGroupId());
-    faculty.setText(profileInfo.getProfileResponseResource().getFaculty());
-
-
-    Picasso.get().load(profileInfo.getProfileResponseResource().getProfileImageUrl()).into(profImg);
-    Picasso.get().load(profileInfo.getProfileResponseResource().getProfileImageUrl()).into(navProfImg);
-}
+//public void setData(ProfileInfo profileInfo){
+//    CircleImageView profImg = (CircleImageView) getActivity().findViewById(R.id.profile_image);
+//    CircleImageView navProfImg = NavigationViewManager.getNewInstance().getNavProfImg();
+//    TextView name = (TextView) getActivity().findViewById(R.id.profile_name_lastname);
+//    TextView profile_group = (TextView) getActivity().findViewById(R.id.profile_group);
+//    TextView faculty = (TextView) getActivity().findViewById(R.id.profile_faculty);
+//    TextView navName = NavigationViewManager.getNewInstance().getName();
+//
+//    name.setText(profileInfo.getProfileResponseResource().getFirstName()+" "+profileInfo.getProfileResponseResource().getLastName());
+//    navName.setText(profileInfo.getProfileResponseResource().getFirstName()+" "+profileInfo.getProfileResponseResource().getLastName());
+//    profile_group.setText(profileInfo.getProfileResponseResource().getGroupId());
+//    faculty.setText(profileInfo.getProfileResponseResource().getFaculty());
+//
+//
+//    Picasso.get().load(profileInfo.getProfileResponseResource().getProfileImageUrl()).into(profImg);
+//    Picasso.get().load(profileInfo.getProfileResponseResource().getProfileImageUrl()).into(navProfImg);
+//}
 
 
     @ListItemSelected(item = ListItemSelected.Item.PROFILE)
@@ -133,25 +133,26 @@ public void setData(ProfileInfo profileInfo){
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
-        SplashScreen.getProfileInfo().updateData();
-        profInfo  = SplashScreen.getProfileInfo();
-        setData(profInfo);
-        RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo,getActivity());
-        rv.setAdapter(adapter);
-
-        TextView textGroup = (TextView) getActivity().findViewById(R.id.profile_group);
-        textGroup.setOnClickListener(click->{
-            Toast.makeText(getActivity(),getString(R.string.loading),Toast.LENGTH_SHORT).show();
-            GroupMembers sn = new GroupMembers();
-            beginTransaction(getFragmentManager(),sn,"membersGroup",textGroup.getText().toString());
-        });
-
-        TextView textMarks = (TextView) getActivity().findViewById(R.id.my_marks);
-        textMarks.setOnClickListener(click->{
-            Toast.makeText(getActivity(),getString(R.string.loading),Toast.LENGTH_SHORT).show();
-            Marks sn = new Marks();
-            beginTransaction(getFragmentManager(),sn,"marks",textGroup.getText().toString());
-        });
+        BaseQuery.profileQuery(getActivity(),rv,this);
+        //SplashScreen.getProfileInfo().updateData();
+//        profInfo  = SplashScreen.getProfileInfo();
+//        setData(profInfo);
+//        RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo,getActivity());
+//        rv.setAdapter(adapter);
+//
+//        TextView textGroup = (TextView) getActivity().findViewById(R.id.profile_group);
+//        textGroup.setOnClickListener(click->{
+//            Toast.makeText(getActivity(),getString(R.string.loading),Toast.LENGTH_SHORT).show();
+//            GroupMembers sn = new GroupMembers();
+//            beginTransaction(getFragmentManager(),sn,"membersGroup",textGroup.getText().toString());
+//        });
+//
+//        TextView textMarks = (TextView) getActivity().findViewById(R.id.my_marks);
+//        textMarks.setOnClickListener(click->{
+//            Toast.makeText(getActivity(),getString(R.string.loading),Toast.LENGTH_SHORT).show();
+//            Marks sn = new Marks();
+//            beginTransaction(getFragmentManager(),sn,"marks",textGroup.getText().toString());
+//        });
 
 
     }
@@ -166,14 +167,14 @@ public void setData(ProfileInfo profileInfo){
         fragment.setEnterTransition(TransitionInflater.from(activity).inflateTransition(android.R.transition.explode));
     }
 
-    public void beginTransaction(FragmentManager frManager, Fragment nextFragment, String backStackTag,String idGroup) {
-        FragmentTransaction transaction = frManager.beginTransaction();
-        Bundle bundle = new Bundle();
-        bundle.putString("grId", idGroup);
-        nextFragment.setArguments(bundle);
-        transaction.addToBackStack(backStackTag);
-        transaction.replace(R.id.mainFrame,nextFragment).commit();
-    }
+//    public void beginTransaction(FragmentManager frManager, Fragment nextFragment, String backStackTag,String idGroup) {
+//        FragmentTransaction transaction = frManager.beginTransaction();
+//        Bundle bundle = new Bundle();
+//        bundle.putString("grId", idGroup);
+//        nextFragment.setArguments(bundle);
+//        transaction.addToBackStack(backStackTag);
+//        transaction.replace(R.id.mainFrame,nextFragment).commit();
+//    }
 
     @Override
     public void cameraOpen() {

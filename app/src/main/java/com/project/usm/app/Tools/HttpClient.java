@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.support.design.widget.TabLayout;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -48,6 +50,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.project.usm.app.DTO.MapPointResponseResource;
 import com.project.usm.app.DTO.StudentMarkDataResponseResource;
 import com.project.usm.app.DTO.SubjectResponseResource;
+import com.project.usm.app.DTO.UserProfileOneElement;
+import com.project.usm.app.Fragments.GroupMembers;
+import com.project.usm.app.Fragments.Marks;
 import com.project.usm.app.Fragments.Profile;
 import com.project.usm.app.MainActivity;
 import com.project.usm.app.Model.News;
@@ -101,6 +106,7 @@ import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
+import de.hdodenhof.circleimageview.CircleImageView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -136,6 +142,7 @@ public class HttpClient {
     private MyTaskGetMarks taskMarks;
     private MyTaskGetMap taskMap;
     private MyTaskGetNews taskGetNews;
+    private MyTaskGetProfile taskGetProfile;
 
     @Inject
 public HttpClient(String url,String port){
@@ -191,6 +198,11 @@ public HttpClient buildTaskGet(){
     this.taskGet = new MyTaskGet();
     return this;
 }
+
+public HttpClient buildTaskGetProfile(Activity activity,RecyclerView rv,Fragment fragment){
+        this.taskGetProfile = new MyTaskGetProfile(activity,rv,fragment);
+        return this;
+    }
 public HttpClient buildTaskGetNews(HomeNews presenter,Activity activity,Fragment fragment,Home_View view){
         this.taskGetNews = new MyTaskGetNews(presenter,activity,fragment,view);
         return this;
@@ -401,6 +413,9 @@ public void closeClient() throws IOException {
                 Picasso.get().load(SplashScreen.getProfileInfo().getProfileResponseResource().getProfileImageUrl()).into(MainActivity.getNavManager().getNavProfImg());
                 MainActivity.getNavManager().getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
                 MainActivity.getNavManager().getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
+                SplashScreen.getSessionManager().setProfileData(SplashScreen.getProfileInfo().getProfileResponseResource().getProfileImageUrl()
+                                                                ,SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName()
+                                                                ,SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
             }else{
                 auth_view.onLoginMessageError();
             }
@@ -494,7 +509,7 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         @Override
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
-            SplashScreen.getGsonParser().parseProfile(activity,true,result);
+            SplashScreen.setProfileInfo(SplashScreen.getGsonParser().parseProfile(activity,result));
             Toast.makeText(MainActivity.getNavManager().getContext(),activity.getString(R.string.save),Toast.LENGTH_SHORT).show();
 
         }
@@ -603,7 +618,7 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
         protected  void onPostExecute(String result){
             super.onPostExecute(result);
             //Log.e("ertertert",result);
-            SplashScreen.getGsonParser().parseProfile(activity,true,result);
+            SplashScreen.setProfileInfo(SplashScreen.getGsonParser().parseProfile(activity,result));
             dialog.dismiss();
             Toast.makeText(MainActivity.getNavManager().getContext(),activity.getString(R.string.save),Toast.LENGTH_SHORT).show();
 
@@ -675,11 +690,10 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
                 public void onItemClick(View view, int position) {
                     AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
                     alertDialog.setTitle(activity.getString(R.string.info));
-                    List<String> titles = profInfo.get(position).getTitle();
-                    List<String> info = profInfo.get(position).getInfo();
+                    List<UserProfileOneElement> data = profInfo.get(position).getData();
                     String res = "";
-                    for(int i=0;i<titles.size();i++){
-                        res += titles.get(i)+": "+info.get(i)+"\n";
+                    for(int i=0;i<data.size();i++){
+                        res += data.get(i).getName()+": "+data.get(i).getResponseResult()+"\n";
                     }
                     alertDialog.setMessage(res);
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -696,6 +710,106 @@ public class MyTaskPost extends AsyncTask<String, Void, String>{
                 }
             }));
             pr.dismiss();
+        }
+    }
+    public class MyTaskGetProfile extends AsyncTask<String, Void, String>{
+
+        Fragment fragment;
+        Activity activity;
+        ProgressDialog dialog;
+        RecyclerView rv;
+        public MyTaskGetProfile(Activity activity,RecyclerView rv,Fragment fragment){
+            this.activity = activity;
+            this.dialog = new ProgressDialog(activity);
+            this.rv = rv;
+            this.fragment = fragment;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage(activity.getString(R.string.loading));
+            dialog.show();
+            Log.d("LOG_TAG", "BeginGet");
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String res = "";
+            CloseableHttpResponse httpResponse = null;
+            try {
+
+                httpResponse = client.execute(httpGet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bf = null;
+            try {
+
+                bf = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+                res = bf.readLine();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            flushData();
+            return res;
+        }
+
+
+        public void beginTransaction(FragmentManager frManager, Fragment nextFragment, String backStackTag,String idGroup) {
+            FragmentTransaction transaction = frManager.beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("grId", idGroup);
+            nextFragment.setArguments(bundle);
+            transaction.addToBackStack(backStackTag);
+            transaction.replace(R.id.mainFrame,nextFragment).commit();
+        }
+
+        @Override
+        protected  void onPostExecute(String result){
+            super.onPostExecute(result);
+            SplashScreen.setProfileInfo(SplashScreen.getGsonParser().parseProfile(activity,result));
+            ProfileInfo profInfo  = SplashScreen.getProfileInfo();
+
+            //setData(profInfo);
+
+
+            CircleImageView profImg = (CircleImageView) activity.findViewById(R.id.profile_image);
+            CircleImageView navProfImg = NavigationViewManager.getNewInstance().getNavProfImg();
+            TextView name = (TextView) activity.findViewById(R.id.profile_name_lastname);
+            TextView profile_group = (TextView) activity.findViewById(R.id.profile_group);
+            TextView faculty = (TextView) activity.findViewById(R.id.profile_faculty);
+            TextView navName = NavigationViewManager.getNewInstance().getName();
+
+            name.setText(profInfo.getProfileResponseResource().getFirstName()+" "+profInfo.getProfileResponseResource().getLastName());
+            navName.setText(profInfo.getProfileResponseResource().getFirstName()+" "+profInfo.getProfileResponseResource().getLastName());
+            profile_group.setText(profInfo.getProfileResponseResource().getGroupId());
+            faculty.setText(profInfo.getProfileResponseResource().getFaculty());
+
+
+            Picasso.get().load(profInfo.getProfileResponseResource().getProfileImageUrl()).into(profImg);
+            Picasso.get().load(profInfo.getProfileResponseResource().getProfileImageUrl()).into(navProfImg);
+
+            RVAdapterProfileInfo adapter = new RVAdapterProfileInfo(profInfo,activity);
+            rv.setAdapter(adapter);
+
+            TextView textGroup = (TextView)activity.findViewById(R.id.profile_group);
+            textGroup.setOnClickListener(click->{
+                Toast.makeText(activity,activity.getString(R.string.loading),Toast.LENGTH_SHORT).show();
+                GroupMembers sn = new GroupMembers();
+                beginTransaction(fragment.getFragmentManager(),sn,"membersGroup",textGroup.getText().toString());
+            });
+
+            TextView textMarks = (TextView) activity.findViewById(R.id.my_marks);
+            textMarks.setOnClickListener(click->{
+                Toast.makeText(activity,activity.getString(R.string.loading),Toast.LENGTH_SHORT).show();
+                Marks sn = new Marks();
+                beginTransaction(fragment.getFragmentManager(),sn,"marks",textGroup.getText().toString());
+            });
+            dialog.dismiss();
         }
     }
 

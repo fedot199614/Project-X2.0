@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:transitionName="sh_cv"
-        app:cardElevation="5dp"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true">
 

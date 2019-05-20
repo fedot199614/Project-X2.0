@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.project.usm.app.DTO.UserProfileOneElement;
 import com.project.usm.app.DTO.UserProfileResponseResource;
 import com.project.usm.app.R;
 
@@ -37,52 +39,26 @@ public class ProfileInfo {
 
     private final Activity activity;
     private UserProfileResponseResource profileResponseResource;
-    Map<String,String> data = new LinkedHashMap<>();
-    private List<String> title;
-    private Map<String,Boolean> editable = new LinkedHashMap<>();
-    private List<String> info;
+    private List<UserProfileOneElement> data = new LinkedList<>();
 
-    public void updateData(){
-        data.clear();
-        data.put(activity.getString(R.string.adress),this.profileResponseResource.getStreetAddress()); editable.put("streetAddress",true);
-        data.put("Email",this.profileResponseResource.getEmail()); editable.put("email",true);
-        data.put(activity.getString(R.string.phone),this.profileResponseResource.getPhoneNumber()); editable.put("phoneNumber",true);
-        data.put(activity.getString(R.string.group),this.profileResponseResource.getGroupId()); editable.put("1",false);
-        data.put(activity.getString(R.string.form),String.valueOf(this.profileResponseResource.getEducationFormType())); editable.put("2",false);
-        data.put(activity.getString(R.string.card),this.profileResponseResource.getCarnetId()); editable.put("3",false);
-        title = new LinkedList<>();
-        info = new LinkedList<>();
-
-        Set keySet = data.keySet();
-        Iterator<String> iterator = keySet.iterator();
-        while(iterator.hasNext()){
-            String key = iterator.next();
-
-            title.add(key);
-            info.add(data.get(key));
-        }
-    }
+//    public void updateData(){
+//        data.clear();
+//        data.add(new UserProfileOneElement(activity.getString(R.string.adress),"streetAddress",true,InputType.TYPE_CLASS_TEXT,this.profileResponseResource.getStreetAddress()));
+//        data.add(new UserProfileOneElement("Email","email",true,InputType.TYPE_CLASS_TEXT,this.profileResponseResource.getEmail()));
+//        data.add(new UserProfileOneElement(activity.getString(R.string.phone),"phoneNumber",true,InputType.TYPE_CLASS_PHONE,this.profileResponseResource.getPhoneNumber()));
+//        data.add(new UserProfileOneElement(activity.getString(R.string.group)," ",false,InputType.TYPE_CLASS_TEXT,this.profileResponseResource.getGroupId()));
+//        data.add(new UserProfileOneElement(activity.getString(R.string.form)," ",false,InputType.TYPE_CLASS_TEXT,String.valueOf(this.profileResponseResource.getEducationFormType())));
+//        data.add(new UserProfileOneElement(activity.getString(R.string.card)," ",false,InputType.TYPE_CLASS_TEXT,this.profileResponseResource.getCarnetId()));
+//    }
     public ProfileInfo(Activity activity,UserProfileResponseResource profileResponseResource) {
         this.activity = activity;
         this.profileResponseResource = profileResponseResource;
-        data.put(activity.getString(R.string.adress),this.profileResponseResource.getStreetAddress()); editable.put("streetAddress",true);
-        data.put("Email",this.profileResponseResource.getEmail()); editable.put("email",true);
-        data.put(activity.getString(R.string.phone),this.profileResponseResource.getPhoneNumber()); editable.put("phoneNumber",true);
-        data.put(activity.getString(R.string.group),this.profileResponseResource.getGroupId()); editable.put("1",false);
-        data.put(activity.getString(R.string.form),String.valueOf(this.profileResponseResource.getEducationFormType())); editable.put("2",false);
-        data.put(activity.getString(R.string.card),this.profileResponseResource.getCarnetId()); editable.put("3",false);
-        title = new LinkedList<>();
-        info = new LinkedList<>();
-
-
-        Set keySet = data.keySet();
-        Iterator<String> iterator = keySet.iterator();
-        while(iterator.hasNext()){
-            String key = iterator.next();
-
-            title.add(key);
-            info.add(data.get(key));
-        }
+        data.add(new UserProfileOneElement(activity.getString(R.string.adress),"streetAddress",true,InputType.TYPE_CLASS_TEXT,this.profileResponseResource.getStreetAddress()));
+        data.add(new UserProfileOneElement("Email","email",true,InputType.TYPE_CLASS_TEXT,this.profileResponseResource.getEmail()));
+        data.add(new UserProfileOneElement(activity.getString(R.string.phone),"phoneNumber",true,InputType.TYPE_CLASS_PHONE,this.profileResponseResource.getPhoneNumber()));
+        data.add(new UserProfileOneElement(activity.getString(R.string.group)," ",false,InputType.TYPE_CLASS_TEXT,this.profileResponseResource.getGroupId()));
+        data.add(new UserProfileOneElement(activity.getString(R.string.form)," ",false,InputType.TYPE_CLASS_TEXT,String.valueOf(this.profileResponseResource.getEducationFormType())));
+        data.add(new UserProfileOneElement(activity.getString(R.string.card)," ",false,InputType.TYPE_CLASS_TEXT,this.profileResponseResource.getCarnetId()));
     }
 
 }

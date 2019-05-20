@@ -124,6 +124,15 @@ public class BaseQuery {
 
     }
 
+    public static void profileQuery(Activity activity,RecyclerView rv,Fragment fragment){
+
+        String jsonResponseProfile = "";
+        SplashScreen.getHttpClient().buildTaskGetProfile(activity,rv,fragment).profile()
+                .getRequestBuild(new Header[]{new BasicHeader("Authorization",
+                        "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
+                .getTaskGetProfile().execute();
+    }
+
     public static ProfileInfo profileQuery(Activity activity){
 
         String jsonResponseProfile = "";
@@ -139,7 +148,7 @@ public class BaseQuery {
             SplashScreen.getHttpClient().getTaskGet().cancel(true);
         }
 
-        ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(activity,false,jsonResponseProfile);
+         ProfileInfo profInfo =  SplashScreen.getGsonParser().parseProfile(activity,jsonResponseProfile);
 
         return profInfo;
     }
