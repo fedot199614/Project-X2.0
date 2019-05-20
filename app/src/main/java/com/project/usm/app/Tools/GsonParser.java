@@ -261,61 +261,14 @@ public class GsonParser {
     }
 
 
-    public ProfileInfo parseProfile(Activity activity,Boolean update,String json){
+    public ProfileInfo parseProfile(Activity activity,String json){
 
         JsonElement element = new JsonParser().parse(json);
         JsonObject obj = element.getAsJsonObject();
         ProfileInfo profileInfo = null;
         if(!obj.has("error")) {
-            if(!update) {
                 UserProfileResponseResource profile = gson.fromJson(json, UserProfileResponseResource.class);
                 profileInfo = new ProfileInfo(activity,profile);
-            }else{
-
-                UserProfileResponseResource profile = gson.fromJson(json, UserProfileResponseResource.class);
-                SplashScreen.getProfileInfo().setProfileResponseResource(profile);
-                SplashScreen.getProfileInfo().updateData();
-
-            }
-        }else{
-            if(SplashScreen.getSessionManager().isLoggedIn()){
-                this.user = new User(SplashScreen.getSessionManager().getUserDetails().get("idnp"),SplashScreen.getSessionManager().getUserDetails().get("password"));
-            }
-            List<BasicNameValuePair> clientParamPlusUserParam = new ArrayList<>();
-            clientParamPlusUserParam.addAll(user.getParamsClient());
-            clientParamPlusUserParam.addAll(user.getParams());
-            SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPost().execute();
-            try {
-                String response = SplashScreen.getHttpClient().getTaskPost().get();
-
-                JsonElement jElement = new JsonParser().parse(response);
-                JsonObject jObject = jElement.getAsJsonObject();
-                SplashScreen.getSessionManager().updateUserToken(jObject.get("access_token").getAsString());
-            }catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-            }
-
-            String jsonResponseProfile = "";
-            SplashScreen.getHttpClient().buildTaskGet().profile()
-                    .getRequestBuild(new Header[]{new BasicHeader("Authorization",
-                            "Bearer "+SplashScreen.getSessionManager().getUserDetails().get("token"))})
-                    .getTaskGet().execute();
-            try {
-                jsonResponseProfile = SplashScreen.getHttpClient().getTaskGet().get();
-
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            if(!update) {
-                UserProfileResponseResource profile = gson.fromJson(jsonResponseProfile, UserProfileResponseResource.class);
-                profileInfo = new ProfileInfo(activity,profile);
-            }else{
-                UserProfileResponseResource profile = gson.fromJson(jsonResponseProfile, UserProfileResponseResource.class);
-                SplashScreen.getProfileInfo().setProfileResponseResource(profile);
-                SplashScreen.getProfileInfo().updateData();
-
-            }
-
         }
         return profileInfo;
     }

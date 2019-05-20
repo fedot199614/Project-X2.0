@@ -81,9 +81,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             auth_presenter = new Auth_Presenter();
             HashMap<String,String> userDetails = SplashScreen.getSessionManager().getUserDetails();
             auth_presenter.createAuthUser(userDetails.get("idnp"),userDetails.get("password"),userDetails.get("token"));
-            Picasso.get().load(SplashScreen.getProfileInfo().getProfileResponseResource().getProfileImageUrl()).into(navViewManager.getNavProfImg());
-            navViewManager.getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
-            navViewManager.getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
+//            Picasso.get().load(SplashScreen.getProfileInfo().getProfileResponseResource().getProfileImageUrl()).into(navViewManager.getNavProfImg());
+//            navViewManager.getName().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getFirstName()+" "+SplashScreen.getProfileInfo().getProfileResponseResource().getLastName());
+//            navViewManager.getSomeInfo().setText(SplashScreen.getProfileInfo().getProfileResponseResource().getSpeciality());
+
+            Picasso.get().load(SplashScreen.getSessionManager().getImgUrl()).into(navViewManager.getNavProfImg());
+            navViewManager.getName().setText(SplashScreen.getSessionManager().getName());
+            navViewManager.getSomeInfo().setText(SplashScreen.getSessionManager().getSpeciality());
+
         }else{
             navViewManager.sign_inViewVisibility();
         }

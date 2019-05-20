@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.project.usm.app.DTO.UserProfileOneElement;
 import com.project.usm.app.Model.ProfileInfo;
 import com.project.usm.app.R;
 
@@ -26,21 +27,16 @@ public class RVAdapterProfileInfo extends RecyclerView.Adapter<RVAdapterProfileI
 
 
 
-    List<String> title;
-    List<String> info;
+    List<UserProfileOneElement> profInfo;
     Activity activity;
-    Map<String,Boolean> editable;
-    Set<String> key;
-    Iterator<String> iteratorKey;
-    String queryName = "";
+
+
+
 
     public RVAdapterProfileInfo(ProfileInfo profInfo, Activity activity){
-        this.title = profInfo.getTitle();
-        this.info = profInfo.getInfo();
-        this.editable = profInfo.getEditable();
-        this.key = editable.keySet();
+        this.profInfo = profInfo.getData();
         this.activity = activity;
-        this.iteratorKey =  key.iterator();
+
     }
 
 
@@ -54,21 +50,15 @@ public class RVAdapterProfileInfo extends RecyclerView.Adapter<RVAdapterProfileI
 
     @Override
     public void onBindViewHolder(@NonNull Profile personViewHolder, int i) {
-        personViewHolder.title.setText(title.get(i));
-        personViewHolder.info.setText(info.get(i));
-
-        String query = "";
-        if(iteratorKey.hasNext()){
-            String key = iteratorKey.next();
-            if(key.equals("email") || key.equals("streetAddress") || key.equals("phoneNumber")) {
-                personViewHolder.setKey(key);
-            }else{
-                personViewHolder.fontAwesome.setVisibility(View.GONE);
-            }
+        personViewHolder.title.setText(profInfo.get(i).getName());
+        personViewHolder.info.setText(profInfo.get(i).getResponseResult());
+        if(!profInfo.get(i).getEditable()){
+            personViewHolder.fontAwesome.setVisibility(View.GONE);
         }
+
         personViewHolder.fontAwesome.setOnClickListener(click->{
 
-            CustomDialogClass dialog = new CustomDialogClass(personViewHolder.info,activity,personViewHolder.title.getText().toString(),personViewHolder.key);
+            CustomDialogClass dialog = new CustomDialogClass(profInfo.get(i),personViewHolder.info,activity,personViewHolder.title.getText().toString(),profInfo.get(i).getQueryName());
             dialog.show();
         });
 
@@ -76,7 +66,7 @@ public class RVAdapterProfileInfo extends RecyclerView.Adapter<RVAdapterProfileI
 
     @Override
     public int getItemCount() {
-        return info.size();
+        return profInfo.size();
     }
 
 
@@ -86,12 +76,12 @@ public class RVAdapterProfileInfo extends RecyclerView.Adapter<RVAdapterProfileI
     }
 
 
-    @Setter
+
     public static class Profile extends RecyclerView.ViewHolder {
         TextView title;
         TextView info;
         FontAwesome fontAwesome;
-        String key;
+
 
 
         Profile(View itemView) {

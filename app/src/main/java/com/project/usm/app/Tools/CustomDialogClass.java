@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.project.usm.app.DTO.UserProfileOneElement;
 import com.project.usm.app.R;
 
 public class CustomDialogClass extends Dialog implements
@@ -25,15 +27,16 @@ public class CustomDialogClass extends Dialog implements
     private TextInputLayout textInputLayout;
     private TextInputEditText textInputEditText;
     private String title,queryName;
+    private UserProfileOneElement oneElement;
 
 
-
-    public CustomDialogClass(TextView s, Activity a, String title, String queryName) {
+    public CustomDialogClass(UserProfileOneElement oneElement,TextView s, Activity a, String title, String queryName) {
         super(a);
         this.c = a;
         this.title= title;
         this.queryName = queryName;
         this.textUpdate = s;
+        this.oneElement = oneElement;
     }
 
     @Override
@@ -46,6 +49,7 @@ public class CustomDialogClass extends Dialog implements
         textInputLayout = (TextInputLayout) findViewById(R.id.update_text_input);
         textInputLayout.setHint(title);
         textInputEditText = (TextInputEditText) findViewById(R.id.update_text_input_inner);
+        textInputEditText.setInputType(oneElement.getInputType());
         yes.setOnClickListener(this);
 
 

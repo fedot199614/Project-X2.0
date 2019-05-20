@@ -12,9 +12,13 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.project.usm.app.Model.ClientApp;
 import com.project.usm.app.Model.News;
 import com.project.usm.app.Model.ProfileInfo;
+import com.project.usm.app.Model.User;
 import com.project.usm.app.Module.ContextModule;
 import com.project.usm.app.Module.DaggerInjectionComponent;
 import com.project.usm.app.Module.InjectionComponent;
@@ -23,12 +27,17 @@ import com.project.usm.app.Tools.GsonParser;
 import com.project.usm.app.Tools.HttpClient;
 import com.project.usm.app.Tools.SessionManager;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+
+import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 
 public class SplashScreen extends AppCompatActivity {
+    private static User user;
     private static ProfileInfo profileInfo;
     private static GsonParser gsonParser;
     private static SessionManager session;
@@ -53,7 +62,22 @@ public class SplashScreen extends AppCompatActivity {
             BaseQuery.oauthClient(gsonParser);
             newsList = new LinkedList<>();
             if(session.isLoggedIn()) {
-                profileInfo  = BaseQuery.profileQuery(this);
+                //profileInfo  = BaseQuery.profileQuery(this);
+                user = new User(SplashScreen.getSessionManager().getUserDetails().get("idnp"),SplashScreen.getSessionManager().getUserDetails().get("password"));
+                List<BasicNameValuePair> clientParamPlusUserParam = new ArrayList<>();
+                clientParamPlusUserParam.addAll(user.getParamsClient());
+                clientParamPlusUserParam.addAll(user.getParams());
+                SplashScreen.getHttpClient().buildTaskPost().oauth().postRequestBuild(user.getHeaders(), clientParamPlusUserParam).getTaskPost().execute();
+                try {
+                    String response = SplashScreen.getHttpClient().getTaskPost().get();
+
+                    JsonElement jElement = new JsonParser().parse(response);
+                    JsonObject jObject = jElement.getAsJsonObject();
+                    SplashScreen.getSessionManager().updateUserToken(jObject.get("access_token").getAsString());
+                }catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 //BaseQuery.membersGroupQuery(SplashScreen.getGsonParser(),profileInfo.getProfileResponseResource().getGroupId());
 
             }
